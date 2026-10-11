@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Shippori+Mincho:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--c-bg);color:var(--c-text);font-family:var(--f-body);line-height:var(--leading-body);width:1600px}
+
+  /* Header: the sky of the islands */
+  .sky{position:relative;height:430px;background:var(--c-sky);overflow:hidden}
+  .sky svg{position:absolute;inset:0;width:100%;height:100%}
+  .sky .text{position:absolute;left:56px;top:96px;max-width:640px}
+  .sky .kanji{font-family:"Shippori Mincho","Noto Serif CJK JP",serif;font-size:22px;color:var(--sora-700);letter-spacing:.4em;margin-bottom:14px}
+  .sky h1{font-family:var(--f-heading);font-weight:700;font-size:58px;line-height:1.04;color:var(--sora-900)}
+</style></head><body>
+<header class="sky">
+  <svg viewBox="0 0 1600 430" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="sun" cx="78%" cy="18%" r="40%"><stop offset="0" stop-color="#FFF6D6" stop-opacity=".95"/><stop offset=".35" stop-color="#FBE3A2" stop-opacity=".55"/><stop offset="1" stop-color="#FBE3A2" stop-opacity="0"/></radialGradient>
+      <linearGradient id="rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9AB2CF"/><stop offset="1" stop-color="#C9DAEE" stop-opacity=".2"/></linearGradient>
+      <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ED3A8"/><stop offset="1" stop-color="#7FC08E"/></linearGradient>
+    </defs>
+    <rect width="1600" height="430" fill="url(#sun)"/>
+    <!-- far clouds -->
+    <g fill="#FFFFFF" opacity=".75">
+      <ellipse cx="760" cy="300" rx="140" ry="26"/><ellipse cx="830" cy="286" rx="80" ry="30"/>
+      <ellipse cx="1480" cy="250" rx="120" ry="22"/><ellipse cx="1530" cy="236" rx="60" ry="24"/>
+    </g>
+    <!-- large island -->
+    <g transform="translate(1040 150)">
+      <path d="M0 62 Q150 40 300 62 L270 92 L232 104 L206 168 L180 112 L150 196 L126 118 L92 132 L70 100 L28 90 Z" fill="url(#rock)"/>
+      <path d="M-6 64 Q150 34 306 64 Q150 52 -6 64 Z" fill="#6FAE7E"/>
+      <path d="M0 62 Q150 30 300 62 Q150 48 0 62 Z" fill="url(#grass)"/>
+      <!-- shrine (torii) -->
+      <g transform="translate(176 6)" fill="none" stroke="#B23447" stroke-width="5" stroke-linecap="round">
+        <path d="M-8 4 Q24 -4 56 4"/><path d="M0 14 H48"/><path d="M6 6 V50 M42 6 V50"/>
+      </g>
+      <!-- tree -->
+      <g transform="translate(70 18)"><rect x="-3" y="18" width="6" height="26" fill="#7A6A58"/><circle cx="0" cy="12" r="18" fill="#8CC79A"/><circle cx="12" cy="18" r="12" fill="#7FC08E"/></g>
+      <!-- flowers -->
+      <g fill="#F3A6B8"><circle cx="120" cy="54" r="3"/><circle cx="132" cy="50" r="3"/><circle cx="244" cy="54" r="3"/><circle cx="256" cy="52" r="3"/></g>
+      <!-- waterfall -->
+      <path d="M262 66 Q266 120 258 230" stroke="#FFFFFF" stroke-width="4" opacity=".7" fill="none"/>
+    </g>
+    <!-- small island -->
+    <g transform="translate(1390 92)">
+      <path d="M0 30 Q55 18 110 30 L96 46 L74 52 L60 92 L46 54 L22 50 Z" fill="url(#rock)"/>
+      <path d="M0 30 Q55 14 110 30 Q55 24 0 30 Z" fill="url(#grass)"/>
+      <g fill="#F3A6B8"><circle cx="40" cy="26" r="2.5"/><circle cx="70" cy="25" r="2.5"/></g>
+    </g>
+    <!-- distant island -->
+    <g transform="translate(860 120)" opacity=".55">
+      <path d="M0 20 Q36 12 72 20 L60 32 L44 60 L30 34 Z" fill="#AFC5DE"/>
+      <path d="M0 20 Q36 10 72 20 Q36 16 0 20 Z" fill="#A8D3B2"/>
+    </g>
+    <!-- rope bridge -->
+    <path d="M1340 214 Q1368 180 1396 124" stroke="#8C7A66" stroke-width="2" fill="none" stroke-dasharray="3 4"/>
+    <!-- near clouds -->
+    <g fill="#FFFFFF">
+      <ellipse cx="980" cy="392" rx="210" ry="44"/><ellipse cx="1110" cy="372" rx="130" ry="54"/><ellipse cx="1250" cy="396" rx="190" ry="40"/>
+      <ellipse cx="1430" cy="380" rx="150" ry="50"/><ellipse cx="1580" cy="400" rx="140" ry="40"/>
+      <ellipse cx="560" cy="420" rx="260" ry="40"/><ellipse cx="300" cy="430" rx="300" ry="36"/>
+    </g>
+    <!-- birds -->
+    <g stroke="#4B6585" stroke-width="2" fill="none" stroke-linecap="round" opacity=".6">
+      <path d="M700 120 q8 -8 16 0 q8 -8 16 0"/><path d="M742 140 q6 -6 12 0 q6 -6 12 0"/>
+    </g>
+  </svg>
+  <div class="text">
+    <div class="kanji" lang="ja">空の島</div>
+    <h1>The Day I Made<br>That Promise</h1>
+  </div>
+</header>
+</body></html>

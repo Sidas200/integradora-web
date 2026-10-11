@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Shippori+Mincho:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+  :root{--bg:#F3F9FE;--paper:#FFFFFF;--ink:#14335A;--ink-muted:#4B6585;--blue:#1D5C9A;--blue-soft:#DDEEFB;--gold-soft:#FDF1CF;--red:#B23447;--red-soft:#F8E1E5;--green-soft:#E2F1E5;--green:#2F6B3E;--border:#CFE0EF}
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);font-family:"Zen Kaku Gothic New",sans-serif;color:var(--ink);padding:40px 48px;width:1600px}
+  h1{font-family:"Shippori Mincho",serif;font-size:34px;font-weight:700}
+  .sub{color:var(--ink-muted);font-size:17px;margin:6px 0 26px}
+  .canvas{display:grid;grid-template-columns:150px 1fr;gap:28px;align-items:stretch}
+  .actors{display:flex;flex-direction:column;justify-content:space-around;align-items:center;gap:20px}
+  .actor{text-align:center;font-weight:500;font-size:16px}
+  .actor svg{display:block;margin:0 auto 6px}
+  .actor small{display:block;color:var(--ink-muted);font-weight:400;font-size:12.5px;max-width:140px}
+  .system{border:2px solid var(--blue);border-radius:6px;background:var(--paper);padding:16px 20px 20px}
+  .system>b{font-family:"Shippori Mincho",serif;font-size:20px}
+  .group{margin-top:14px;border:1.5px dashed var(--border);border-radius:4px;padding:12px 14px}
+  .group h2{font-size:15px;font-weight:700;color:var(--ink-muted);margin-bottom:10px}
+  .cases{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .oval{border:1.5px solid var(--blue);border-radius:999px;padding:10px 16px;text-align:center;font-size:14px;line-height:1.35;background:#fff;display:flex;flex-direction:column;justify-content:center;min-height:62px}
+  .oval i{font-style:normal;color:var(--ink-muted);font-size:12px}
+  .crud{display:inline-flex;gap:3px;justify-content:center;margin-top:4px}
+  .crud span{font-size:11.5px;font-weight:700;border-radius:3px;padding:1px 6px}
+  .C{background:var(--green-soft);color:var(--green)}.R{background:var(--blue-soft);color:var(--blue)}.U{background:var(--gold-soft);color:#7A5410}.D{background:var(--red-soft);color:var(--red)}
+  .legend{margin-top:18px;font-size:14px;color:var(--ink-muted);display:flex;gap:18px;align-items:center}
+  .legend .crud{margin:0}
+</style></head><body>
+<h1>Casos de uso de la PWA</h1>
+<p class="sub">Cada caso indica qué operación CRUD hace sobre la API. Un Jugador también puede hacer todo lo del Visitante.</p>
+<div class="canvas">
+  <div class="actors">
+    <div class="actor"><svg width="46" height="70" viewBox="0 0 46 70" fill="none" stroke="#14335A" stroke-width="2.4"><circle cx="23" cy="12" r="9"/><path d="M23 21v24M6 31h34M23 45 9 66M23 45l14 21"/></svg>Visitante<small>sin cuenta</small></div>
+    <div class="actor"><svg width="46" height="70" viewBox="0 0 46 70" fill="none" stroke="#1D5C9A" stroke-width="2.4"><circle cx="23" cy="12" r="9"/><path d="M23 21v24M6 31h34M23 45 9 66M23 45l14 21"/></svg>Jugador<small>con sesión iniciada · hereda de Visitante</small></div>
+  </div>
+  <div class="system">
+    <b>PWA · The Day I Made That Promise</b>
+    <div class="group">
+      <h2>Público — Visitante</h2>
+      <div class="cases">
+        <div class="oval">CU-01 Ver landing y ficha del juego<span class="crud"><span class="R">R</span></span></div>
+        <div class="oval">CU-02 Leer noticias<i>GET /news</i><span class="crud"><span class="R">R lista</span></span></div>
+        <div class="oval">CU-03 Suscribirse al lanzamiento<i>POST /subscriptions</i><span class="crud"><span class="C">C</span></span></div>
+        <div class="oval">CU-04 Crear cuenta<i>POST /auth/register</i><span class="crud"><span class="C">C</span></span></div>
+        <div class="oval">CU-05 Iniciar sesión<i>crea sesión de dispositivo</i></div>
+        <div class="oval">CU-06 Instalar la app<i>manifiesto + SW</i></div>
+      </div>
+    </div>
+    <div class="group">
+      <h2>Con sesión — Jugador</h2>
+      <div class="cases">
+        <div class="oval">CU-07 Ver resumen de la cuenta<i>GET /account</i><span class="crud"><span class="R">R</span></span></div>
+        <div class="oval">CU-08 Ver partidas y estadísticas<i>GET /account/saves</i><span class="crud"><span class="R">R lista</span></span></div>
+        <div class="oval">CU-09 Ver historial<i>GET /account/history</i><span class="crud"><span class="R">R lista paginada</span></span></div>
+        <div class="oval">CU-10 Ver logros<i>GET /account/achievements</i><span class="crud"><span class="R">R lista</span></span></div>
+        <div class="oval">CU-11 Cambiar nombre de usuario<i>PATCH /account</i><span class="crud"><span class="U">U</span></span></div>
+        <div class="oval">CU-12 Cambiar contraseña<i>PUT /account/password</i><span class="crud"><span class="U">U</span></span></div>
+        <div class="oval">CU-13 Editar configuración del juego<i>PUT /account/settings</i><span class="crud"><span class="U">U</span></span></div>
+        <div class="oval">CU-14 Ver y cerrar sesiones en dispositivos<i>/account/devices</i><span class="crud"><span class="R">R</span><span class="D">D</span></span></div>
+        <div class="oval">CU-15 Eliminar cuenta<i>solo web · pide contraseña</i><span class="crud"><span class="D">D</span></span></div>
+        <div class="oval">CU-16 Cerrar sesión<i>POST /auth/logout</i><span class="crud"><span class="D">D sesión</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="legend"><span class="crud"><span class="C">C</span></span>crear <span class="crud"><span class="R">R</span></span>leer <span class="crud"><span class="U">U</span></span>actualizar <span class="crud"><span class="D">D</span></span>eliminar</div>
+</body></html>

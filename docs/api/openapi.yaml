@@ -1,0 +1,1107 @@
+openapi: 3.1.0
+info:
+  title: The Day I Made That Promise API
+  version: 1.0.0
+  summary: REST contract shared by the PWA (React), the game (Unity PC) and the mobile app (Flutter).
+  description: |
+    Contract first: this file is the source of truth.
+    - The backend (Spring Boot + springdoc) is checked against it in CI.
+    - The PWA generates its types with `openapi-typescript` → `src/shared/api/schema.d.ts`.
+
+    Conventions: camelCase JSON, ISO-8601 dates in UTC, durations in whole seconds,
+    UPPERCASE enumerations, errors as `application/problem+json` (RFC 9457) with a stable `code`.
+  license:
+    name: Proprietary · Hex Studio
+    identifier: LicenseRef-Proprietary
+servers:
+  - url: /api/v1
+    description: PWA (same origin; Vercel forwards /api/* to Render)
+  - url: https://tdimp-api.onrender.com/api/v1
+    description: Production (Unity game and Flutter app)
+  - url: https://tdimp-api-staging.onrender.com/api/v1
+    description: Staging
+tags:
+  - name: Auth
+    description: Registration, login, logout and token refresh.
+  - name: Account
+    description: Profile, password, settings, devices and account deletion.
+  - name: Saves
+    description: Save slots. Read by the web; written only by the game.
+  - name: History
+    description: Paginated play sessions and timeline.
+  - name: Achievements
+    description: Player achievement status; the game unlocks them.
+  - name: Public
+    description: Content for the landing page, no session required.
+security:
+  - bearer: []
+
+paths:
+  # ------------------------------------------------------------------ Auth
+  /auth/register:
+    post:
+      tags: [Auth]
+      operationId: register
+      summary: Create an account (web or mobile) and log in
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        '201':
+          description: Account created and session started. On the web the refresh token arrives in the cookie.
+          headers:
+            Set-Cookie: { $ref: '#/components/headers/RefreshCookie' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResponse' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '429': { $ref: '#/components/responses/TooManyAttempts' }
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      operationId: login
+      summary: Log in
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: Session started.
+          headers:
+            Set-Cookie: { $ref: '#/components/headers/RefreshCookie' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResponse' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '429': { $ref: '#/components/responses/TooManyAttempts' }
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      operationId: refreshToken
+      summary: Renew the access token (rotates the refresh token)
+      description: |
+        Web: sends the `tdimp_rt` cookie and the `X-Requested-With: tdimp-pwa` header (CSRF defense); empty body.
+        Unity/Flutter: send `refreshToken` in the body.
+        If an already rotated refresh token is presented, the whole family is revoked (possible theft) and 401 is returned.
+      security: []
+      parameters:
+        - in: header
+          name: X-Requested-With
+          required: false
+          schema: { type: string, const: tdimp-pwa }
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RefreshRequest' }
+      responses:
+        '200':
+          description: New tokens.
+          headers:
+            Set-Cookie: { $ref: '#/components/headers/RefreshCookie' }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResponse' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      operationId: logout
+      summary: Log out this device
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RefreshRequest' }
+      responses:
+        '204':
+          description: Session revoked and cookie cleared. Idempotent.
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+
+  /auth/reauthenticate:
+    post:
+      tags: [Auth]
+      operationId: reauthenticate
+      summary: Confirm the password before a sensitive action
+      description: Returns a new access token with `auth_time` = now. Required by `DELETE /account`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReauthenticateRequest' }
+      responses:
+        '200':
+          description: Token with recent authentication.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResponse' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '429': { $ref: '#/components/responses/TooManyAttempts' }
+
+  # ------------------------------------------------------------------ Account
+  /account:
+    get:
+      tags: [Account]
+      operationId: getAccount
+      summary: Account profile and summary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Account' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+    patch:
+      tags: [Account]
+      operationId: updateAccount
+      summary: Change the username
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateAccountRequest' }
+      responses:
+        '200':
+          description: Account updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Account' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '409': { $ref: '#/components/responses/Conflict' }
+    delete:
+      tags: [Account]
+      operationId: deleteAccount
+      summary: Delete the account and all its data (web only)
+      description: |
+        Rules: the token must have `cli = WEB` (otherwise 403 `DELETION_WEB_ONLY`) and an `auth_time` of
+        5 minutes ago or less (otherwise 401 `REAUTHENTICATION_REQUIRED`; call `/auth/reauthenticate` first).
+        Deletes in cascade saves, stats, history, achievements, settings and every session.
+      responses:
+        '204':
+          description: Account deleted; the refresh cookie is cleared.
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /account/password:
+    put:
+      tags: [Account]
+      operationId: changePassword
+      summary: Change the password (logs out every other session)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChangePasswordRequest' }
+      responses:
+        '204': { description: Password changed. }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /account/settings:
+    get:
+      tags: [Account]
+      operationId: getSettings
+      summary: Game settings synced to the cloud
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Settings' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+    put:
+      tags: [Account]
+      operationId: replaceSettings
+      summary: Replace the settings (idempotent; the PWA may retry it when the network returns)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Settings' }
+      responses:
+        '200':
+          description: Saved.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Settings' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+
+  /account/devices:
+    get:
+      tags: [Account]
+      operationId: listDevices
+      summary: Active sessions per device
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Device' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+    delete:
+      tags: [Account]
+      operationId: revokeOtherDevices
+      summary: Log out every device except this one
+      responses:
+        '204': { description: Sessions revoked. }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /account/devices/{id}:
+    delete:
+      tags: [Account]
+      operationId: revokeDevice
+      summary: Log out one device
+      parameters:
+        - $ref: '#/components/parameters/IdUuid'
+      responses:
+        '204': { description: Session revoked. }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ------------------------------------------------------------------ Saves
+  /account/saves:
+    get:
+      tags: [Saves]
+      operationId: listSaves
+      summary: The account's save slots (3 at most)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                maxItems: 3
+                items: { $ref: '#/components/schemas/SaveSummary' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /account/saves/{slot}:
+    get:
+      tags: [Saves]
+      operationId: getSave
+      summary: Save detail for the web
+      parameters:
+        - $ref: '#/components/parameters/Slot'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SaveDetail' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /account/saves/{slot}/data:
+    get:
+      tags: [Saves]
+      operationId: downloadSaveData
+      summary: (Unity) Full save document
+      parameters:
+        - $ref: '#/components/parameters/Slot'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SaveData' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Saves]
+      operationId: uploadSaveData
+      summary: (Unity) Create or replace the save of a slot
+      description: |
+        `version` must be the latest one the client knows (0 if the slot is new).
+        If it does not match the server's → 409 `VERSION_CONFLICT` with `serverVersion`.
+      parameters:
+        - $ref: '#/components/parameters/Slot'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SaveData' }
+      responses:
+        '200':
+          description: Save accepted.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SaveAccepted' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '409': { $ref: '#/components/responses/VersionConflict' }
+
+  /account/saves/{slot}/sessions:
+    post:
+      tags: [Saves]
+      operationId: uploadPlaySessions
+      summary: (Unity) Send play sessions in a batch (idempotent by id)
+      parameters:
+        - $ref: '#/components/parameters/Slot'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              minItems: 1
+              maxItems: 50
+              items: { $ref: '#/components/schemas/PlaySessionInput' }
+      responses:
+        '200':
+          description: Batch processed.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BatchResult' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /account/saves/{slot}/events:
+    post:
+      tags: [Saves]
+      operationId: uploadEvents
+      summary: (Unity) Send telemetry events in a batch (idempotent by id)
+      parameters:
+        - $ref: '#/components/parameters/Slot'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              minItems: 1
+              maxItems: 100
+              items: { $ref: '#/components/schemas/EventInput' }
+      responses:
+        '200':
+          description: Batch processed.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BatchResult' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+
+  # ------------------------------------------------------------------ History
+  /account/sessions:
+    get:
+      tags: [History]
+      operationId: listPlaySessions
+      summary: Play sessions, newest first
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - name: slot
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 3 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PlaySessionPage' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /account/history:
+    get:
+      tags: [History]
+      operationId: listHistory
+      summary: Unified timeline (sessions, achievements and milestones)
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - name: type
+          in: query
+          required: false
+          schema: { type: string, enum: [SESSION, ACHIEVEMENT, MILESTONE] }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HistoryPage' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  # ------------------------------------------------------------------ Achievements
+  /account/achievements:
+    get:
+      tags: [Achievements]
+      operationId: listMyAchievements
+      summary: Full catalog with the player's status
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/PlayerAchievement' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /account/achievements/{achievementId}:
+    put:
+      tags: [Achievements]
+      operationId: unlockAchievement
+      summary: (Unity) Record an unlocked achievement (idempotent)
+      parameters:
+        - name: achievementId
+          in: path
+          required: true
+          schema: { type: string, pattern: '^[a-z0-9_]{2,40}$' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UnlockAchievementRequest' }
+      responses:
+        '200':
+          description: It was already unlocked.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PlayerAchievement' }
+        '201':
+          description: Unlocked now.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PlayerAchievement' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ------------------------------------------------------------------ Public
+  /achievements:
+    get:
+      tags: [Public]
+      operationId: listAchievements
+      summary: Achievement catalog (hidden ones are masked)
+      security: []
+      responses:
+        '200':
+          description: OK. Cache-Control public, max-age=3600.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Achievement' }
+        '429': { $ref: '#/components/responses/TooManyAttempts' }
+
+  /news:
+    get:
+      tags: [Public]
+      operationId: listNews
+      summary: Published news posts, newest first
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: OK. Cache-Control public, max-age=300.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NewsPage' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+
+  /news/{slug}:
+    get:
+      tags: [Public]
+      operationId: getNewsPost
+      summary: One published news post
+      security: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string, pattern: '^[a-z0-9]+(-[a-z0-9]+)*$', maxLength: 80 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NewsPost' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /subscriptions:
+    post:
+      tags: [Public]
+      operationId: subscribeToLaunch
+      summary: Ask to be notified about the launch
+      description: Returns 202 whether the email is new or already existed (does not reveal which emails are registered).
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SubscriptionRequest' }
+      responses:
+        '202': { description: Received. }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '429': { $ref: '#/components/responses/TooManyAttempts' }
+
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 15-minute access token. Claims - sub (player id), sid (device session id), cli (WEB, UNITY_PC, MOBILE), auth_time, exp.
+
+  headers:
+    RefreshCookie:
+      description: Only when `client = WEB`. `tdimp_rt=<token>; HttpOnly; Secure; SameSite=Strict; Path=/api/v1/auth; Max-Age=2592000`
+      schema: { type: string }
+
+  parameters:
+    Slot:
+      name: slot
+      in: path
+      required: true
+      schema: { type: integer, minimum: 1, maximum: 3 }
+    IdUuid:
+      name: id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    Page:
+      name: page
+      in: query
+      required: false
+      description: Page number, starting at 0.
+      schema: { type: integer, minimum: 0, default: 0 }
+    Size:
+      name: size
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, maximum: 50, default: 20 }
+
+  responses:
+    ValidationFailed:
+      description: Invalid data.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://tdimp.app/problems/validation-failed
+            title: Validation failed
+            status: 400
+            detail: One or more fields are invalid.
+            code: VALIDATION_FAILED
+            errors:
+              - field: username
+                code: Pattern
+                message: Must be 3 to 20 letters, digits or underscores.
+    Unauthenticated:
+      description: The token is missing or expired, or the credentials are not valid.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://tdimp.app/problems/unauthenticated
+            title: Unauthenticated
+            status: 401
+            code: TOKEN_EXPIRED
+    Forbidden:
+      description: Authenticated but not allowed to perform this operation.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://tdimp.app/problems/operation-not-allowed
+            title: Operation not allowed
+            status: 403
+            detail: The account can only be deleted from the web.
+            code: DELETION_WEB_ONLY
+    NotFound:
+      description: The resource does not exist or does not belong to the account.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Conflict:
+      description: Repeated unique value (email or username).
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: https://tdimp.app/problems/conflict
+            title: Already exists
+            status: 409
+            code: USERNAME_IN_USE
+            errors:
+              - field: username
+                code: IN_USE
+                message: Username is already taken.
+    VersionConflict:
+      description: Another device saved this slot after the version that was sent.
+      content:
+        application/problem+json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Problem'
+              - type: object
+                properties:
+                  serverVersion: { type: integer }
+                  serverUpdatedAt: { type: string, format: date-time }
+          example:
+            type: https://tdimp.app/problems/version-conflict
+            title: Version conflict
+            status: 409
+            code: VERSION_CONFLICT
+            serverVersion: 9
+            serverUpdatedAt: '2026-10-09T23:41:00Z'
+    TooManyAttempts:
+      description: Attempt limit exceeded.
+      headers:
+        Retry-After:
+          schema: { type: integer }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+
+  schemas:
+    # -------------------------------------------------------------- common
+    Problem:
+      type: object
+      description: RFC 9457 Problem Details + `code` and `errors` extensions.
+      required: [type, title, status, code]
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        instance: { type: string }
+        code:
+          type: string
+          description: Stable code that each client turns into a message in its own language.
+          enum: [VALIDATION_FAILED, INVALID_CREDENTIALS, TOKEN_EXPIRED, INVALID_SESSION, REAUTHENTICATION_REQUIRED,
+                 DELETION_WEB_ONLY, EMAIL_IN_USE, USERNAME_IN_USE, NOT_FOUND, VERSION_CONFLICT,
+                 TOO_MANY_ATTEMPTS, INTERNAL_ERROR]
+        errors:
+          type: array
+          items:
+            type: object
+            required: [field, code, message]
+            properties:
+              field: { type: string }
+              code: { type: string, description: 'Bean Validation constraint (Pattern, Size, NotBlank, Email, AssertTrue) or IN_USE.' }
+              message: { type: string, description: Developer-facing text; the UI shows its own text based on field + code. }
+    PageMeta:
+      type: object
+      required: [number, size, totalElements, totalPages]
+      properties:
+        number: { type: integer, minimum: 0 }
+        size: { type: integer, minimum: 1 }
+        totalElements: { type: integer, minimum: 0 }
+        totalPages: { type: integer, minimum: 0 }
+    ClientType:
+      type: string
+      enum: [WEB, UNITY_PC, MOBILE]
+    Character:
+      type: string
+      enum: [TSUKI, HIKARI]
+    Email:
+      type: string
+      format: email
+      maxLength: 254
+    Username:
+      type: string
+      pattern: '^[A-Za-z0-9_]{3,20}$'
+    Password:
+      type: string
+      minLength: 8
+      maxLength: 72
+      description: No composition rules; length only (8 to 72; 72 is the BCrypt limit).
+
+    # -------------------------------------------------------------- auth
+    RegisterRequest:
+      type: object
+      required: [email, username, password, acceptedPrivacyNotice, client]
+      properties:
+        email: { $ref: '#/components/schemas/Email' }
+        username: { $ref: '#/components/schemas/Username' }
+        password: { $ref: '#/components/schemas/Password' }
+        acceptedPrivacyNotice: { type: boolean, const: true }
+        client:
+          type: string
+          enum: [WEB, MOBILE]
+          description: The game does not create accounts.
+      example: { email: felc@example.com, username: Felc, password: a-long-passphrase, acceptedPrivacyNotice: true, client: WEB }
+    LoginRequest:
+      type: object
+      required: [email, password, client]
+      properties:
+        email: { $ref: '#/components/schemas/Email' }
+        password: { type: string, minLength: 1, maxLength: 72 }
+        client: { $ref: '#/components/schemas/ClientType' }
+      example: { email: felc@example.com, password: a-long-passphrase, client: UNITY_PC }
+    RefreshRequest:
+      type: object
+      properties:
+        refreshToken: { type: string, minLength: 43, maxLength: 64 }
+    ReauthenticateRequest:
+      type: object
+      required: [password]
+      properties:
+        password: { type: string, minLength: 1, maxLength: 72 }
+    SessionPlayer:
+      type: object
+      required: [id, username, email]
+      properties:
+        id: { type: string, format: uuid }
+        username: { type: string }
+        email: { type: string }
+    TokenResponse:
+      type: object
+      required: [accessToken, tokenType, expiresInSec, player]
+      properties:
+        accessToken: { type: string }
+        tokenType: { type: string, const: Bearer }
+        expiresInSec: { type: integer, example: 900 }
+        refreshToken:
+          type: string
+          description: Only for UNITY_PC and MOBILE. On WEB it travels in the HttpOnly cookie and never in the JSON.
+        player: { $ref: '#/components/schemas/SessionPlayer' }
+      example:
+        accessToken: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIuLi4ifQ.signature
+        tokenType: Bearer
+        expiresInSec: 900
+        player: { id: 6f1c2a7e-0b7d-4e7a-9a0e-3d1f5b2c9e11, username: Felc, email: felc@example.com }
+
+    # -------------------------------------------------------------- account
+    AccountSummary:
+      type: object
+      required: [saves, playTimeSec, enemiesDefeated, itemsCrafted, achievementsUnlocked, achievementsTotal]
+      properties:
+        saves: { type: integer, minimum: 0, maximum: 3 }
+        playTimeSec: { type: integer, minimum: 0 }
+        enemiesDefeated: { type: integer, minimum: 0 }
+        itemsCrafted: { type: integer, minimum: 0 }
+        achievementsUnlocked: { type: integer, minimum: 0 }
+        achievementsTotal: { type: integer, minimum: 0 }
+        lastSessionAt: { type: [string, 'null'], format: date-time }
+    Account:
+      type: object
+      required: [id, username, email, createdAt, summary]
+      properties:
+        id: { type: string, format: uuid }
+        username: { type: string }
+        email: { type: string }
+        createdAt: { type: string, format: date-time }
+        lastLoginAt: { type: [string, 'null'], format: date-time }
+        summary: { $ref: '#/components/schemas/AccountSummary' }
+      example:
+        id: 6f1c2a7e-0b7d-4e7a-9a0e-3d1f5b2c9e11
+        username: Felc
+        email: felc@example.com
+        createdAt: '2026-10-01T18:20:00Z'
+        lastLoginAt: '2026-10-10T01:58:00Z'
+        summary: { saves: 2, playTimeSec: 11520, enemiesDefeated: 148, itemsCrafted: 9, achievementsUnlocked: 2, achievementsTotal: 6, lastSessionAt: '2026-10-10T01:58:00Z' }
+    UpdateAccountRequest:
+      type: object
+      required: [username]
+      properties:
+        username: { $ref: '#/components/schemas/Username' }
+    ChangePasswordRequest:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword: { type: string, minLength: 1, maxLength: 72 }
+        newPassword: { $ref: '#/components/schemas/Password' }
+    Settings:
+      type: object
+      required: [musicVolume, sfxVolume, language, fullscreen, controls]
+      properties:
+        musicVolume: { type: integer, minimum: 0, maximum: 100 }
+        sfxVolume: { type: integer, minimum: 0, maximum: 100 }
+        language: { type: string, enum: [es, en] }
+        fullscreen: { type: boolean }
+        controls:
+          type: object
+          description: Map of action → Unity Input System binding.
+          additionalProperties: { type: string, maxLength: 40 }
+          maxProperties: 40
+        updatedAt: { type: string, format: date-time, readOnly: true }
+      example: { musicVolume: 70, sfxVolume: 85, language: es, fullscreen: true, controls: { attack: '<Keyboard>/j', interact: '<Keyboard>/e' }, updatedAt: '2026-10-09T20:01:00Z' }
+    Device:
+      type: object
+      required: [id, client, description, createdAt, current]
+      properties:
+        id: { type: string, format: uuid, description: Id of the token family (one login). }
+        client: { $ref: '#/components/schemas/ClientType' }
+        description: { type: string, description: 'Browser or app and operating system, taken from the User-Agent.', example: 'Chrome · Windows' }
+        createdAt: { type: string, format: date-time }
+        lastUsedAt: { type: [string, 'null'], format: date-time }
+        current: { type: boolean, description: true if it is the session making the request. }
+
+    # -------------------------------------------------------------- saves
+    SaveStats:
+      type: object
+      required: [playTimeSec, enemiesDefeated, deaths, materialsCollected, itemsCrafted]
+      properties:
+        playTimeSec: { type: integer, minimum: 0 }
+        enemiesDefeated: { type: integer, minimum: 0 }
+        deaths: { type: integer, minimum: 0 }
+        materialsCollected: { type: integer, minimum: 0 }
+        itemsCrafted: { type: integer, minimum: 0 }
+    SaveSummary:
+      type: object
+      required: [slot, activeCharacter, currentChapter, milestonesCompleted, milestonesTotal, playTimeSec, updatedAt, version]
+      properties:
+        slot: { type: integer, minimum: 1, maximum: 3 }
+        activeCharacter: { $ref: '#/components/schemas/Character' }
+        currentChapter: { type: integer, minimum: 0 }
+        lastMilestone:
+          type: [object, 'null']
+          properties:
+            id: { type: string }
+            title: { type: string }
+        milestonesCompleted: { type: integer, minimum: 0 }
+        milestonesTotal: { type: integer, minimum: 0 }
+        playTimeSec: { type: integer, minimum: 0 }
+        updatedAt: { type: string, format: date-time }
+        version: { type: integer, minimum: 0 }
+      example: { slot: 1, activeCharacter: TSUKI, currentChapter: 1, lastMilestone: { id: zone1_shrine, title: Primer santuario }, milestonesCompleted: 3, milestonesTotal: 7, playTimeSec: 6720, updatedAt: '2026-10-10T01:58:00Z', version: 8 }
+    SaveDetail:
+      allOf:
+        - $ref: '#/components/schemas/SaveSummary'
+        - type: object
+          required: [stats, inventory, milestones]
+          properties:
+            stats: { $ref: '#/components/schemas/SaveStats' }
+            inventory:
+              type: array
+              items:
+                type: object
+                required: [itemId, name, type, quantity]
+                properties:
+                  itemId: { type: string }
+                  name: { type: string }
+                  type: { type: string, enum: [MATERIAL, EQUIPMENT, KEY] }
+                  rarity: { type: string, enum: [COMMON, RARE, EPIC] }
+                  iconKey: { type: [string, 'null'] }
+                  quantity: { type: integer, minimum: 1 }
+            milestones:
+              type: array
+              description: Every milestone in the catalog, with completedAt null if still pending.
+              items:
+                type: object
+                required: [id, title, chapter]
+                properties:
+                  id: { type: string }
+                  title: { type: string }
+                  chapter: { type: integer }
+                  completedAt: { type: [string, 'null'], format: date-time }
+    SaveData:
+      type: object
+      description: Document produced and consumed by the Unity game. The API splits it into normalized tables.
+      required: [version, activeCharacter, currentChapter, stats, inventory, collectedPickups, objects, completedMilestones, extraData]
+      properties:
+        version: { type: integer, minimum: 0 }
+        activeCharacter: { $ref: '#/components/schemas/Character' }
+        currentChapter: { type: integer, minimum: 0, maximum: 20 }
+        currentScene: { type: [string, 'null'], maxLength: 80 }
+        position:
+          type: [object, 'null']
+          properties:
+            x: { type: number }
+            y: { type: number }
+        health: { type: [integer, 'null'], minimum: 0 }
+        stats: { $ref: '#/components/schemas/SaveStats' }
+        inventory:
+          type: array
+          maxItems: 200
+          items:
+            type: object
+            required: [itemId, quantity]
+            properties:
+              itemId: { type: string, pattern: '^[a-z0-9_]{2,40}$' }
+              quantity: { type: integer, minimum: 1, maximum: 999 }
+        collectedPickups:
+          type: array
+          maxItems: 2000
+          uniqueItems: true
+          items: { type: string, pattern: '^[A-Za-z0-9_.:-]{1,100}$' }
+        objects:
+          type: array
+          maxItems: 2000
+          items:
+            type: object
+            required: [objectId, state]
+            properties:
+              objectId: { type: string, pattern: '^[A-Za-z0-9_.:-]{1,100}$' }
+              state: { type: string, pattern: '^[A-Z_]{2,30}$' }
+        completedMilestones:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            required: [milestoneId, completedAt]
+            properties:
+              milestoneId: { type: string, pattern: '^[a-z0-9_]{2,40}$' }
+              playTimeSec: { type: [integer, 'null'], minimum: 0 }
+              completedAt: { type: string, format: date-time }
+        extraData:
+          type: object
+          description: Only what has no table of its own. Must include its own format version `v`.
+          required: [v]
+          properties:
+            v: { type: integer, minimum: 1 }
+          additionalProperties: true
+      example:
+        version: 7
+        activeCharacter: TSUKI
+        currentChapter: 1
+        currentScene: Zone1_Forest
+        position: { x: 12.5, y: -3.25 }
+        health: 80
+        stats: { playTimeSec: 6720, enemiesDefeated: 61, deaths: 3, materialsCollected: 40, itemsCrafted: 2 }
+        inventory: [ { itemId: material_a, quantity: 5 }, { itemId: forged_amulet, quantity: 1 } ]
+        collectedPickups: [ 'zone1:pickup_01', 'zone1:pickup_03' ]
+        objects: [ { objectId: forest_door_01, state: OPEN } ]
+        completedMilestones: [ { milestoneId: prologue_fall, playTimeSec: 300, completedAt: '2026-10-09T23:10:00Z' } ]
+        extraData: { v: 1, flags: { sawIntro: true } }
+    SaveAccepted:
+      type: object
+      required: [version, updatedAt]
+      properties:
+        version: { type: integer }
+        updatedAt: { type: string, format: date-time }
+    PlaySessionInput:
+      type: object
+      required: [id, startedAt, endedAt, durationSec, platform]
+      properties:
+        id: { type: string, format: uuid, description: Generated by the game; resending does not duplicate. }
+        startedAt: { type: string, format: date-time }
+        endedAt: { type: string, format: date-time }
+        durationSec: { type: integer, minimum: 0, description: 'Active time, without pauses.' }
+        platform: { type: string, enum: [WINDOWS, MACOS, LINUX] }
+        gameVersion: { type: string, pattern: '^[0-9A-Za-z.+-]{1,30}$' }
+    EventInput:
+      type: object
+      required: [id, type, occurredAt]
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string, enum: [ENEMY_DEFEATED, ENEMY_DROP, PICKUP, CRAFT, DEATH, BOSS_DEFEATED, MILESTONE_COMPLETED] }
+        data:
+          type: object
+          maxProperties: 20
+          additionalProperties: true
+        occurredAt: { type: string, format: date-time }
+      example: { id: 3f2b8c1e-6a8d-4f0b-9c55-0e7b1d2a4c90, type: CRAFT, data: { recipeId: amulet_recipe }, occurredAt: '2026-10-09T23:53:00Z' }
+    BatchResult:
+      type: object
+      required: [accepted, duplicates]
+      properties:
+        accepted: { type: integer, minimum: 0 }
+        duplicates: { type: integer, minimum: 0 }
+
+    # -------------------------------------------------------------- history
+    PlaySession:
+      type: object
+      required: [id, slot, startedAt, platform]
+      properties:
+        id: { type: string, format: uuid }
+        slot: { type: integer, minimum: 1, maximum: 3 }
+        startedAt: { type: string, format: date-time }
+        endedAt: { type: [string, 'null'], format: date-time }
+        durationSec: { type: [integer, 'null'], minimum: 0 }
+        platform: { type: string, enum: [WINDOWS, MACOS, LINUX] }
+    PlaySessionPage:
+      type: object
+      required: [content, page]
+      properties:
+        content:
+          type: array
+          items: { $ref: '#/components/schemas/PlaySession' }
+        page: { $ref: '#/components/schemas/PageMeta' }
+    HistoryItem:
+      type: object
+      required: [type, referenceId, occurredAt]
+      properties:
+        type: { type: string, enum: [SESSION, ACHIEVEMENT, MILESTONE] }
+        referenceId: { type: string }
+        occurredAt: { type: string, format: date-time }
+        slot: { type: [integer, 'null'], minimum: 1, maximum: 3 }
+        title: { type: [string, 'null'] }
+        valueSec: { type: [integer, 'null'], description: 'SESSION: duration; MILESTONE: play time when it was completed.' }
+    HistoryPage:
+      type: object
+      required: [content, page]
+      properties:
+        content:
+          type: array
+          items: { $ref: '#/components/schemas/HistoryItem' }
+        page: { $ref: '#/components/schemas/PageMeta' }
+      example:
+        content:
+          - { type: ACHIEVEMENT, referenceId: first_craft, occurredAt: '2026-10-10T01:53:00Z', slot: null, title: El poder se fabrica, valueSec: null }
+          - { type: SESSION, referenceId: 0b9d6a52-1d0e-4a51-8f6e-2c4b7e9a1f30, occurredAt: '2026-10-10T01:58:00Z', slot: 1, title: null, valueSec: 1680 }
+          - { type: MILESTONE, referenceId: zone1_shrine, occurredAt: '2026-10-10T01:10:00Z', slot: 1, title: Primer santuario, valueSec: 5400 }
+        page: { number: 0, size: 20, totalElements: 3, totalPages: 1 }
+
+    # -------------------------------------------------------------- achievements
+    Achievement:
+      type: object
+      required: [id, name, hidden, sortOrder]
+      properties:
+        id: { type: string }
+        name: { type: string, description: 'Masked while locked if hidden = true.' }
+        description: { type: [string, 'null'] }
+        iconKey: { type: [string, 'null'] }
+        hidden: { type: boolean }
+        sortOrder: { type: integer }
+    PlayerAchievement:
+      allOf:
+        - $ref: '#/components/schemas/Achievement'
+        - type: object
+          required: [unlocked]
+          properties:
+            unlocked: { type: boolean }
+            unlockedAt: { type: [string, 'null'], format: date-time }
+      example: { id: first_craft, name: El poder se fabrica, description: Fabrica tu primer objeto en la forja., iconKey: achievement_forge, hidden: false, sortOrder: 20, unlocked: true, unlockedAt: '2026-10-10T01:53:00Z' }
+    UnlockAchievementRequest:
+      type: object
+      required: [unlockedAt]
+      properties:
+        unlockedAt: { type: string, format: date-time }
+        slot: { type: integer, minimum: 1, maximum: 3 }
+
+    # -------------------------------------------------------------- public
+    NewsSummary:
+      type: object
+      required: [slug, title, summary, publishedAt]
+      properties:
+        slug: { type: string }
+        title: { type: string }
+        summary: { type: string }
+        coverKey: { type: [string, 'null'] }
+        publishedAt: { type: string, format: date-time }
+    NewsPost:
+      allOf:
+        - $ref: '#/components/schemas/NewsSummary'
+        - type: object
+          required: [contentMd]
+          properties:
+            contentMd: { type: string, description: Markdown without raw HTML. }
+    NewsPage:
+      type: object
+      required: [content, page]
+      properties:
+        content:
+          type: array
+          items: { $ref: '#/components/schemas/NewsSummary' }
+        page: { $ref: '#/components/schemas/PageMeta' }
+    SubscriptionRequest:
+      type: object
+      required: [email, language, consent]
+      properties:
+        email: { $ref: '#/components/schemas/Email' }
+        language: { type: string, enum: [es, en] }
+        consent: { type: boolean, const: true }

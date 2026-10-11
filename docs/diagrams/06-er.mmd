@@ -1,0 +1,174 @@
+%% Entity-relationship model (schema game) — mirrors docs/db/V1__initial_schema.sql
+erDiagram
+  players ||--o{ auth_sessions : "inicia sesión en"
+  players ||--|| settings : "tiene"
+  players ||--o{ saves : "tiene hasta 3"
+  players ||--o{ player_achievements : "desbloquea"
+  achievements ||--o{ player_achievements : "se otorga en"
+  saves ||--|| save_stats : "acumula"
+  saves ||--o{ inventory : "contiene"
+  saves ||--o{ collected_pickups : "registra"
+  saves ||--o{ interacted_objects : "registra"
+  saves ||--o{ story_progress : "avanza"
+  saves ||--o{ play_sessions : "se juega en"
+  saves ||--o{ telemetry_events : "emite"
+  story_milestones ||--o{ story_progress : "se completa en"
+  items ||--o{ inventory : "se guarda en"
+  items ||--o{ recipes : "resulta de"
+  recipes ||--|{ recipe_ingredients : "pide"
+  items ||--o{ recipe_ingredients : "es ingrediente"
+  auth_sessions |o--o| auth_sessions : "replaced_by"
+
+  players {
+    uuid id PK
+    text email UK "minúsculas"
+    text username UK "único sin mayúsculas"
+    text password_hash "BCrypt"
+    timestamptz privacy_accepted_at
+    timestamptz last_login_at
+    timestamptz created_at
+    timestamptz updated_at
+  }
+  auth_sessions {
+    uuid id PK
+    uuid player_id FK
+    uuid family_id "cadena de rotación"
+    text token_hash UK "SHA-256"
+    text client "WEB | UNITY_PC | MOBILE"
+    text user_agent
+    timestamptz authenticated_at "auth_time"
+    timestamptz expires_at
+    timestamptz last_used_at
+    timestamptz revoked_at
+    text revocation_reason
+    uuid replaced_by FK
+  }
+  settings {
+    uuid player_id PK, FK
+    smallint music_volume "0-100"
+    smallint sfx_volume "0-100"
+    text language "es | en"
+    boolean fullscreen
+    jsonb controls
+    timestamptz updated_at
+  }
+  saves {
+    uuid id PK
+    uuid player_id FK "UK con slot"
+    smallint slot "1-3"
+    text active_character "TSUKI | HIKARI"
+    smallint current_chapter
+    text current_scene
+    real pos_x
+    real pos_y
+    int health
+    jsonb extra_data
+    int version "bloqueo optimista"
+    timestamptz created_at
+    timestamptz updated_at
+  }
+  save_stats {
+    uuid save_id PK, FK
+    int play_time_sec
+    int enemies_defeated
+    int deaths
+    int materials_collected
+    int items_crafted
+    timestamptz updated_at
+  }
+  inventory {
+    uuid save_id PK, FK
+    text item_id PK, FK
+    int quantity "mayor a 0"
+  }
+  collected_pickups {
+    uuid save_id PK, FK
+    text pickup_id PK
+    timestamptz collected_at
+  }
+  interacted_objects {
+    uuid save_id PK, FK
+    text object_id PK
+    text state
+    timestamptz updated_at
+  }
+  story_progress {
+    uuid save_id PK, FK
+    text milestone_id PK, FK
+    int play_time_sec
+    timestamptz completed_at
+  }
+  story_milestones {
+    text id PK
+    smallint chapter
+    text title
+    text description
+    smallint sort_order UK
+  }
+  achievements {
+    text id PK
+    text name
+    text description
+    text icon_key
+    boolean hidden
+    smallint sort_order
+  }
+  player_achievements {
+    uuid player_id PK, FK
+    text achievement_id PK, FK
+    timestamptz unlocked_at
+  }
+  items {
+    text id PK
+    text name
+    text type "MATERIAL | EQUIPMENT | KEY"
+    text rarity
+    text description
+    text icon_key
+    smallint max_stack
+  }
+  recipes {
+    text id PK
+    text result_item_id FK
+    smallint result_quantity
+  }
+  recipe_ingredients {
+    text recipe_id PK, FK
+    text item_id PK, FK
+    smallint quantity
+  }
+  play_sessions {
+    uuid id PK "lo genera el cliente"
+    uuid save_id FK
+    timestamptz started_at
+    timestamptz ended_at
+    int duration_sec
+    text platform
+    text game_version
+    timestamptz received_at
+  }
+  telemetry_events {
+    uuid id PK "lo genera el cliente"
+    uuid save_id FK
+    text type
+    jsonb data
+    timestamptz occurred_at
+    timestamptz received_at
+  }
+  news_posts {
+    uuid id PK
+    text slug UK
+    text title
+    text summary
+    text content_md
+    text cover_key
+    timestamptz published_at "null = borrador"
+  }
+  launch_subscriptions {
+    uuid id PK
+    text email UK
+    text language
+    text source
+    timestamptz consented_at
+    timestamptz created_at
+  }

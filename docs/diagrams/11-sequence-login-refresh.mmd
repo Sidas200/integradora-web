@@ -1,0 +1,34 @@
+%% Web login and token refresh (rotation with reuse detection)
+sequenceDiagram
+  actor U as Jugador
+  participant P as PWA (React)
+  participant N as Vercel /api/* (rewrite)
+  participant A as API Spring Boot
+  participant D as PostgreSQL
+
+  U->>P: Escribe correo y contraseña
+  P->>N: POST /api/v1/auth/login {email, password, client:"WEB"}
+  N->>A: reenvía (mismo origen para el navegador)
+  A->>D: SELECT players WHERE email = lower(:email)
+  A->>A: BCrypt.matches(password, hash)
+  A->>D: INSERT auth_sessions (familia nueva, token_hash = SHA-256, authenticated_at = now)
+  A->>A: Firma JWT de 15 min {sub, sid, cli:WEB, auth_time}
+  A-->>P: 200 {accessToken, expiresInSec, player} + Set-Cookie tdimp_rt (HttpOnly, Secure, SameSite=Strict)
+  P->>P: Guarda el accessToken SOLO en memoria y navega a /app
+
+  Note over P,A: 15 minutos después el access token expira
+  P->>N: GET /api/v1/account (Bearer vencido)
+  N->>A: reenvía
+  A-->>P: 401 ProblemDetail TOKEN_EXPIRED
+  P->>N: POST /api/v1/auth/refresh (cookie tdimp_rt + X-Requested-With), una sola vez aunque fallen varias peticiones
+  N->>A: reenvía
+  A->>D: SELECT auth_sessions WHERE token_hash = SHA-256(cookie)
+  alt Token activo
+    A->>D: UPDATE anterior: revoked_at, ROTATED, replaced_by · INSERT nuevo (misma familia)
+    A-->>P: 200 {accessToken nuevo} + Set-Cookie tdimp_rt nuevo
+    P->>N: Reintenta GET /api/v1/account con el token nuevo
+  else Token ya rotado o revocado (posible robo)
+    A->>D: UPDATE toda la familia: REUSE_DETECTED
+    A-->>P: 401 INVALID_SESSION + borra la cookie
+    P->>P: Limpia la caché de consultas e IndexedDB y manda a /login
+  end

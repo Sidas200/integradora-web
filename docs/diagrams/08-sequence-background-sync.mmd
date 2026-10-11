@@ -1,0 +1,23 @@
+%% Background work: launch subscription with Background Sync
+sequenceDiagram
+  actor V as Visitante
+  participant P as Landing
+  participant S as Service Worker
+  participant C as IndexedDB subscription-queue
+  participant A as API
+
+  V->>P: Escribe su correo y acepta el aviso
+  P->>S: POST /api/v1/subscriptions {email, language, consent}
+  S->>A: fetch(request)
+  alt Hay conexión
+    A-->>P: 202 Accepted (misma respuesta si el correo ya existía)
+    P-->>V: "Listo, te avisaremos del lanzamiento"
+  else Falla la red
+    S->>C: subscriptionQueue.pushRequest() (se guarda hasta 24 h)
+    S-->>P: 202 sintético con cabecera X-Queued: 1
+    P-->>V: "Sin conexión: lo enviaremos en cuanto vuelva la red"
+    Note over S,C: Chromium: evento sync aunque la pestaña esté cerrada.<br/>Safari y Firefox: Workbox reintenta al volver a arrancar el SW.
+    S->>A: Reintento automático
+    A-->>S: 202 Accepted
+    S-->>P: postMessage SUBSCRIPTION_SENT (si la pestaña sigue abierta)
+  end

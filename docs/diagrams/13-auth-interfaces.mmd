@@ -1,0 +1,82 @@
+%% Class diagram of authentication: interfaces, implementations and polymorphism.
+%% Classes without «interface» are package-private (not public).
+classDiagram
+  direction TB
+
+  namespace controller {
+    class AuthController {
+      +register(RegisterRequest) TokenResponse
+      +login(LoginRequest) TokenResponse
+      +refresh(RefreshRequest) TokenResponse
+      +logout(RefreshRequest) void
+    }
+    class RefreshChannel {
+      <<interface>>
+      +supports(ClientType) boolean
+      +read(HttpServletRequest, RefreshRequest) Optional~String~
+      +deliver(IssuedSession, HttpServletResponse) TokenResponse
+      +clear(HttpServletResponse) void
+    }
+    class CookieRefreshChannel
+    class BodyRefreshChannel
+  }
+
+  namespace service {
+    class AuthService {
+      <<interface>>
+      +register(RegisterRequest, ClientContext) IssuedSession
+      +login(LoginRequest, ClientContext) IssuedSession
+      +refresh(String, ClientContext) IssuedSession
+      +logout(String) void
+      +reauthenticate(Requester, String) IssuedSession
+    }
+    class AuthServiceImpl
+  }
+
+  namespace repository {
+    class PlayerRepository {
+      <<interface>>
+      +findByEmail(String) Optional~Player~
+      +existsByUsernameIgnoreCase(String) boolean
+    }
+    class AuthSessionRepository {
+      <<interface>>
+      +findByTokenHash(String) Optional~AuthSession~
+      +revokeFamily(UUID, String, Instant) int
+    }
+  }
+
+  namespace security {
+    class TokenIssuer {
+      <<interface>>
+      +issueAccessToken(TokenClaims) AccessToken
+    }
+    class JwtTokenIssuer
+    class RateLimiter {
+      <<interface>>
+      +consume(String key) void
+    }
+    class Bucket4jRateLimiter
+    class NoOpRateLimiter
+    class PasswordEncoder {
+      <<interface>>
+      +encode(CharSequence) String
+      +matches(CharSequence, String) boolean
+    }
+    class DelegatingPasswordEncoder
+  }
+
+  AuthController --> AuthService : usa
+  AuthController --> "2" RefreshChannel : usa
+  CookieRefreshChannel ..|> RefreshChannel : WEB
+  BodyRefreshChannel ..|> RefreshChannel : UNITY_PC, MOBILE
+  AuthServiceImpl ..|> AuthService
+  AuthServiceImpl --> PlayerRepository
+  AuthServiceImpl --> AuthSessionRepository
+  AuthServiceImpl --> TokenIssuer
+  AuthServiceImpl --> RateLimiter
+  AuthServiceImpl --> PasswordEncoder
+  JwtTokenIssuer ..|> TokenIssuer
+  Bucket4jRateLimiter ..|> RateLimiter : dev, prod
+  NoOpRateLimiter ..|> RateLimiter : test
+  DelegatingPasswordEncoder ..|> PasswordEncoder

@@ -1,0 +1,27 @@
+%% API consumption for lists: instant data, revalidation and offline mode
+sequenceDiagram
+  actor U as Jugador
+  participant V as HistoryPage
+  participant Q as TanStack Query
+  participant I as IndexedDB (persister)
+  participant S as Service Worker
+  participant A as API
+
+  U->>V: Abre /app/history
+  V->>Q: useInfiniteQuery(['history'])
+  Q->>I: Hidrata la caché persistida (al arrancar la app)
+  Q-->>V: Muestra la última lista guardada al instante
+  alt Hay conexión
+    Q->>S: GET /api/v1/account/history?page=0&size=20
+    S->>A: Red directa (los datos privados no entran a Cache Storage)
+    A-->>S: 200 {content[], page{...}}
+    S-->>Q: respuesta
+    Q-->>V: Vuelve a pintar con datos frescos
+    Q->>I: Persiste (throttle 1 s)
+    U->>V: Pulsa "Cargar más"
+    V->>Q: fetchNextPage() → page=1
+  else Sin conexión
+    Q-->>V: Consulta en pausa (networkMode online)
+    V-->>U: Banner "Sin conexión · datos del 9 oct, 19:58" y botones de escritura deshabilitados
+    Note over Q: Al volver la red, refetchOnReconnect actualiza solo
+  end

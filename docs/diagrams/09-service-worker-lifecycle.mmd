@@ -1,0 +1,14 @@
+%% Service Worker lifecycle with user-controlled updates (registerType: "prompt")
+stateDiagram-v2
+  direction LR
+  [*] --> Registering: main.tsx llama registerSW()
+  Registering --> Installing: descarga sw.js
+  Installing --> Active: primera visita (no hay versión previa)
+  Installing --> Waiting: ya hay una versión controlando la página
+  Installing --> Redundant: falla el precache
+  Waiting --> Activating: el usuario pulsa "Actualizar"<br/>(postMessage SKIP_WAITING)
+  Waiting --> Activating: se cierran todas las pestañas
+  Activating --> Active: limpia precaches viejos (cleanupOutdatedCaches)
+  Active --> Active: intercepta fetch<br/>precache · caché en ejecución · cola sync
+  Active --> Installing: despliegue nuevo detectado<br/>(revisión cada 60 min y al abrir)
+  Redundant --> [*]

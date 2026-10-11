@@ -1,0 +1,25 @@
+%% Context diagram (C4 level 1): who uses the system and what it connects to
+flowchart LR
+  visitor(["Visitante<br/>conoce el juego"])
+  player(["Jugador<br/>tiene cuenta"])
+
+  subgraph system["Sistema The Day I Made That Promise"]
+    direction TB
+    pwa["PWA web<br/>React + Vite + Service Worker"]
+    game["Juego PC<br/>Unity 6 · Windows"]
+    mobile["App móvil<br/>Flutter · Android"]
+    api["API REST<br/>Spring Boot"]
+    db[("PostgreSQL<br/>Supabase")]
+    pwa -- "HTTPS /api/v1 (JSON)" --> api
+    game -- "HTTPS /api/v1 (JSON)" --> api
+    mobile -- "HTTPS /api/v1 (JSON)" --> api
+    api -- "JDBC / SQL" --> db
+  end
+
+  itch["itch.io<br/>tienda externa"]
+
+  visitor -- "lee la landing y las noticias,<br/>se suscribe al lanzamiento" --> pwa
+  player -- "crea cuenta, consulta historial y logros,<br/>configura, elimina su cuenta" --> pwa
+  player -- "juega; guarda en la nube" --> game
+  player -- "crea cuenta, consulta" --> mobile
+  pwa -- "botón Comprar" --> itch

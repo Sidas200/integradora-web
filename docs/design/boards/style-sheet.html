@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Shippori+Mincho:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--c-bg);color:var(--c-text);font-family:var(--f-body);line-height:var(--leading-body);width:1600px}
+  code{font-family:"DejaVu Sans Mono",monospace;font-size:.85em}
+
+  /* Header: the sky of the islands */
+  .sky{position:relative;height:430px;background:var(--c-sky);overflow:hidden}
+  .sky svg{position:absolute;inset:0;width:100%;height:100%}
+  .sky .text{position:absolute;left:56px;top:96px;max-width:640px}
+  .sky .kanji{font-family:"Shippori Mincho","Noto Serif CJK JP",serif;font-size:22px;color:var(--sora-700);letter-spacing:.4em;margin-bottom:14px}
+  .sky h1{font-family:var(--f-heading);font-weight:700;font-size:58px;line-height:1.04;color:var(--sora-900)}
+  .sky p{font-size:18px;color:#2E4C70;margin-top:14px;max-width:34em}
+
+  main{padding:40px 56px 56px}
+  h2{font-family:var(--f-heading);font-size:var(--t-xl);margin-bottom:var(--s-4)}
+  .block{margin-bottom:var(--s-8)}
+
+  /* Palette */
+  .families{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--s-5)}
+  .family h3{font-family:var(--f-heading);font-size:var(--t-l);display:flex;gap:10px;align-items:baseline}
+  .family h3 span{font-size:15px;color:var(--c-text-muted);font-family:"Shippori Mincho","Noto Serif CJK JP",serif}
+  .family p{font-size:var(--t-s);color:var(--c-text-muted);margin:var(--s-1) 0 var(--s-3);min-height:4.8em}
+  .swatch{display:flex;justify-content:space-between;align-items:flex-end;height:56px;padding:var(--s-2) var(--s-3);font-size:12.5px;border-radius:var(--radius-s);margin-bottom:5px}
+  .swatch b{font-weight:500}
+
+  /* Themes */
+  .themes{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-5)}
+  .theme{border-radius:16px;padding:var(--s-5);position:relative;overflow:hidden;min-height:250px}
+  .theme.day{background:linear-gradient(180deg,#A9D6F5,#DDEEFB 60%,#F3F9FE);color:var(--sora-900)}
+  .theme.night{background:linear-gradient(180deg,#0B1A33,#162B4D 70%,#203A63);color:#EAF3FC}
+  .theme h3{font-family:var(--f-heading);font-size:var(--t-xl)}
+  .theme .sub{font-size:var(--t-s);opacity:.85}
+  .demo-card{margin-top:var(--s-4);border-radius:var(--radius-m);padding:var(--s-4);max-width:420px}
+  .day .demo-card{background:#fff;box-shadow:var(--shadow-cloud);border:1px solid #D3E4F3}
+  .night .demo-card{background:#162B4D;border:1px solid #2A4673}
+  .demo-card .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .demo-card b{font-family:var(--f-heading);font-size:18px}
+  .demo-card small{display:block;font-size:13px;opacity:.8}
+  .bar{height:8px;border-radius:4px;margin:12px 0 10px;overflow:hidden}
+  .day .bar{background:#DDEEFB}.night .bar{background:#203A63}
+  .bar i{display:block;height:100%;width:43%;background:var(--hikari-400);border-radius:4px}
+  .figure{font-family:var(--f-pixel);font-size:22px}
+  .day .figure{color:var(--sora-700)}.night .figure{color:var(--hikari-400)}
+  .link{font-size:13.5px;text-decoration:underline;text-underline-offset:3px}
+  .day .link{color:#1D5C9A}.night .link{color:#9CCBF2}
+  .stars{position:absolute;inset:0;pointer-events:none}
+
+  /* Typography */
+  .type-samples{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:var(--s-6)}
+  .sample{border-top:var(--line);padding-top:var(--s-4)}
+  .sample .role{font-size:var(--t-s);color:var(--c-text-muted)}
+  .s-heading{font-family:var(--f-heading);font-weight:700;font-size:3rem;line-height:1.08;margin:var(--s-3) 0}
+  .s-body{font-size:1.25rem;margin:var(--s-3) 0}
+  .s-pixel{font-family:var(--f-pixel);font-size:2.4rem;color:var(--sora-700);margin:var(--s-3) 0}
+  .scale{display:flex;gap:var(--s-4);align-items:baseline;flex-wrap:wrap;font-family:var(--f-heading);margin-top:var(--s-3)}
+
+  /* Components */
+  .comps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--s-6);align-items:start}
+  .box{background:var(--c-surface);border:var(--line);border-radius:var(--radius-m);padding:var(--s-5);box-shadow:var(--shadow-cloud)}
+  .box h3{font-size:var(--t-s);color:var(--c-text-muted);font-weight:500;margin-bottom:var(--s-4)}
+  .btns{display:flex;flex-wrap:wrap;gap:var(--s-3)}
+  .btn{display:inline-flex;align-items:center;min-height:44px;padding:0 var(--s-5);border-radius:var(--radius-m);font-size:var(--t-s);font-weight:500;border:1px solid transparent;font-family:inherit}
+  .b-promise{background:var(--c-promise);color:var(--c-on-promise);box-shadow:var(--glow-promise);border-radius:var(--radius-pill)}
+  .b-primary{background:var(--c-primary);color:var(--c-on-primary)}
+  .b-outline{border-color:var(--c-control-border);color:var(--c-text);background:#fff}
+  .b-danger{background:var(--c-danger);color:var(--c-on-danger)}
+  .b-focus{outline:3px solid var(--c-focus);outline-offset:3px}
+  .b-off{opacity:.45}
+  .field{display:grid;gap:6px;margin-bottom:var(--s-4)}
+  .field label{font-size:var(--t-s)}
+  .field .input{height:48px;border:1px solid var(--c-control-border);border-radius:var(--radius-m);background:#fff;display:flex;align-items:center;padding:0 var(--s-4);font-size:var(--t-s)}
+  .field.error .input{border-color:var(--c-error);border-width:2px}
+  .field small{font-size:var(--t-s);color:var(--c-text-muted)}
+  .field.error small{color:var(--c-error)}
+  .toast{display:flex;align-items:center;gap:var(--s-4);background:var(--sora-100);border:1px solid var(--sora-200);border-radius:var(--radius-m);padding:var(--s-3) var(--s-4);font-size:var(--t-s);margin-bottom:var(--s-3)}
+  .toast .action{margin-left:auto;color:var(--c-link);text-decoration:underline;text-underline-offset:3px;font-weight:500}
+  .toast.ok{background:#E6F4EA;border-color:#B9DFC4}
+  .dialog{background:#fff;border:2px solid var(--beni-600);border-radius:var(--radius-m);padding:var(--s-5);box-shadow:0 24px 60px rgb(20 51 90 / .18)}
+  .dialog h4{font-family:var(--f-heading);font-size:var(--t-xl);margin-bottom:var(--s-3)}
+  .dialog p{font-size:var(--t-s);color:var(--c-text-muted);margin-bottom:var(--s-4)}
+  .dialog ul{font-size:var(--t-s);padding-left:1.1em;margin-bottom:var(--s-4);color:var(--c-text-muted)}
+  .dialog .actions{display:flex;justify-content:flex-end;gap:var(--s-3)}
+  .empty{border:1.5px dashed var(--sora-300);border-radius:var(--radius-m);padding:var(--s-5);font-size:var(--t-s);color:var(--c-text-muted);background:var(--sora-50)}
+  .empty b{display:block;color:var(--c-text);font-family:var(--f-heading);font-size:var(--t-l);margin-bottom:var(--s-1)}
+  .skeleton{height:14px;border-radius:7px;background:linear-gradient(90deg,#DDEEFB,#F3F9FE,#DDEEFB);margin-bottom:10px}
+  .principles{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-5);font-size:var(--t-s);color:var(--c-text-muted)}
+  .principles b{display:block;color:var(--c-text);font-family:var(--f-heading);font-size:var(--t-l);margin-bottom:var(--s-2)}
+</style></head><body>
+
+<header class="sky">
+  <svg viewBox="0 0 1600 430" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="sun" cx="78%" cy="18%" r="40%"><stop offset="0" stop-color="#FFF6D6" stop-opacity=".95"/><stop offset=".35" stop-color="#FBE3A2" stop-opacity=".55"/><stop offset="1" stop-color="#FBE3A2" stop-opacity="0"/></radialGradient>
+      <linearGradient id="rock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9AB2CF"/><stop offset="1" stop-color="#C9DAEE" stop-opacity=".2"/></linearGradient>
+      <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ED3A8"/><stop offset="1" stop-color="#7FC08E"/></linearGradient>
+    </defs>
+    <rect width="1600" height="430" fill="url(#sun)"/>
+    <!-- far clouds -->
+    <g fill="#FFFFFF" opacity=".75">
+      <ellipse cx="760" cy="300" rx="140" ry="26"/><ellipse cx="830" cy="286" rx="80" ry="30"/>
+      <ellipse cx="1480" cy="250" rx="120" ry="22"/><ellipse cx="1530" cy="236" rx="60" ry="24"/>
+    </g>
+    <!-- large island -->
+    <g transform="translate(1040 150)">
+      <path d="M0 62 Q150 40 300 62 L270 92 L232 104 L206 168 L180 112 L150 196 L126 118 L92 132 L70 100 L28 90 Z" fill="url(#rock)"/>
+      <path d="M-6 64 Q150 34 306 64 Q150 52 -6 64 Z" fill="#6FAE7E"/>
+      <path d="M0 62 Q150 30 300 62 Q150 48 0 62 Z" fill="url(#grass)"/>
+      <!-- shrine (torii) -->
+      <g transform="translate(176 6)" fill="none" stroke="#B23447" stroke-width="5" stroke-linecap="round">
+        <path d="M-8 4 Q24 -4 56 4"/><path d="M0 14 H48"/><path d="M6 6 V50 M42 6 V50"/>
+      </g>
+      <!-- tree -->
+      <g transform="translate(70 18)"><rect x="-3" y="18" width="6" height="26" fill="#7A6A58"/><circle cx="0" cy="12" r="18" fill="#8CC79A"/><circle cx="12" cy="18" r="12" fill="#7FC08E"/></g>
+      <!-- flowers -->
+      <g fill="#F3A6B8"><circle cx="120" cy="54" r="3"/><circle cx="132" cy="50" r="3"/><circle cx="244" cy="54" r="3"/><circle cx="256" cy="52" r="3"/></g>
+      <!-- waterfall -->
+      <path d="M262 66 Q266 120 258 230" stroke="#FFFFFF" stroke-width="4" opacity=".7" fill="none"/>
+    </g>
+    <!-- small island -->
+    <g transform="translate(1390 92)">
+      <path d="M0 30 Q55 18 110 30 L96 46 L74 52 L60 92 L46 54 L22 50 Z" fill="url(#rock)"/>
+      <path d="M0 30 Q55 14 110 30 Q55 24 0 30 Z" fill="url(#grass)"/>
+      <g fill="#F3A6B8"><circle cx="40" cy="26" r="2.5"/><circle cx="70" cy="25" r="2.5"/></g>
+    </g>
+    <!-- distant island -->
+    <g transform="translate(860 120)" opacity=".55">
+      <path d="M0 20 Q36 12 72 20 L60 32 L44 60 L30 34 Z" fill="#AFC5DE"/>
+      <path d="M0 20 Q36 10 72 20 Q36 16 0 20 Z" fill="#A8D3B2"/>
+    </g>
+    <!-- rope bridge -->
+    <path d="M1340 214 Q1368 180 1396 124" stroke="#8C7A66" stroke-width="2" fill="none" stroke-dasharray="3 4"/>
+    <!-- near clouds -->
+    <g fill="#FFFFFF">
+      <ellipse cx="980" cy="392" rx="210" ry="44"/><ellipse cx="1110" cy="372" rx="130" ry="54"/><ellipse cx="1250" cy="396" rx="190" ry="40"/>
+      <ellipse cx="1430" cy="380" rx="150" ry="50"/><ellipse cx="1580" cy="400" rx="140" ry="40"/>
+      <ellipse cx="560" cy="420" rx="260" ry="40"/><ellipse cx="300" cy="430" rx="300" ry="36"/>
+    </g>
+    <!-- birds -->
+    <g stroke="#4B6585" stroke-width="2" fill="none" stroke-linecap="round" opacity=".6">
+      <path d="M700 120 q8 -8 16 0 q8 -8 16 0"/><path d="M742 140 q6 -6 12 0 q6 -6 12 0"/>
+    </g>
+  </svg>
+  <div class="text">
+    <div class="kanji" lang="ja">空の島</div>
+    <h1>Sistema visual<br>Cielo de las islas</h1>
+    <p>Un mundo suspendido sobre las nubes: azul que orienta, oro que promete, verde que confirma y el carmesí de la espada reservado para lo que no se puede deshacer.</p>
+  </div>
+</header>
+
+<main>
+<section class="block"><h2>Paleta</h2>
+<div class="families">
+  <div class="family"><h3>Sora <span lang="ja">空</span></h3><p>El cielo. Fondo, navegación, enlaces y botón principal; el tono más oscuro es el texto.</p>
+    <div class="swatch" style="background:#F3F9FE;border:1px solid #D3E4F3"><b>50</b>#F3F9FE</div>
+    <div class="swatch" style="background:#DDEEFB"><b>100</b>#DDEEFB</div>
+    <div class="swatch" style="background:#BCDDF5"><b>200</b>#BCDDF5</div>
+    <div class="swatch" style="background:#8CC4EC"><b>300</b>#8CC4EC</div>
+    <div class="swatch" style="background:#3F8ED0;color:#fff"><b>500</b>#3F8ED0</div>
+    <div class="swatch" style="background:#1D5C9A;color:#fff"><b>700</b>#1D5C9A</div>
+    <div class="swatch" style="background:#14335A;color:#fff"><b>900 · texto</b>#14335A</div></div>
+  <div class="family"><h3>Kumo <span lang="ja">雲</span></h3><p>Las nubes. Tarjetas, campos y diálogos flotan en blanco sobre el cielo.</p>
+    <div class="swatch" style="background:#FFFFFF;border:1px solid #D3E4F3"><b>blanco</b>#FFFFFF</div>
+    <div class="swatch" style="background:#FFFFFF;border:1px solid #D3E4F3;color:#4B6585"><b>borde</b>#D3E4F3</div>
+    <div class="swatch" style="background:#4B6585;color:#fff"><b>texto suave</b>#4B6585</div>
+    <div class="swatch" style="background:#6F8BAC;color:#fff"><b>borde de campo</b>#6F8BAC</div></div>
+  <div class="family"><h3>Hikari <span lang="ja">光</span></h3><p>La luz del sol. Solo para la promesa: comprar, progresar y desbloquear logros.</p>
+    <div class="swatch" style="background:#FBE3A2"><b>300</b>#FBE3A2</div>
+    <div class="swatch" style="background:#F3C658"><b>400</b>#F3C658</div>
+    <div class="swatch" style="background:#B4842A;color:#fff"><b>600</b>#B4842A</div></div>
+  <div class="family"><h3>Midori <span lang="ja">緑</span></h3><p>Las islas y sus prados. Confirmaciones y estados completados.</p>
+    <div class="swatch" style="background:#7FC08E"><b>400</b>#7FC08E</div>
+    <div class="swatch" style="background:#2E6B45;color:#fff"><b>700</b>#2E6B45</div></div>
+  <div class="family"><h3>Beni <span lang="ja">紅</span></h3><p>La espada carmesí. Errores y acciones irreversibles; nunca decoración.</p>
+    <div class="swatch" style="background:#F08A97"><b>400</b>#F08A97</div>
+    <div class="swatch" style="background:#B23447;color:#fff"><b>600</b>#B23447</div></div>
+</div></section>
+
+<section class="block"><h2>Temas</h2>
+<div class="themes">
+  <div class="theme day">
+    <h3>Hikari · día</h3><div class="sub">Tema por defecto</div>
+    <div class="demo-card">
+      <div class="row"><div><b>Primer santuario</b><small>Ranura 1 · Tsuki · Capítulo 1</small></div><span class="figure">1h 52m</span></div>
+      <div class="bar"><i></i></div>
+      <div class="row"><small>3 de 7 hitos de la historia</small><span class="link">Ver detalle</span></div>
+    </div>
+  </div>
+  <div class="theme night">
+    <svg class="stars" viewBox="0 0 700 250" preserveAspectRatio="none"><g fill="#EAF3FC" opacity=".7"><circle cx="420" cy="30" r="1.4"/><circle cx="520" cy="60" r="1"/><circle cx="610" cy="24" r="1.6"/><circle cx="660" cy="90" r="1"/><circle cx="560" cy="120" r="1.2"/><circle cx="470" cy="80" r="1"/></g></svg>
+    <h3>Tsuki · noche estrellada</h3><div class="sub">Se activa con el sistema en modo oscuro o desde el panel</div>
+    <div class="demo-card">
+      <div class="row"><div><b>Primer santuario</b><small>Ranura 1 · Tsuki · Capítulo 1</small></div><span class="figure">1h 52m</span></div>
+      <div class="bar"><i></i></div>
+      <div class="row"><small>3 de 7 hitos de la historia</small><span class="link">Ver detalle</span></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="block"><h2>Tipografía</h2>
+<div class="type-samples">
+  <div class="sample"><span class="role">Títulos · Shippori Mincho 700</span><div class="s-heading">Una promesa que desafiará al cielo</div>
+    <div class="scale"><span style="font-size:2.441rem">Aa</span><span style="font-size:1.953rem">Aa</span><span style="font-size:1.563rem">Aa</span><span style="font-size:1.25rem">Aa</span><span style="font-size:1rem">Aa</span><span style="font-size:.8rem;font-family:var(--f-body);color:var(--c-text-muted)">escala 1.25 · base 16 px</span></div></div>
+  <div class="sample"><span class="role">Interfaz y lectura · Zen Kaku Gothic New 400/500/700</span><div class="s-body">Tu última sesión fue hoy a las 19:58. Guarda tu avance en la nube y consulta tus logros.</div></div>
+  <div class="sample"><span class="role">Cifras del juego · DotGothic16 (solo números)</span><div class="s-pixel">3h 12m · 148</div></div>
+</div></section>
+
+<section class="block"><h2>Componentes</h2>
+<div class="comps">
+  <div>
+    <div class="box"><h3>Botones (mínimo 44 × 44 px)</h3>
+      <div class="btns"><button class="btn b-promise">Comprar en itch.io</button><button class="btn b-primary">Guardar cambios</button><button class="btn b-outline">Cancelar</button><button class="btn b-danger">Eliminar mi cuenta</button><button class="btn b-outline b-focus">Con foco de teclado</button><button class="btn b-primary b-off" disabled>Sin conexión</button></div>
+    </div>
+    <div class="box" style="margin-top:var(--s-5)"><h3>Estados de lista</h3>
+      <div class="skeleton" style="width:70%"></div><div class="skeleton" style="width:90%"></div><div class="skeleton" style="width:55%"></div>
+      <div class="empty" style="margin-top:var(--s-4)"><b>Aún no hay sesiones</b>Juega una partida con tu cuenta iniciada y tus sesiones aparecerán aquí.</div>
+    </div>
+  </div>
+  <div>
+    <div class="box"><h3>Formulario con validación</h3>
+      <div class="field"><label>Nombre de usuario</label><div class="input">Tsuki_07</div><small>De 3 a 20 letras, números o guion bajo.</small></div>
+      <div class="field error"><label>Correo electrónico</label><div class="input">felc@correo</div><small>Escribe un correo completo, por ejemplo nombre@dominio.com.</small></div>
+      <div class="field error"><label>Nombre de usuario</label><div class="input">felc</div><small>Ese nombre ya está en uso. Prueba con otro.</small></div>
+    </div>
+    <div class="box" style="margin-top:var(--s-5)"><h3>Avisos de la PWA</h3>
+      <div class="toast">Hay una versión nueva de la app.<span class="action">Actualizar</span></div>
+      <div class="toast">Sin conexión. Ves los datos guardados el 9 de octubre a las 19:58.</div>
+      <div class="toast ok">Configuración guardada. Se aplicará al abrir el juego.</div>
+    </div>
+  </div>
+  <div class="dialog" role="dialog" aria-labelledby="t-del">
+    <h4 id="t-del">Eliminar tu cuenta</h4>
+    <p>Esto borra para siempre tu cuenta y todo lo que guardaste en la nube. No se puede deshacer.</p>
+    <ul><li>Tus 2 partidas, estadísticas e historial.</li><li>Tus logros desbloqueados.</li><li>Las sesiones abiertas en el juego y en la app móvil.</li></ul>
+    <p>Tus partidas guardadas en tu computadora no se tocan.</p>
+    <div class="field"><label>Contraseña</label><div class="input">••••••••••</div></div>
+    <div class="field"><label>Escribe ELIMINAR para confirmar</label><div class="input">ELIMINAR</div></div>
+    <div class="actions"><button class="btn b-outline">Conservar mi cuenta</button><button class="btn b-danger">Eliminar mi cuenta</button></div>
+  </div>
+</div></section>
+
+<section class="block" style="margin-bottom:0"><h2>Principios</h2>
+<div class="principles">
+  <div><b>El cielo es el lienzo</b>Fondo de azul a bruma blanca; las tarjetas flotan como nubes. Las islas y las nubes son la única ilustración.</div>
+  <div><b>El color cuenta la historia</b>Azul orienta, oro promete, verde confirma y carmesí advierte. Si un color no cumple su papel, no aparece.</div>
+  <div><b>El píxel es entero</b>Sprites a escala ×2, ×3 o ×4 con <code>image-rendering: pixelated</code>. Nunca escalas fraccionarias.</div>
+  <div><b>Calma japonesa</b>Mucho aire, líneas finas y una sola animación automática: las nubes del inicio, que se detienen con movimiento reducido.</div>
+</div></section>
+</main>
+</body></html>

@@ -1,0 +1,39 @@
+%% PWA navigation map
+flowchart LR
+  home["/  Landing"]
+  news["/news"]
+  post["/news/:slug"]
+  login["/login"]
+  register["/register"]
+  privacy["/privacy"]
+
+  subgraph app["/app  (requiere sesión · layout con navegación)"]
+    direction TB
+    dashboard["/app  Resumen"]
+    saves["/app/saves"]
+    save["/app/saves/:slot"]
+    history["/app/history"]
+    achievements["/app/achievements"]
+    subgraph account["/app/account"]
+      profile["/app/account  Perfil"]
+      settings["/app/account/settings"]
+      security["/app/account/security<br/>contraseña y dispositivos"]
+      delete["/app/account/delete"]
+    end
+  end
+
+  home --> news --> post
+  home --> register
+  home --> login
+  home --> privacy
+  register -- "201 · sesión iniciada" --> dashboard
+  login -- "200" --> dashboard
+  dashboard --> saves --> save
+  dashboard --> history
+  dashboard --> achievements
+  dashboard --> profile
+  profile --> settings
+  profile --> security
+  profile --> delete
+  delete -- "204 · sesión cerrada" --> home
+  app -. "sin sesión → redirige con ?returnTo=" .-> login

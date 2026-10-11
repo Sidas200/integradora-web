@@ -1,0 +1,20 @@
+%% Account deletion: web only and with recent reauthentication
+sequenceDiagram
+  actor U as Jugador
+  participant P as PWA /app/account/delete
+  participant A as API Spring Boot
+  participant D as PostgreSQL
+
+  U->>P: Escribe su contraseña y la palabra ELIMINAR
+  P->>A: POST /api/v1/auth/reauthenticate {password} (Bearer)
+  A->>A: Verifica la contraseña del sub del token
+  A-->>P: 200 {accessToken con auth_time = ahora}
+  P->>A: DELETE /api/v1/account (Bearer recién emitido)
+  A->>A: Regla 1: claim cli == WEB, si no → 403 DELETION_WEB_ONLY
+  A->>A: Regla 2: auth_time ≤ 5 min, si no → 401 REAUTHENTICATION_REQUIRED
+  A->>D: BEGIN · DELETE FROM players WHERE id = :sub · COMMIT
+  Note over D: ON DELETE CASCADE borra settings, saves, save_stats,<br/>inventory, play_sessions, telemetry_events, player_achievements y auth_sessions
+  A-->>P: 204 No Content + borra la cookie tdimp_rt
+  P->>P: queryClient.clear(), borra IndexedDB y cachés del jugador
+  P-->>U: Pantalla de despedida en / con confirmación
+  Note over A: Unity y Flutter reciben 401 en su siguiente refresh:<br/>sus sesiones ya no existen

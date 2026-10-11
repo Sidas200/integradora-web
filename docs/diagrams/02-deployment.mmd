@@ -1,0 +1,42 @@
+%% Containers and deployment (C4 level 2): where each piece runs
+flowchart LR
+  subgraph browser["Navegador del jugador"]
+    direction TB
+    spa["SPA React<br/>(app shell)"]
+    sw["Service Worker<br/>Workbox"]
+    cache[("Cache Storage<br/>shell, imágenes,<br/>API pública")]
+    idb[("IndexedDB<br/>caché de consultas<br/>del jugador")]
+    spa <--> sw
+    sw <--> cache
+    spa <--> idb
+  end
+
+  subgraph vercel["Vercel (CDN, plan Hobby)"]
+    direction TB
+    static["Build de Vite (dist/)<br/>/ , /assets/*, sw.js"]
+    proxy["Rewrite externo<br/>/api/* → Render<br/>(vercel.ts)"]
+  end
+
+  subgraph render["Render (Docker, plan gratuito)"]
+    api["Spring Boot 4.1<br/>Java 21<br/>:8080"]
+  end
+
+  subgraph supabase["Supabase"]
+    pooler["Session pooler<br/>IPv4 :5432"]
+    pg[("PostgreSQL<br/>esquema game")]
+    pooler --> pg
+  end
+
+  unity["Juego Unity PC"]
+  flutter["App Flutter"]
+  gha["GitHub Actions<br/>CI/CD"]
+
+  sw -- "HTTPS mismo origen" --> static
+  sw -- "HTTPS mismo origen<br/>cookie refresh first-party" --> proxy
+  proxy -- "HTTPS" --> api
+  unity -- "HTTPS + Bearer" --> api
+  flutter -- "HTTPS + Bearer" --> api
+  api -- "JDBC + TLS<br/>HikariCP (≤5 conexiones)" --> pooler
+  gha -. "vercel build + deploy --prebuilt" .-> vercel
+  gha -. "deploy hook" .-> render
+  gha -. "flyway migrate" .-> pooler

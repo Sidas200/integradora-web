@@ -1,0 +1,81 @@
+# CD Staging · push a dev
+#
+# 1. Corre CI Backend y CI Frontend (los mismos workflows de los PR).
+# 2. Si cambió backend/: Flyway en Supabase de pruebas y Deploy Hook de Render.
+# 3. Health check de la API y pruebas de humo contra la PWA de pruebas.
+#
+# La PWA la despliega Vercel desde Git (rama dev -> Preview con dominio fijo);
+# este workflow no la construye ni la sube.
+name: CD Staging
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+    inputs:
+      deploy-api:
+        description: Forzar migraciones y despliegue de la API
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: cd-staging
+  cancel-in-progress: false # nunca interrumpir un despliegue a medias
+
+jobs:
+  changes:
+    name: staging-changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      backend: ${{ steps.decide.outputs.backend }}
+      frontend: ${{ steps.decide.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
+      - name: Decidir qué se despliega
+        id: decide
+        env:
+          BACKEND: ${{ steps.filter.outputs.backend }}
+          FRONTEND: ${{ steps.filter.outputs.frontend }}
+          MANUAL: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy-api }}
+        run: |
+          backend=false; frontend=false
+          if [ -f backend/mvnw ] && { [ "$BACKEND" = "true" ] || [ "$MANUAL" = "true" ]; }; then backend=true; fi
+          if [ -f frontend/package.json ] && [ "$FRONTEND" = "true" ]; then frontend=true; fi
+          echo "backend=$backend" >> "$GITHUB_OUTPUT"
+          echo "frontend=$frontend" >> "$GITHUB_OUTPUT"
+          echo "backend=$backend frontend=$frontend"
+
+  backend-ci:
+    name: backend
+    uses: ./.github/workflows/ci-backend.yml
+
+  frontend-ci:
+    name: frontend
+    uses: ./.github/workflows/ci-frontend.yml
+
+  deploy:
+    name: staging
+    needs: [changes, backend-ci, frontend-ci]
+    if: >-
+      ${{ !cancelled()
+        && needs.backend-ci.result == 'success'
+        && needs.frontend-ci.result == 'success'
+        && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true') }}
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: staging
+      deploy-api: ${{ needs.changes.outputs.backend == 'true' }}
+    secrets: inherit

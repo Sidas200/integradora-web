@@ -1,0 +1,143 @@
+# Despliegue reutilizable · lo llaman cd-staging.yml y cd-production.yml
+#
+# Flyway en Supabase -> Deploy Hook de Render -> GET /actuator/health -> pruebas de humo (Cypress)
+#
+# Todo corre en un solo job con `environment:` para que en producción la
+# aprobación del Product Owner o la Scrum Master se pida una sola vez.
+#
+# Secretos del ambiente (Settings › Environments › <ambiente>):
+#   DB_URL, DB_MIGRATION_USER, DB_MIGRATION_PASSWORD, RENDER_DEPLOY_HOOK
+#   RENDER_API_KEY (opcional: permite esperar a que Render termine el deploy)
+# Variables del ambiente:
+#   API_URL  origen de la API en Render, sin /api (ej. https://tdimp-api-staging.onrender.com)
+#   WEB_URL  dominio de la PWA en Vercel (Preview fijo de dev o Production)
+name: Deploy (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: staging o production
+        required: true
+        type: string
+      deploy-api:
+        description: Migrar la base de datos y desplegar la API
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+env:
+  FLYWAY_IMAGE: flyway/flyway:11
+  MIGRATIONS_DIR: backend/src/main/resources/db/migration
+
+jobs:
+  deploy:
+    name: deploy-${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ vars.WEB_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Migraciones Flyway en Supabase
+        if: ${{ inputs.deploy-api }}
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USER: ${{ secrets.DB_MIGRATION_USER }}
+          DB_PASSWORD: ${{ secrets.DB_MIGRATION_PASSWORD }}
+        run: |
+          if [ ! -d "$MIGRATIONS_DIR" ]; then
+            echo "::notice::$MIGRATIONS_DIR no existe todavía; se omiten las migraciones."
+            exit 0
+          fi
+          if [ -z "$DB_URL" ] || [ -z "$DB_USER" ]; then
+            echo "::error::Faltan DB_URL o DB_MIGRATION_USER en el ambiente ${{ inputs.environment }}."
+            exit 1
+          fi
+          docker run --rm \
+            -v "$PWD/$MIGRATIONS_DIR:/flyway/sql:ro" \
+            -e FLYWAY_URL="$DB_URL" \
+            -e FLYWAY_USER="$DB_USER" \
+            -e FLYWAY_PASSWORD="$DB_PASSWORD" \
+            "$FLYWAY_IMAGE" \
+            -schemas=game -locations=filesystem:/flyway/sql -validateMigrationNaming=true \
+            migrate
+
+      - name: Disparar despliegue en Render
+        if: ${{ inputs.deploy-api }}
+        id: render
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::error::Falta RENDER_DEPLOY_HOOK en el ambiente ${{ inputs.environment }}."
+            exit 1
+          fi
+          response=$(curl -fsS -X POST "$HOOK")
+          deploy_id=$(echo "$response" | jq -r '.deploy.id // empty')
+          service_id=$(echo "$HOOK" | sed -E 's#.*/deploy/(srv-[^?/]+).*#\1#')
+          echo "deploy-id=$deploy_id" >> "$GITHUB_OUTPUT"
+          echo "service-id=$service_id" >> "$GITHUB_OUTPUT"
+          echo "Deploy solicitado: ${deploy_id:-sin id}"
+
+      - name: Esperar a que Render termine
+        if: ${{ inputs.deploy-api }}
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          DEPLOY_ID: ${{ steps.render.outputs.deploy-id }}
+          SERVICE_ID: ${{ steps.render.outputs.service-id }}
+        run: |
+          if [ -z "$RENDER_API_KEY" ] || [ -z "$DEPLOY_ID" ]; then
+            echo "::warning::Sin RENDER_API_KEY no se puede saber cuándo termina el deploy; el health check puede responder la versión anterior."
+            exit 0
+          fi
+          for i in $(seq 1 60); do
+            status=$(curl -fsS -H "Authorization: Bearer $RENDER_API_KEY" \
+              "https://api.render.com/v1/services/$SERVICE_ID/deploys/$DEPLOY_ID" | jq -r '.status')
+            echo "[$i] $status"
+            case "$status" in
+              live) exit 0 ;;
+              build_failed|update_failed|canceled|deactivated|pre_deploy_failed)
+                echo "::error::El deploy en Render terminó en $status"; exit 1 ;;
+            esac
+            sleep 15
+          done
+          echo "::error::El deploy en Render no terminó en 15 minutos"; exit 1
+
+      - name: Health check de la API
+        if: ${{ inputs.deploy-api }}
+        env:
+          API_URL: ${{ vars.API_URL }}
+        run: |
+          if [ -z "$API_URL" ]; then
+            echo "::error::Falta la variable API_URL en el ambiente ${{ inputs.environment }}."
+            exit 1
+          fi
+          # El plan gratuito de Render suspende el servicio: el primer intento puede tardar.
+          for i in $(seq 1 20); do
+            if curl -fsS --max-time 60 "$API_URL/actuator/health" | jq -e '.status == "UP"' > /dev/null; then
+              echo "API en línea."; exit 0
+            fi
+            echo "[$i] la API aún no responde UP"; sleep 15
+          done
+          echo "::error::$API_URL/actuator/health no respondió UP"; exit 1
+
+      - name: Pruebas de humo (Cypress)
+        if: ${{ hashFiles('frontend/cypress/e2e/smoke/**') != '' }}
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: frontend
+          spec: cypress/e2e/smoke/**/*
+          browser: chrome
+        env:
+          CYPRESS_BASE_URL: ${{ vars.WEB_URL }}
+          CYPRESS_API_URL: ${{ vars.API_URL }}
+
+      - name: Aviso sin pruebas de humo
+        if: ${{ hashFiles('frontend/cypress/e2e/smoke/**') == '' }}
+        run: echo "::notice::No hay pruebas en frontend/cypress/e2e/smoke/; se omiten."

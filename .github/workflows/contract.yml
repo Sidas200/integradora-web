@@ -1,0 +1,96 @@
+# Contract · docs/api/openapi.yaml (OpenAPI 3.1)
+# Check obligatorio en dev y main: backend-contract
+#
+# 1. Valida la sintaxis del contrato (Redocly CLI, reglas mínimas).
+# 2. Lo compara contra la versión de la rama destino (oasdiff) y falla ante
+#    cambios incompatibles. Un cambio incompatible se "declara" poniendo la
+#    etiqueta `breaking-change` al PR: el reporte se publica igual, pero no falla.
+name: Contract
+
+on:
+  pull_request:
+    branches: [dev, main]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contract-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CONTRACT: docs/api/openapi.yaml
+  REDOCLY_VERSION: 2.63.0
+  OASDIFF_VERSION: 1.33.0
+
+jobs:
+  changes:
+    name: contract-changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      contract: ${{ steps.filter.outputs.contract == 'true' || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            contract:
+              - 'docs/api/openapi.yaml'
+              - '.github/workflows/contract.yml'
+
+  contract:
+    name: backend-contract # check obligatorio para fusionar
+    needs: changes
+    if: ${{ needs.changes.outputs.contract == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Validar sintaxis del contrato
+        run: npx --yes "@redocly/cli@${REDOCLY_VERSION}" lint "$CONTRACT" --extends=minimal
+
+      - name: Instalar oasdiff
+        run: |
+          curl -fsSL "https://github.com/oasdiff/oasdiff/releases/download/v${OASDIFF_VERSION}/oasdiff_${OASDIFF_VERSION}_linux_amd64.tar.gz" \
+            | tar xz -C "$RUNNER_TEMP" oasdiff
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+
+      - name: Comparar contra la rama destino
+        env:
+          BASE_REF: ${{ github.base_ref || github.event.repository.default_branch }}
+          DECLARED: ${{ contains(github.event.pull_request.labels.*.name, 'breaking-change') }}
+        run: |
+          if ! git cat-file -e "origin/${BASE_REF}:${CONTRACT}" 2>/dev/null; then
+            echo "::notice::La rama ${BASE_REF} no tiene ${CONTRACT}; no hay contra qué comparar."
+            exit 0
+          fi
+          git show "origin/${BASE_REF}:${CONTRACT}" > "$RUNNER_TEMP/base.yaml"
+
+          {
+            echo "## Cambios en el contrato contra \`${BASE_REF}\`"
+            echo '```'
+            oasdiff changelog "$RUNNER_TEMP/base.yaml" "$CONTRACT" || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if oasdiff breaking "$RUNNER_TEMP/base.yaml" "$CONTRACT" --fail-on ERR; then
+            echo "Sin cambios incompatibles."
+          elif [ "$DECLARED" = "true" ]; then
+            echo "::warning::Cambios incompatibles declarados con la etiqueta breaking-change."
+          else
+            echo "::error::Cambios incompatibles en el contrato. Si son intencionales, agrega la etiqueta breaking-change al PR y avisa a los equipos del juego y de la app móvil."
+            exit 1
+          fi

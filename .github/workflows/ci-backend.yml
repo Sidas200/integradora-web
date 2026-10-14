@@ -1,0 +1,124 @@
+# CI Backend · Spring Boot 4.1 + Java 21 (Temurin) + Maven Wrapper
+# Check obligatorio en dev y main: backend-verify
+#
+# El workflow se dispara siempre (sin `paths:` a nivel de evento) y decide con
+# dorny/paths-filter si hay que verificar. Un job omitido cuenta como exitoso
+# para la protección de ramas; con `paths:` el check quedaría "pendiente" en los
+# PR que no tocan backend/ y GitHub bloquearía la fusión.
+#
+# El push a dev no está aquí: lo ejecuta cd-staging.yml (workflow_call) antes
+# de desplegar, para no correr la misma verificación dos veces.
+name: CI Backend
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-backend-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: backend-changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      run: ${{ steps.decide.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'docs/api/openapi.yaml'
+              - '.github/workflows/ci-backend.yml'
+      - name: Decidir si se verifica
+        id: decide
+        env:
+          CHANGED: ${{ steps.filter.outputs.backend }}
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+        run: |
+          run=false
+          # main y las ejecuciones manuales siempre verifican (lección de ci-game.yml).
+          if [ "$CHANGED" = "true" ] || [ "$REF" = "refs/heads/main" ] || [ "$EVENT" = "workflow_dispatch" ]; then
+            run=true
+          fi
+          # Mientras backend/ no exista no hay nada que compilar.
+          if [ ! -f backend/mvnw ]; then
+            echo "::notice::backend/mvnw todavía no existe; se omite backend-verify."
+            run=false
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
+  verify:
+    name: backend-verify # check obligatorio para fusionar
+    needs: changes
+    if: ${{ needs.changes.outputs.run == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres: # base de datos temporal solo dentro del runner
+        image: postgres:16
+        env:
+          POSTGRES_DB: tdimp
+          POSTGRES_USER: tdimp
+          POSTGRES_PASSWORD: tdimp
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U tdimp"
+          --health-interval 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - name: Permiso de ejecución del wrapper
+        run: chmod +x mvnw
+      - name: Compilar, analizar y probar
+        # Compilación, Checkstyle, JUnit, Mockito, ArchUnit e integración contra PostgreSQL.
+        run: ./mvnw -B -ntp verify
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          DB_URL: jdbc:postgresql://localhost:5432/tdimp
+          DB_USER: tdimp
+          DB_PASSWORD: tdimp
+          JWT_SECRET: test-only-secret-not-used-outside-ci
+      - name: Publicar reportes de pruebas
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-reports
+          path: |
+            backend/target/surefire-reports/
+            backend/target/failsafe-reports/
+            backend/target/checkstyle-result.xml
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Publicar JAR
+        if: ${{ success() && github.event_name != 'pull_request' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/*.jar
+          if-no-files-found: error
+          retention-days: ${{ github.ref == 'refs/heads/main' && 90 || 7 }}

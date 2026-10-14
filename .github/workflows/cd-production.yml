@@ -1,0 +1,47 @@
+# CD Production · tag vX.Y.Z en main
+#
+#   git switch main && git pull && git tag v1.0.0 && git push origin v1.0.0
+#
+# El commit etiquetado ya pasó CI Backend y CI Frontend al llegar a main.
+# El ambiente `production` debe tener como revisores obligatorios al Product
+# Owner y a la Scrum Master (Settings › Environments › production): el job de
+# despliegue espera su aprobación antes de tocar Supabase o Render.
+name: CD Production
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-production
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: validate-tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: El tag debe apuntar a un commit de main
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::$GITHUB_REF_NAME no apunta a un commit de main."
+            exit 1
+          fi
+          echo "$GITHUB_REF_NAME está en main."
+
+  deploy:
+    name: production
+    needs: validate
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: production
+      deploy-api: true
+    secrets: inherit

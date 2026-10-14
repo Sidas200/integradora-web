@@ -1,0 +1,100 @@
+# CI Frontend · React 19 + TypeScript 5.9 + Vite 8 + Node.js 24
+# Check obligatorio en dev y main: web-verify
+#
+# Scripts que frontend/package.json debe definir:
+#   lint       -> eslint .
+#   typecheck  -> tsc -b --noEmit (o tsc --noEmit)
+#   test       -> vitest run
+#   build      -> tsc -b && vite build
+#   api:check  -> (opcional) regenera src/shared/api/schema.d.ts con openapi-typescript
+#                y falla si difiere del archivo versionado
+name: CI Frontend
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-frontend-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: web-changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      run: ${{ steps.decide.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+              - 'docs/api/openapi.yaml'
+              - '.github/workflows/ci-frontend.yml'
+      - name: Decidir si se verifica
+        id: decide
+        env:
+          CHANGED: ${{ steps.filter.outputs.frontend }}
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+        run: |
+          run=false
+          if [ "$CHANGED" = "true" ] || [ "$REF" = "refs/heads/main" ] || [ "$EVENT" = "workflow_dispatch" ]; then
+            run=true
+          fi
+          if [ ! -f frontend/package.json ]; then
+            echo "::notice::frontend/package.json todavía no existe; se omite web-verify."
+            run=false
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
+  verify:
+    name: web-verify # check obligatorio para fusionar
+    needs: changes
+    if: ${{ needs.changes.outputs.run == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Tipos de la API al día con el contrato
+        run: npm run --if-present api:check
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Pruebas (Vitest)
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Publicar dist
+        if: ${{ success() && github.event_name != 'pull_request' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: frontend/dist/
+          if-no-files-found: error
+          retention-days: ${{ github.ref == 'refs/heads/main' && 90 || 7 }}

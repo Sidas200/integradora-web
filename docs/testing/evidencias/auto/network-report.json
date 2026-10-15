@@ -1,0 +1,105 @@
+[
+  {
+    "step": "CP-01",
+    "method": "GET",
+    "url": "/api/v1/news?page=0&size=6",
+    "status": 200,
+    "fromServiceWorker": false,
+    "latencyMs": 444,
+    "totalMs": 445,
+    "requestBytes": 0,
+    "responseBytes": 1444,
+    "requestPayload": null,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "max-age=300, public",
+      "server-timing": "app;desc=\"Spring Boot\";dur=439.1, db;desc=\"PostgreSQL\";dur=251.2",
+      "x-request-id": "1ef2e948"
+    }
+  },
+  {
+    "step": "CP-01",
+    "method": "GET",
+    "url": "/api/v1/news?page=0&size=6",
+    "status": 200,
+    "fromServiceWorker": true,
+    "latencyMs": 2,
+    "totalMs": 2,
+    "requestBytes": 0,
+    "responseBytes": 1444,
+    "requestPayload": null,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "max-age=300, public",
+      "server-timing": "app;desc=\"Spring Boot\";dur=439.1, db;desc=\"PostgreSQL\";dur=251.2",
+      "x-request-id": "1ef2e948"
+    }
+  },
+  {
+    "step": "CP-02",
+    "method": "GET",
+    "url": "/api/v1/news?page=1&size=6",
+    "status": 200,
+    "fromServiceWorker": true,
+    "latencyMs": 460,
+    "totalMs": 462,
+    "requestBytes": 0,
+    "responseBytes": 1400,
+    "requestPayload": null,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "max-age=300, public",
+      "server-timing": "app;desc=\"Spring Boot\";dur=440.9, db;desc=\"PostgreSQL\";dur=201.1",
+      "x-request-id": "a3914142"
+    }
+  },
+  {
+    "step": "CP-03",
+    "method": "POST",
+    "url": "/api/v1/subscriptions",
+    "status": 202,
+    "fromServiceWorker": true,
+    "latencyMs": 335,
+    "totalMs": 336,
+    "requestBytes": 79,
+    "responseBytes": 0,
+    "requestPayload": "{\"email\":\"lab-online-20261015014003@tdimp.test\",\"language\":\"es\",\"consent\":true}",
+    "headers": {
+      "server-timing": "app;desc=\"Spring Boot\";dur=322.8, db;desc=\"PostgreSQL\";dur=107.2",
+      "x-request-id": "402766c7"
+    }
+  },
+  {
+    "step": "CP-04",
+    "method": "GET",
+    "url": "/api/v1/news?page=0&size=6",
+    "status": 200,
+    "fromServiceWorker": true,
+    "latencyMs": 3,
+    "totalMs": 4,
+    "requestBytes": 0,
+    "responseBytes": 1444,
+    "requestPayload": null,
+    "headers": {
+      "content-type": "application/json",
+      "cache-control": "max-age=300, public",
+      "server-timing": "app;desc=\"Spring Boot\";dur=439.1, db;desc=\"PostgreSQL\";dur=251.2",
+      "x-request-id": "1ef2e948"
+    }
+  },
+  {
+    "step": "CP-05",
+    "method": "POST",
+    "url": "/api/v1/subscriptions",
+    "status": 202,
+    "fromServiceWorker": true,
+    "latencyMs": 7,
+    "totalMs": 7,
+    "requestBytes": 80,
+    "responseBytes": 0,
+    "requestPayload": "{\"email\":\"lab-offline-20261015014003@tdimp.test\",\"language\":\"es\",\"consent\":true}",
+    "headers": {
+      "x-queued": "1"
+    }
+  }
+]

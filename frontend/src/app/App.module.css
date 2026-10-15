@@ -1,0 +1,8 @@
+.hero { background: var(--c-sky); padding: var(--s-8) var(--s-4) var(--s-7); text-align: center; }
+.hero h1 { font-family: var(--f-heading); font-size: clamp(2rem, 1.2rem + 3.5vw, 3.6rem); margin: var(--s-2) 0; color: var(--c-text); }
+.hero p { margin: 0; color: var(--c-text-muted); }
+.kicker { text-transform: uppercase; letter-spacing: .08em; font-size: var(--t-xs); }
+.layout { max-width: 1180px; margin: 0 auto; padding: var(--s-6) var(--s-4); display: grid; gap: var(--s-6); }
+.side { display: grid; gap: var(--s-5); align-content: start; }
+@media (min-width: 900px) { .layout { grid-template-columns: 1fr 340px; } }
+.footer { text-align: center; color: var(--c-text-muted); font-size: var(--t-xs); padding: var(--s-6) var(--s-4); }

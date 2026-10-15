@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- PWA icon: floating island with the shrine's torii under the sun, over a sea of clouds.
+       The motif fits inside the 80 % safe circle required by the "maskable" version. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7FBDEB"/><stop offset=".65" stop-color="#BCDDF5"/><stop offset="1" stop-color="#F3F9FE"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <circle cx="330" cy="168" r="56" fill="#FBE3A2"/>
+  <circle cx="330" cy="168" r="38" fill="#F3C658"/>
+  <path d="M128 262 Q256 234 384 262 L356 292 L316 302 L290 372 L262 308 L232 330 L206 300 L160 290 Z" fill="#7F9CC0"/>
+  <path d="M120 264 Q256 222 392 264 Q256 248 120 264 Z" fill="#7FC08E"/>
+  <g fill="none" stroke="#B23447" stroke-width="14" stroke-linecap="round">
+    <path d="M206 202 Q256 188 306 202"/><path d="M218 220 H294"/><path d="M228 206 V256 M284 206 V256"/>
+  </g>
+  <g fill="#FFFFFF">
+    <ellipse cx="150" cy="420" rx="150" ry="46"/><ellipse cx="300" cy="404" rx="120" ry="52"/>
+    <ellipse cx="440" cy="426" rx="140" ry="44"/><rect y="430" width="512" height="82"/>
+  </g>
+</svg>

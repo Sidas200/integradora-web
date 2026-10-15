@@ -43,7 +43,7 @@ mvn spring-boot:run
 
 En IntelliJ se abre `backend/pom.xml` y las variables se agregan en la configuración de ejecución.
 
-Para generar el Maven Wrapper que usa el pipeline de CI: `mvn -N wrapper:wrapper -Dmaven=3.9.11`.
+El Maven Wrapper (`mvnw`, `mvnw.cmd` y `.mvn/`) está versionado y fija Maven 3.9.11; el pipeline de CI lo usa. También se puede ejecutar con `./mvnw spring-boot:run` (Git Bash) o `.\mvnw.cmd spring-boot:run` (PowerShell) sin instalar Maven.
 
 ## Logs
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useNewsList } from '../queries'
 import { log, logTable } from '../../../shared/lab/logger'
 import css from './NewsList.module.css'
@@ -7,7 +7,7 @@ const dateFormat = new Intl.DateTimeFormat('es-MX', { dateStyle: 'long' })
 
 export function NewsList() {
   const { data, status, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching } = useNewsList()
-  const items = data?.pages.flatMap((p) => p.content) ?? []
+  const items = useMemo(() => data?.pages.flatMap((p) => p.content) ?? [], [data])
   const total = data?.pages[0]?.page.totalElements ?? 0
 
   useEffect(() => {

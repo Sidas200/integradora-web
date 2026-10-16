@@ -50,16 +50,23 @@ export function PwaStatus() {
   const { lastMessage, offlineReady } = usePwaState()
   const [snap, setSnap] = useState<Snapshot | null>(null)
 
-  const refresh = useCallback(async () => {
-    const s = await snapshot()
+  const apply = useCallback((s: Snapshot) => {
     setSnap(s)
     log('pwa', `SW=${s.sw} · controla la página=${s.controlled} · cola Background Sync=${s.queued}`)
     logTable('pwa', 'Cache Storage', s.caches)
   }, [])
 
+  const refresh = useCallback(() => snapshot().then(apply), [apply])
+
   useEffect(() => {
-    void refresh()
-  }, [refresh, online, lastMessage, offlineReady])
+    let active = true
+    void snapshot().then((s) => {
+      if (active) apply(s)
+    })
+    return () => {
+      active = false
+    }
+  }, [apply, online, lastMessage, offlineReady])
 
   useEffect(() => {
     const id = setInterval(() => void snapshot().then(setSnap), 5000)

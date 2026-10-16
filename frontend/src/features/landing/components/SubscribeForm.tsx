@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { api } from '../../../shared/api/client'
 import { usePwaState } from '../../../shared/pwa/registerSW'
 import { log } from '../../../shared/lab/logger'
@@ -13,11 +13,11 @@ export function SubscribeForm() {
   const [result, setResult] = useState<Result>({ kind: 'idle' })
   const { lastMessage } = usePwaState()
 
-  useEffect(() => {
-    if (lastMessage?.type === 'SUBSCRIPTION_SENT' && result.kind === 'queued') {
-      setResult({ kind: 'sent', text: 'Volvió la conexión: tu registro pendiente ya se envió.' })
-    }
-  }, [lastMessage, result.kind])
+  // Se deriva al renderizar en lugar de copiarlo al estado con un efecto.
+  const shown: Result =
+    lastMessage?.type === 'SUBSCRIPTION_SENT' && result.kind === 'queued'
+      ? { kind: 'sent', text: 'Volvió la conexión: tu registro pendiente ya se envió.' }
+      : result
 
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -66,8 +66,8 @@ export function SubscribeForm() {
           {result.kind === 'sending' ? 'Enviando…' : 'Avisarme'}
         </button>
       </form>
-      {result.text && (
-        <p role="status" className={css.result} data-kind={result.kind} data-testid="subscribe-result">{result.text}</p>
+      {shown.text && (
+        <p role="status" className={css.result} data-kind={shown.kind} data-testid="subscribe-result">{shown.text}</p>
       )}
     </section>
   )

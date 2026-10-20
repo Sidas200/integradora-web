@@ -1,0 +1,51 @@
+name: tdimp
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tdimp
+      POSTGRES_USER: tdimp
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tdimp -d tdimp"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    # No host port: avoids clashing with the local PostgreSQL on 5432
+
+  api:
+    build: ./backend
+    image: tdimp-api:local
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Same variable names used in ci-backend.yml; add any other one your application.yml requires
+      DB_URL: jdbc:postgresql://db:5432/tdimp
+      DB_USER: tdimp
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_MIGRATION_USER: tdimp
+      DB_MIGRATION_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      SPRING_FLYWAY_ENABLED: "true"
+    ports:
+      - "18081:8080"   # direct API access for checks (health, Swagger)
+
+  web:
+    build: ./frontend
+    image: tdimp-web:local
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      API_ORIGIN: http://api:8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  db-data:

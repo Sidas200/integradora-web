@@ -39,6 +39,6 @@ springdoc:
 
 tdimp:
   security:
-    jwt-secret: ${JWT_SECRET:not-used-in-the-lab-slice}
+    jwt-secret: ${JWT_SECRET}
     access-token-ttl: 15m
     refresh-token-ttl: 30d

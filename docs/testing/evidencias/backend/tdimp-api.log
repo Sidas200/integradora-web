@@ -6,7 +6,7 @@
 2026-10-14T19:07:12.134-06:00  INFO [req=] 18900 --- [tdimp-api] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
 2026-10-14T19:07:12.226-06:00  INFO [req=] 18900 --- [tdimp-api] [main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1952 ms
 2026-10-14T19:07:12.401-06:00 DEBUG [req=] 18900 --- [tdimp-api] [main] m.u.tdimp.api.config.RequestTraceFilter  : Filter 'requestTraceFilter' configured for use
-2026-10-14T19:07:14.033-06:00  INFO [req=] 18900 --- [tdimp-api] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://aws-0-ca-central-1.pooler.supabase.com:5432/postgres?sslmode=require (PostgreSQL 17.6)
+2026-10-14T19:07:14.033-06:00  INFO [req=] 18900 --- [tdimp-api] [main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://<host-del-session-pooler>:5432/postgres?sslmode=require (PostgreSQL 17.6)
 2026-10-14T19:07:15.598-06:00  INFO [req=] 18900 --- [tdimp-api] [main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "game"."flyway_schema_history" does not exist yet
 2026-10-14T19:07:15.993-06:00  INFO [req=] 18900 --- [tdimp-api] [main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.593s)
 2026-10-14T19:07:17.280-06:00  INFO [req=] 18900 --- [tdimp-api] [main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "game"."flyway_schema_history" with baseline ...

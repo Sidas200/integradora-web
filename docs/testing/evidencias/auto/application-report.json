@@ -1,0 +1,123 @@
+[
+  {
+    "step": "CP-02 en línea, tras consultar",
+    "at": "2026-10-15T01:40:06.505Z",
+    "online": true,
+    "serviceWorker": {
+      "scope": "http://localhost:4173/",
+      "state": "activated",
+      "scriptURL": "http://localhost:4173/sw.js",
+      "controlsPage": true
+    },
+    "cacheStorage": [
+      {
+        "name": "workbox-precache-v2-http://localhost:4173/",
+        "entries": 10,
+        "sample": [
+          "/pwa-512x512.png?__WB_REVISION__=cba6541732354567ddb8ff913cde99d6",
+          "/pwa-192x192.png?__WB_REVISION__=52b184fbd2f295116a3a0ed353c47a43",
+          "/maskable-icon-512x512.png?__WB_REVISION__=d92a8130fba429b7937777eb1a1373b3",
+          "/index.html?__WB_REVISION__=849008dafd74320caae3aa176cdba963"
+        ]
+      },
+      {
+        "name": "public-api",
+        "entries": 2,
+        "sample": [
+          "/api/v1/news?page=0&size=6",
+          "/api/v1/news?page=1&size=6"
+        ]
+      }
+    ],
+    "indexedDB": {
+      "databases": [
+        "workbox-expiration v1"
+      ],
+      "backgroundSyncQueue": []
+    }
+  },
+  {
+    "step": "CP-05 sin conexión, tras el envío",
+    "at": "2026-10-15T01:40:08.629Z",
+    "online": false,
+    "serviceWorker": {
+      "scope": "http://localhost:4173/",
+      "state": "activated",
+      "scriptURL": "http://localhost:4173/sw.js",
+      "controlsPage": true
+    },
+    "cacheStorage": [
+      {
+        "name": "workbox-precache-v2-http://localhost:4173/",
+        "entries": 10,
+        "sample": [
+          "/pwa-512x512.png?__WB_REVISION__=cba6541732354567ddb8ff913cde99d6",
+          "/pwa-192x192.png?__WB_REVISION__=52b184fbd2f295116a3a0ed353c47a43",
+          "/maskable-icon-512x512.png?__WB_REVISION__=d92a8130fba429b7937777eb1a1373b3",
+          "/index.html?__WB_REVISION__=849008dafd74320caae3aa176cdba963"
+        ]
+      },
+      {
+        "name": "public-api",
+        "entries": 2,
+        "sample": [
+          "/api/v1/news?page=0&size=6",
+          "/api/v1/news?page=1&size=6"
+        ]
+      }
+    ],
+    "indexedDB": {
+      "databases": [
+        "workbox-background-sync v3",
+        "workbox-expiration v1"
+      ],
+      "backgroundSyncQueue": [
+        {
+          "queueName": "subscription-queue",
+          "queuedAt": "2026-10-15T01:40:07.948Z",
+          "method": "POST",
+          "url": "http://localhost:4173/api/v1/subscriptions",
+          "payload": "{\"email\":\"lab-offline-20261015014003@tdimp.test\",\"language\":\"es\",\"consent\":true}"
+        }
+      ]
+    }
+  },
+  {
+    "step": "CP-06 en línea, tras sincronizar",
+    "at": "2026-10-15T01:40:11.214Z",
+    "online": true,
+    "serviceWorker": {
+      "scope": "http://localhost:4173/",
+      "state": "activated",
+      "scriptURL": "http://localhost:4173/sw.js",
+      "controlsPage": true
+    },
+    "cacheStorage": [
+      {
+        "name": "workbox-precache-v2-http://localhost:4173/",
+        "entries": 10,
+        "sample": [
+          "/pwa-512x512.png?__WB_REVISION__=cba6541732354567ddb8ff913cde99d6",
+          "/pwa-192x192.png?__WB_REVISION__=52b184fbd2f295116a3a0ed353c47a43",
+          "/maskable-icon-512x512.png?__WB_REVISION__=d92a8130fba429b7937777eb1a1373b3",
+          "/index.html?__WB_REVISION__=849008dafd74320caae3aa176cdba963"
+        ]
+      },
+      {
+        "name": "public-api",
+        "entries": 2,
+        "sample": [
+          "/api/v1/news?page=0&size=6",
+          "/api/v1/news?page=1&size=6"
+        ]
+      }
+    ],
+    "indexedDB": {
+      "databases": [
+        "workbox-background-sync v3",
+        "workbox-expiration v1"
+      ],
+      "backgroundSyncQueue": []
+    }
+  }
+]

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+dev-dist/
+coverage/
+.vercel/
+cypress/videos/
+cypress/screenshots/
+.env
+.env.local
+.env.*.local

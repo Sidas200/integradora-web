@@ -1,0 +1,4 @@
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--c-bg); color: var(--c-text); font-family: var(--f-body); line-height: var(--leading-body); }
+:focus-visible { outline: 3px solid var(--c-focus); outline-offset: 2px; }

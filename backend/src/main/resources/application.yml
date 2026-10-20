@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: tdimp-api
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+      schema: game
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.default_schema: game
+  flyway:
+    enabled: true
+    schemas: game
+    locations: classpath:db/migration
+    user: ${DB_MIGRATION_USER:${DB_USER}}
+    password: ${DB_MIGRATION_PASSWORD:${DB_PASSWORD}}
+
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: framework
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+
+tdimp:
+  security:
+    jwt-secret: ${JWT_SECRET:not-used-in-the-lab-slice}
+    access-token-ttl: 15m
+    refresh-token-ttl: 30d

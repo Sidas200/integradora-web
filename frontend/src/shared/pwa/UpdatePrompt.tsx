@@ -1,4 +1,4 @@
-import { applyUpdate, usePwaState } from './registerSW'
+import { applyUpdate, usePwaState } from './pwaState'
 import css from './pwa.module.css'
 
 export function UpdatePrompt() {

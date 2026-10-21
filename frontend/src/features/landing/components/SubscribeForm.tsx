@@ -1,73 +1,94 @@
-import { useState, type FormEvent } from 'react'
-import { api } from '../../../shared/api/client'
-import { usePwaState } from '../../../shared/pwa/registerSW'
-import { log } from '../../../shared/lab/logger'
-import css from './SubscribeForm.module.css'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { ApiError } from '@/shared/api/problems'
+import { usePwaState } from '@/shared/pwa'
+import { Button } from '@/shared/ui/Button'
+import { CheckboxField } from '@/shared/ui/CheckboxField'
+import { SelectField } from '@/shared/ui/SelectField'
+import { TextField } from '@/shared/ui/TextField'
+import { useSubscribe } from '../mutations'
+import { subscribeSchema, type SubscribeFormInput, type SubscribeFormOutput } from '../schemas'
 
-type Result = { kind: 'idle' | 'sending' | 'sent' | 'queued' | 'error'; text?: string }
+type ValidationKey = 'validation.required' | 'validation.email' | 'validation.consent'
+
+/** Server field errors (400) mapped to the same keys the client schema uses. */
+const SERVER_FIELD_MESSAGES: Record<string, ValidationKey> = {
+  email: 'validation.email',
+  consent: 'validation.consent',
+}
 
 export function SubscribeForm() {
-  const [email, setEmail] = useState('')
-  const [language, setLanguage] = useState<'es' | 'en'>('es')
-  const [consent, setConsent] = useState(false)
-  const [result, setResult] = useState<Result>({ kind: 'idle' })
+  const { t } = useTranslation()
   const { lastMessage } = usePwaState()
+  const subscribe = useSubscribe()
 
-  // Se deriva al renderizar en lugar de copiarlo al estado con un efecto.
-  const shown: Result =
-    lastMessage?.type === 'SUBSCRIPTION_SENT' && result.kind === 'queued'
-      ? { kind: 'sent', text: 'Volvió la conexión: tu registro pendiente ya se envió.' }
-      : result
+  const form = useForm<SubscribeFormInput, unknown, SubscribeFormOutput>({
+    resolver: zodResolver(subscribeSchema),
+    defaultValues: { email: '', language: 'es', consent: false },
+  })
+  const { errors } = form.formState
+  const message = (key?: string) => (key ? t(key as ValidationKey) : undefined)
 
-  async function submit(event: FormEvent) {
-    event.preventDefault()
-    const body = { email: email.trim().toLowerCase(), language, consent: true as const }
-    log('api', 'Payload del formulario de aviso', body)
-    setResult({ kind: 'sending' })
-    try {
-      const { response, error } = await api.POST('/subscriptions', { body })
-      if (response.headers.get('X-Queued') === '1') {
-        setResult({ kind: 'queued', text: 'Sin conexión: guardamos tu registro y se enviará solo al volver la red.' })
-      } else if (response.status === 202) {
-        setResult({ kind: 'sent', text: '¡Listo! Te avisaremos cuando salga el juego.' })
-        setEmail('')
-        setConsent(false)
-      } else {
-        log('error', `La API respondió ${response.status}`, error)
-        setResult({ kind: 'error', text: 'Revisa el correo e inténtalo de nuevo.' })
-      }
-    } catch (e) {
-      log('error', 'Fallo de red no atendido por el Service Worker', e)
-      setResult({ kind: 'error', text: 'No se pudo enviar. Inténtalo de nuevo.' })
-    }
-  }
+  const onSubmit = form.handleSubmit((values) =>
+    subscribe.mutate(
+      { email: values.email.toLowerCase(), language: values.language, consent: true },
+      {
+        onSuccess: (outcome) => {
+          if (outcome === 'SENT') form.reset()
+        },
+        onError: (error) => {
+          if (!(error instanceof ApiError)) return
+          for (const { field } of error.fieldErrors) {
+            const key = SERVER_FIELD_MESSAGES[field]
+            if (key) form.setError(field as 'email' | 'consent', { message: key })
+          }
+        },
+      },
+    ),
+  )
+
+  // Derived while rendering: a queued request that the Service Worker already sent.
+  const synced = subscribe.data === 'QUEUED' && lastMessage?.type === 'SUBSCRIPTION_SENT'
+  const result =
+    synced ? { kind: 'sent', text: t('subscribe.synced') }
+    : subscribe.data === 'SENT' ? { kind: 'sent', text: t('subscribe.sent') }
+    : subscribe.data === 'QUEUED' ? { kind: 'queued', text: t('subscribe.queued') }
+    : subscribe.error ? { kind: 'error', text: t(`errors.${(subscribe.error as ApiError).code ?? 'UNKNOWN'}`) }
+    : null
 
   return (
-    <section aria-labelledby="subscribe-title" className={css.card}>
-      <h2 id="subscribe-title">Avísame del lanzamiento</h2>
-      <form onSubmit={(e) => void submit(e)} className={css.form}>
-        <label>
-          Correo
-          <input type="email" required maxLength={254} autoComplete="email" value={email}
-                 onChange={(e) => setEmail(e.target.value)} placeholder="tu@correo.com" />
-        </label>
-        <label>
-          Idioma
-          <select value={language} onChange={(e) => setLanguage(e.target.value as 'es' | 'en')}>
-            <option value="es">Español</option>
-            <option value="en">English</option>
-          </select>
-        </label>
-        <label className={css.check}>
-          <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-          Acepto el aviso de privacidad
-        </label>
-        <button type="submit" disabled={result.kind === 'sending'}>
-          {result.kind === 'sending' ? 'Enviando…' : 'Avisarme'}
-        </button>
+    <section aria-labelledby="subscribe-title" id="subscribe">
+      <h2 id="subscribe-title">{t('subscribe.title')}</h2>
+      <form onSubmit={(e) => void onSubmit(e)} noValidate>
+        <TextField
+          label={t('subscribe.email')}
+          type="email"
+          autoComplete="email"
+          maxLength={254}
+          placeholder={t('subscribe.emailPlaceholder')}
+          error={message(errors.email?.message)}
+          {...form.register('email')}
+        />
+        <SelectField
+          label={t('subscribe.language')}
+          options={[
+            { value: 'es', label: t('subscribe.languages.es') },
+            { value: 'en', label: t('subscribe.languages.en') },
+          ]}
+          {...form.register('language')}
+        />
+        <CheckboxField
+          label={t('subscribe.consent')}
+          error={message(errors.consent?.message)}
+          {...form.register('consent')}
+        />
+        <Button type="submit" variant="promise" loading={subscribe.isPending}>
+          {subscribe.isPending ? t('subscribe.sending') : t('subscribe.submit')}
+        </Button>
       </form>
-      {shown.text && (
-        <p role="status" className={css.result} data-kind={shown.kind} data-testid="subscribe-result">{shown.text}</p>
+      {result && (
+        <p role="status" data-kind={result.kind} data-testid="subscribe-result">{result.text}</p>
       )}
     </section>
   )

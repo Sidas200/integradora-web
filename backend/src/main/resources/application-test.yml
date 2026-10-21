@@ -1,0 +1,15 @@
+# Perfil test: pruebas de integración.
+# En tu computadora usa la base tdimp_test; en CI, ci-backend.yml pasa DB_URL al PostgreSQL 16 del runner.
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/tdimp_test}
+    username: ${DB_USER:tdimp}
+    password: ${DB_PASSWORD:tdimp}
+
+tdimp:
+  security:
+    jwt-secret: ${JWT_SECRET:test-only-secret-not-used-outside-ci-0123456789}
+
+logging:
+  level:
+    mx.utch.tdimp.api: INFO

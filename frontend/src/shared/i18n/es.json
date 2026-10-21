@@ -1,0 +1,208 @@
+{
+  "app": {
+    "name": "The Day I Made That Promise",
+    "skipToContent": "Saltar al contenido"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "loadMore": "Cargar más",
+    "retry": "Reintentar",
+    "back": "Volver",
+    "pending": "Pantalla pendiente: se implementa en la fase {{phase}}."
+  },
+  "nav": {
+    "main": "Navegación principal",
+    "app": "Navegación de la cuenta",
+    "account": "Secciones de la cuenta",
+    "landing": "Secciones de la página",
+    "home": "Inicio",
+    "news": "Noticias",
+    "login": "Iniciar sesión",
+    "register": "Crear cuenta",
+    "myAccount": "Mi cuenta",
+    "dashboard": "Resumen",
+    "saves": "Partidas",
+    "history": "Historial",
+    "achievements": "Logros",
+    "settings": "Configuración",
+    "security": "Seguridad",
+    "profile": "Perfil",
+    "deleteAccount": "Eliminar cuenta"
+  },
+  "pages": {
+    "landing": "Inicio",
+    "news": "Noticias",
+    "newsPost": "Noticia",
+    "login": "Iniciar sesión",
+    "register": "Crear cuenta",
+    "dashboard": "Resumen",
+    "saves": "Partidas",
+    "saveDetail": "Partida {{slot}}",
+    "history": "Historial",
+    "achievements": "Logros",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "security": "Seguridad",
+    "deleteAccount": "Eliminar cuenta",
+    "lab": "Laboratorio de la PWA"
+  },
+  "landing": {
+    "hero": {
+      "kicker": "Hex Studio · RPG de acción 2D isométrico",
+      "tagline": "El poder no se encuentra, se fabrica.",
+      "ctaBuy": "Comprar",
+      "ctaNotify": "Avísame del lanzamiento"
+    },
+    "sections": {
+      "story": "Historia",
+      "loop": "Cómo se juega",
+      "characters": "Personajes",
+      "specs": "Ficha técnica",
+      "achievements": "Logros",
+      "news": "Noticias",
+      "buy": "Comprar"
+    },
+    "story": {
+      "title": "Una promesa que desafiará al cielo",
+      "p1": "Hace mil años, un rey desafió a los dioses. Desde entonces, los humanos bendecidos viven en islas suspendidas sobre las nubes y quien rompe las reglas del cielo recibe la marca de un «Rulebreaker».",
+      "p2": "Tsuki hizo una promesa: permanecer junto a Hikari todo el tiempo que les quedara. Cuando alguien se la lleva al cielo, salta tras ella y despierta en una isla flotante con la misma marca en la mano.",
+      "p3": "Para llegar al Gran Juzgado necesita el permiso de los guardianes de cada zona. Con una espada carmesí sin filo y una forja escondida, tendrá que fabricar su propio poder."
+    },
+    "loop": {
+      "title": "Explora, combate, fabrica",
+      "explore": {
+        "title": "Explora",
+        "text": "Recorre las zonas de la isla en vista isométrica y vuelve a la base cuando lo necesites."
+      },
+      "fight": {
+        "title": "Combate",
+        "text": "Cada enemigo avisa antes de atacar: lee sus movimientos y responde con la espada."
+      },
+      "collect": {
+        "title": "Recolecta",
+        "text": "Los enemigos y los objetos de la zona sueltan los materiales que necesitas."
+      },
+      "forge": {
+        "title": "Fabrica",
+        "text": "En la forja conviertes los materiales en mejoras: la espada pasa de 15 a 25 de daño."
+      },
+      "guardian": {
+        "title": "Desafía al guardián",
+        "text": "Abre el sello y vence al guardián de la zona para obtener su permiso."
+      }
+    },
+    "characters": {
+      "title": "Personajes",
+      "tsuki": {
+        "name": "Tsuki",
+        "role": "Protagonista",
+        "text": "Un humano marcado como «Rulebreaker» que cruza las islas del cielo para cumplir su promesa."
+      },
+      "hikari": {
+        "name": "Hikari",
+        "role": "La chica que cayó del cielo",
+        "text": "Lleva la misma marca que Tsuki. Alguien se la llevó de regreso a las islas y nadie sabe por qué."
+      },
+      "researcher": {
+        "name": "La investigadora",
+        "role": "Aliada",
+        "text": "Nunca había visto a un humano. A cambio de estudiarlo, le ofrece a Tsuki su base y su forja."
+      }
+    },
+    "specs": {
+      "title": "Ficha técnica",
+      "genreLabel": "Género",
+      "genre": "RPG de acción 2D isométrico",
+      "platformLabel": "Plataforma",
+      "platform": "PC (Windows) · teclado y mouse",
+      "engineLabel": "Motor",
+      "engine": "Unity 6",
+      "lengthLabel": "Duración",
+      "length": "Capítulo demo de 20 a 30 minutos",
+      "languageLabel": "Idioma",
+      "language": "Español",
+      "studioLabel": "Estudio",
+      "studio": "Hex Studio",
+      "releaseLabel": "Lanzamiento",
+      "release": "Próximamente"
+    },
+    "achievements": {
+      "title": "Logros por descubrir",
+      "text": "Los logros que desbloquees en el juego aparecerán en tu cuenta.",
+      "hiddenHint": "Se revela al desbloquearlo."
+    },
+    "news": {
+      "title": "Últimas noticias",
+      "seeAll": "Ver todas las noticias"
+    },
+    "buy": {
+      "title": "Consigue el juego",
+      "text": "El capítulo demo llegará a PC. Deja tu correo y te avisamos el día del lanzamiento.",
+      "button": "Comprar",
+      "unavailable": "Próximamente"
+    }
+  },
+  "subscribe": {
+    "title": "Avísame del lanzamiento",
+    "email": "Correo",
+    "emailPlaceholder": "tu@correo.com",
+    "language": "Idioma",
+    "languages": {
+      "es": "Español",
+      "en": "English"
+    },
+    "consent": "Acepto el aviso de privacidad",
+    "submit": "Avisarme",
+    "sending": "Enviando…",
+    "sent": "¡Listo! Te avisaremos cuando salga el juego.",
+    "queued": "Sin conexión: guardamos tu registro y se enviará solo al volver la red.",
+    "synced": "Volvió la conexión: tu registro pendiente ya se envió."
+  },
+  "news": {
+    "count": "{{shown}} de {{total}}",
+    "publishedOn": "Publicada el {{date}}",
+    "readMore": "Leer noticia",
+    "backToList": "Volver a noticias",
+    "empty": {
+      "title": "Todavía no hay noticias",
+      "text": "Vuelve pronto: aquí publicaremos los avances del juego."
+    },
+    "notFound": {
+      "title": "Esta noticia no existe",
+      "text": "Puede que el enlace esté mal escrito o que la noticia se haya retirado."
+    }
+  },
+  "achievements": {
+    "empty": "Todavía no hay logros publicados."
+  },
+  "validation": {
+    "required": "Este campo es obligatorio.",
+    "email": "Escribe un correo válido.",
+    "consent": "Necesitamos tu consentimiento para avisarte."
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "text": "La dirección no existe o se movió.",
+    "home": "Ir al inicio"
+  },
+  "routeError": {
+    "title": "Algo salió mal",
+    "text": "No pudimos mostrar esta página. Recarga o vuelve al inicio."
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Revisa los datos marcados.",
+    "INVALID_CREDENTIALS": "Correo o contraseña incorrectos.",
+    "TOKEN_EXPIRED": "Tu sesión expiró. Vuelve a iniciar sesión.",
+    "INVALID_SESSION": "Tu sesión ya no es válida. Vuelve a iniciar sesión.",
+    "REAUTHENTICATION_REQUIRED": "Confirma tu contraseña para continuar.",
+    "DELETION_WEB_ONLY": "La cuenta solo se puede eliminar desde la web.",
+    "EMAIL_IN_USE": "Ese correo ya tiene una cuenta.",
+    "USERNAME_IN_USE": "Ese nombre ya está en uso. Prueba con otro.",
+    "NOT_FOUND": "No encontramos lo que buscas.",
+    "VERSION_CONFLICT": "Otro dispositivo guardó cambios más recientes.",
+    "TOO_MANY_ATTEMPTS": "Demasiados intentos. Espera un momento.",
+    "INTERNAL_ERROR": "Algo falló de nuestro lado. Inténtalo más tarde.",
+    "NETWORK_ERROR": "No hay conexión con el servidor. Revisa tu internet.",
+    "UNKNOWN": "Ocurrió un error inesperado."
+  }
+}

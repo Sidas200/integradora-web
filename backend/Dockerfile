@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 # ---------- Stage 1: build the jar ----------
   FROM eclipse-temurin:21-jdk AS build
   WORKDIR /workspace

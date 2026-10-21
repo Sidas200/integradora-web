@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useOnline } from './useOnline'
-import { log } from '../lab/logger'
+import { log } from '@/shared/lab/logger'
 import css from './pwa.module.css'
 
 export function OfflineBanner() {

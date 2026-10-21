@@ -1,0 +1,1 @@
+export { labRoutes } from './routes'

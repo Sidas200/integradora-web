@@ -1,4 +1,4 @@
-// Recorrido de la PWA con Playwright. Requiere el backend en :8080 y `npm run preview`.
+// Recorrido de la PWA con Playwright sobre /lab. Requiere el backend en :8080 y `npm run preview`.
 // Uso: npm run lab:evidence   (HEADED=1 para ver el navegador, LAB_URL para otra URL)
 import { chromium } from 'playwright'
 import { mkdir, writeFile } from 'node:fs/promises'
@@ -150,7 +150,7 @@ const shot = (name) => page.screenshot({ path: path.join(OUT, name), fullPage: t
 const newsCount = () => page.getByTestId('news-item').count()
 
 await step('CP-01', 'GET /news: el listado se consulta y se renderiza', async () => {
-  await page.goto(BASE + '/', { waitUntil: 'networkidle' })
+  await page.goto(BASE + '/lab', { waitUntil: 'networkidle' })
   await page.getByTestId('news-item').first().waitFor({ timeout: 20_000 })
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, { timeout: 15_000 })
   await page.reload({ waitUntil: 'networkidle' })

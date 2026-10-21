@@ -18,8 +18,9 @@ API del proyecto en Spring Boot 4.1 con Java 21. Sigue la arquitectura por capas
 |---|---|
 | `SPRING_PROFILES_ACTIVE` | `local` |
 | `DB_URL` | `jdbc:postgresql://<host del session pooler>:5432/postgres?sslmode=require` |
-| `DB_USER` | `postgres.bkzsbwuksmqwroudvljz` |
+| `DB_USER` | `postgres.<project-ref>` |
 | `DB_PASSWORD` | Contraseña de la base de datos |
+| `JWT_SECRET` | Cadena aleatoria de al menos 64 caracteres (obligatoria, no tiene valor por defecto) |
 
 El host se copia de Supabase, en Connect, opción Session pooler. El archivo `.env` no se sube al repositorio.
 

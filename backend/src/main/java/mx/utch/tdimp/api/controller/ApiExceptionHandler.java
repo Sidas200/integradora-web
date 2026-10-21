@@ -3,8 +3,11 @@ package mx.utch.tdimp.api.controller;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import mx.utch.tdimp.api.exception.ConflictException;
 import mx.utch.tdimp.api.exception.InvalidParameterException;
 import mx.utch.tdimp.api.exception.NotFoundException;
+import mx.utch.tdimp.api.exception.UnauthenticatedException;
+import mx.utch.tdimp.api.exception.VersionConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -55,6 +58,31 @@ class ApiExceptionHandler {
   @ExceptionHandler(NotFoundException.class)
   ResponseEntity<ProblemDetail> notFound(NotFoundException ex) {
     return problem(HttpStatus.NOT_FOUND, "Not found", "NOT_FOUND", ex.getMessage());
+  }
+
+  @ExceptionHandler(UnauthenticatedException.class)
+  ResponseEntity<ProblemDetail> unauthenticated(UnauthenticatedException ex) {
+    log.info("401 {}: {}", ex.code(), ex.getMessage());
+    var response = problem(HttpStatus.UNAUTHORIZED, "Unauthenticated", ex.code(), ex.getMessage());
+    response.getBody().setType(URI.create(TYPE_BASE + "unauthenticated"));
+    return response;
+  }
+
+  @ExceptionHandler(ConflictException.class)
+  ResponseEntity<ProblemDetail> conflict(ConflictException ex) {
+    var response = problem(HttpStatus.CONFLICT, "Already exists", ex.code(), null);
+    response.getBody().setType(URI.create(TYPE_BASE + "conflict"));
+    response.getBody().setProperty("errors",
+        List.of(Map.of("field", ex.field(), "code", "IN_USE", "message", ex.getMessage())));
+    return response;
+  }
+
+  @ExceptionHandler(VersionConflictException.class)
+  ResponseEntity<ProblemDetail> versionConflict(VersionConflictException ex) {
+    var response = problem(HttpStatus.CONFLICT, "Version conflict", "VERSION_CONFLICT", ex.getMessage());
+    response.getBody().setProperty("serverVersion", ex.serverVersion());
+    response.getBody().setProperty("serverUpdatedAt", ex.serverUpdatedAt());
+    return response;
   }
 
   @ExceptionHandler(DataAccessException.class)

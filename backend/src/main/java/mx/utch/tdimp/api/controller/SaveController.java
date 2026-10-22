@@ -11,7 +11,7 @@ import mx.utch.tdimp.api.dto.SaveDataDto;
 import mx.utch.tdimp.api.dto.SaveDetailDto;
 import mx.utch.tdimp.api.dto.SaveSummaryDto;
 import mx.utch.tdimp.api.exception.InvalidParameterException;
-import mx.utch.tdimp.api.model.AccessClaims;
+import mx.utch.tdimp.api.service.AccessClaims;
 import mx.utch.tdimp.api.service.SaveService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

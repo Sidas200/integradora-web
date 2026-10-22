@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { usePwaState } from './registerSW'
+import { usePwaState } from './pwaState'
 import { useOnline } from './useOnline'
-import { log, logTable } from '../lab/logger'
+import { log, logTable } from '@/shared/lab/logger'
 import css from './pwa.module.css'
 
 type Snapshot = {

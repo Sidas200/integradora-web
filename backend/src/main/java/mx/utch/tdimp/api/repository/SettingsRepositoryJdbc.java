@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mx.utch.tdimp.api.config.QueryTimer;
-import mx.utch.tdimp.api.dto.SettingsDto;
+import mx.utch.tdimp.api.model.Settings;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 import tools.jackson.core.type.TypeReference;
@@ -35,7 +35,7 @@ class SettingsRepositoryJdbc implements SettingsRepository {
   }
 
   @Override
-  public Optional<SettingsDto> find(UUID playerId) {
+  public Optional<Settings> find(UUID playerId) {
     return QueryTimer.time(() -> jdbc.sql("select %s from settings where player_id = :playerId".formatted(COLUMNS))
         .param("playerId", playerId)
         .query(this::map)
@@ -43,7 +43,7 @@ class SettingsRepositoryJdbc implements SettingsRepository {
   }
 
   @Override
-  public SettingsDto upsert(UUID playerId, SettingsDto s) {
+  public Settings upsert(UUID playerId, Settings s) {
     return QueryTimer.time(() -> jdbc.sql("""
             insert into settings (player_id, music_volume, sfx_volume, language, fullscreen, controls)
             values (:playerId, :music, :sfx, :language, :fullscreen, cast(:controls as jsonb))
@@ -62,8 +62,8 @@ class SettingsRepositoryJdbc implements SettingsRepository {
         .single()).value();
   }
 
-  private SettingsDto map(ResultSet rs, int rowNum) throws SQLException {
-    return new SettingsDto(
+  private Settings map(ResultSet rs, int rowNum) throws SQLException {
+    return new Settings(
         rs.getInt("music_volume"),
         rs.getInt("sfx_volume"),
         rs.getString("language"),

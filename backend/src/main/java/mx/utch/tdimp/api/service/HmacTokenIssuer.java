@@ -11,9 +11,10 @@ import java.util.Map;
 import java.util.UUID;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import mx.utch.tdimp.api.config.SecurityProperties;
+import mx.utch.tdimp.api.config.TdimpProperties;
+import mx.utch.tdimp.api.exception.ErrorCode;
 import mx.utch.tdimp.api.exception.UnauthenticatedException;
-import mx.utch.tdimp.api.model.AccessClaims;
+import mx.utch.tdimp.api.service.AccessClaims;
 import mx.utch.tdimp.api.model.ClientType;
 import org.springframework.stereotype.Service;
 import tools.jackson.core.type.TypeReference;
@@ -32,9 +33,9 @@ class HmacTokenIssuer implements TokenIssuer {
   private final JsonMapper json;
   private final Clock clock = Clock.systemUTC();
 
-  HmacTokenIssuer(SecurityProperties properties, JsonMapper json) {
-    this.key = new SecretKeySpec(properties.jwtSecret().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-    this.ttlSeconds = properties.accessTokenTtl().toSeconds();
+  HmacTokenIssuer(TdimpProperties properties, JsonMapper json) {
+    this.key = new SecretKeySpec(properties.security().jwtSecret().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+    this.ttlSeconds = properties.security().accessTokenTtl().toSeconds();
     this.json = json;
   }
 
@@ -77,7 +78,7 @@ class HmacTokenIssuer implements TokenIssuer {
     try {
       long exp = ((Number) claims.get("exp")).longValue();
       if (clock.instant().getEpochSecond() >= exp) {
-        throw new UnauthenticatedException("TOKEN_EXPIRED", "The access token has expired.");
+        throw new UnauthenticatedException(ErrorCode.TOKEN_EXPIRED, "The access token has expired.");
       }
       return new AccessClaims(
           UUID.fromString((String) claims.get("sub")),
@@ -104,6 +105,6 @@ class HmacTokenIssuer implements TokenIssuer {
   }
 
   private static UnauthenticatedException invalid() {
-    return new UnauthenticatedException("INVALID_SESSION", "The access token is not valid.");
+    return new UnauthenticatedException(ErrorCode.INVALID_SESSION, "The access token is not valid.");
   }
 }

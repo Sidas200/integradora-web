@@ -9,6 +9,7 @@ import mx.utch.tdimp.api.dto.LoginRequest;
 import mx.utch.tdimp.api.dto.RefreshRequest;
 import mx.utch.tdimp.api.dto.RegisterRequest;
 import mx.utch.tdimp.api.dto.TokenResponse;
+import mx.utch.tdimp.api.exception.ErrorCode;
 import mx.utch.tdimp.api.exception.UnauthenticatedException;
 import mx.utch.tdimp.api.service.AuthResult;
 import mx.utch.tdimp.api.service.AuthService;
@@ -53,7 +54,7 @@ class AuthController {
                                         @RequestHeader(value = HttpHeaders.USER_AGENT, required = false) String userAgent,
                                         HttpServletRequest request, HttpServletResponse response) {
     String token = readToken(request, body)
-        .orElseThrow(() -> new UnauthenticatedException("INVALID_SESSION", "A refresh token is required."));
+        .orElseThrow(() -> new UnauthenticatedException(ErrorCode.INVALID_SESSION, "A refresh token is required."));
     try {
       return respond(HttpStatus.OK, auth.refresh(token, userAgent), response);
     } catch (UnauthenticatedException ex) {

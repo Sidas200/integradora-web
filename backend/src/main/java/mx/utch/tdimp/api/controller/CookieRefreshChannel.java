@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Optional;
-import mx.utch.tdimp.api.config.SecurityProperties;
+import mx.utch.tdimp.api.config.TdimpProperties;
 import mx.utch.tdimp.api.dto.RefreshRequest;
 import mx.utch.tdimp.api.dto.TokenResponse;
 import mx.utch.tdimp.api.model.ClientType;
@@ -26,8 +26,8 @@ class CookieRefreshChannel implements RefreshChannel {
 
   private final Duration maxAge;
 
-  CookieRefreshChannel(SecurityProperties properties) {
-    this.maxAge = properties.refreshTokenTtl();
+  CookieRefreshChannel(TdimpProperties properties) {
+    this.maxAge = properties.security().refreshTokenTtl();
   }
 
   @Override

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Public achievement catalog (README §7.2). It changes only with a Flyway migration, so it caches for 1 hour. */
 @RestController
 @RequestMapping("/api/v1/achievements")
 class AchievementController {
@@ -23,7 +24,7 @@ class AchievementController {
   }
 
   @GetMapping
-  ResponseEntity<List<AchievementDto>> list() {
+  ResponseEntity<List<AchievementDto>> catalog() {
     return ResponseEntity.ok().cacheControl(PUBLIC_1_HOUR).body(achievements.catalog());
   }
 }

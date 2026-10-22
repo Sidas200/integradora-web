@@ -4,7 +4,8 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import mx.utch.tdimp.api.config.QueryTimer;
-import mx.utch.tdimp.api.dto.PlayerAchievementDto;
+import mx.utch.tdimp.api.model.Achievement;
+import mx.utch.tdimp.api.model.PlayerAchievement;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -18,19 +19,18 @@ class AchievementRepositoryJdbc implements AchievementRepository {
   }
 
   @Override
-  public List<PlayerAchievementDto> forPlayer(UUID playerId) {
+  public List<PlayerAchievement> forPlayer(UUID playerId) {
     return QueryTimer.time(() -> jdbc.sql("""
             select a.id, a.name, a.description, a.icon_key, a.hidden, a.sort_order, pa.unlocked_at
             from achievements a
             left join player_achievements pa on pa.achievement_id = a.id and pa.player_id = :playerId
-            order by a.sort_order
+            order by a.sort_order, a.id
             """)
         .param("playerId", playerId)
-        .query((rs, n) -> {
-          OffsetDateTime unlockedAt = rs.getObject("unlocked_at", OffsetDateTime.class);
-          return new PlayerAchievementDto(rs.getString("id"), rs.getString("name"), rs.getString("description"),
-              rs.getString("icon_key"), rs.getBoolean("hidden"), rs.getInt("sort_order"), unlockedAt != null, unlockedAt);
-        })
+        .query((rs, n) -> new PlayerAchievement(
+            new Achievement(rs.getString("id"), rs.getString("name"), rs.getString("description"),
+                rs.getString("icon_key"), rs.getBoolean("hidden"), rs.getInt("sort_order")),
+            rs.getObject("unlocked_at", OffsetDateTime.class)))
         .list()).value();
   }
 

@@ -1,6 +1,6 @@
 package mx.utch.tdimp.api.controller;
 
-import mx.utch.tdimp.api.model.AccessClaims;
+import mx.utch.tdimp.api.service.AccessClaims;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;

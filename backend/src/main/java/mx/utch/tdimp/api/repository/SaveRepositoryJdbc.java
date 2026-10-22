@@ -9,11 +9,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import mx.utch.tdimp.api.config.QueryTimer;
-import mx.utch.tdimp.api.dto.SaveDataDto;
-import mx.utch.tdimp.api.dto.SaveDetailDto;
-import mx.utch.tdimp.api.dto.SaveStatsDto;
-import mx.utch.tdimp.api.dto.SaveSummaryDto;
+import mx.utch.tdimp.api.model.InventoryItem;
+import mx.utch.tdimp.api.model.MilestoneStatus;
+import mx.utch.tdimp.api.model.SaveContent;
 import mx.utch.tdimp.api.model.SaveRecord;
+import mx.utch.tdimp.api.model.SaveStats;
+import mx.utch.tdimp.api.model.SaveSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -52,7 +53,7 @@ class SaveRepositoryJdbc implements SaveRepository {
   }
 
   @Override
-  public List<SaveSummaryDto> listSummaries(UUID playerId) {
+  public List<SaveSummary> listSummaries(UUID playerId) {
     var timed = QueryTimer.time(() -> jdbc.sql(SUMMARY + " order by s.slot")
         .param("playerId", playerId)
         .query(SaveRepositoryJdbc::mapSummary)
@@ -62,7 +63,7 @@ class SaveRepositoryJdbc implements SaveRepository {
   }
 
   @Override
-  public Optional<SaveSummaryDto> findSummary(UUID playerId, int slot) {
+  public Optional<SaveSummary> findSummary(UUID playerId, int slot) {
     return QueryTimer.time(() -> jdbc.sql(SUMMARY + " and s.slot = :slot")
         .param("playerId", playerId)
         .param("slot", slot)
@@ -90,7 +91,7 @@ class SaveRepositoryJdbc implements SaveRepository {
   }
 
   @Override
-  public SaveRecord insert(UUID playerId, int slot, SaveDataDto d) {
+  public SaveRecord insert(UUID playerId, int slot, SaveContent d) {
     var timed = QueryTimer.time(() -> jdbc.sql("""
             insert into saves (player_id, slot, active_character, current_chapter, current_scene, pos_x, pos_y, health,
                                extra_data, version)
@@ -107,7 +108,7 @@ class SaveRepositoryJdbc implements SaveRepository {
   }
 
   @Override
-  public SaveRecord update(UUID saveId, SaveDataDto d) {
+  public SaveRecord update(UUID saveId, SaveContent d) {
     var timed = QueryTimer.time(() -> jdbc.sql("""
             update saves
             set active_character = :character, current_chapter = :chapter, current_scene = :scene,
@@ -124,7 +125,7 @@ class SaveRepositoryJdbc implements SaveRepository {
     return timed.value();
   }
 
-  private Map<String, Object> saveColumns(SaveDataDto d) {
+  private Map<String, Object> saveColumns(SaveContent d) {
     var params = new HashMap<String, Object>();
     params.put("character", d.activeCharacter());
     params.put("chapter", d.currentChapter());
@@ -137,7 +138,7 @@ class SaveRepositoryJdbc implements SaveRepository {
   }
 
   @Override
-  public void replaceContents(UUID saveId, SaveDataDto d) {
+  public void replaceContents(UUID saveId, SaveContent d) {
     var stats = d.stats();
     QueryTimer.time(() -> jdbc.sql("""
             insert into save_stats (save_id, play_time_sec, enemies_defeated, deaths, materials_collected, items_crafted)
@@ -202,7 +203,7 @@ class SaveRepositoryJdbc implements SaveRepository {
   }
 
   @Override
-  public SaveDataDto readData(SaveRecord save) {
+  public SaveContent readData(SaveRecord save) {
     UUID id = save.id();
     var head = QueryTimer.time(() -> jdbc.sql("""
             select active_character, current_chapter, current_scene, pos_x, pos_y, health, extra_data::text as extra
@@ -216,7 +217,7 @@ class SaveRepositoryJdbc implements SaveRepository {
 
     var inventory = QueryTimer.time(() -> jdbc.sql("select item_id, quantity from inventory where save_id = :id order by item_id")
         .param("id", id)
-        .query((rs, n) -> new SaveDataDto.InventoryEntry(rs.getString("item_id"), rs.getInt("quantity")))
+        .query((rs, n) -> new SaveContent.InventoryEntry(rs.getString("item_id"), rs.getInt("quantity")))
         .list()).value();
     var pickups = QueryTimer.time(() -> jdbc.sql("select pickup_id from collected_pickups where save_id = :id order by pickup_id")
         .param("id", id)
@@ -224,23 +225,23 @@ class SaveRepositoryJdbc implements SaveRepository {
         .list()).value();
     var objects = QueryTimer.time(() -> jdbc.sql("select object_id, state from interacted_objects where save_id = :id order by object_id")
         .param("id", id)
-        .query((rs, n) -> new SaveDataDto.ObjectState(rs.getString("object_id"), rs.getString("state")))
+        .query((rs, n) -> new SaveContent.ObjectState(rs.getString("object_id"), rs.getString("state")))
         .list()).value();
     var milestones = QueryTimer.time(() -> jdbc.sql("""
             select milestone_id, play_time_sec, completed_at from story_progress where save_id = :id order by completed_at
             """)
         .param("id", id)
-        .query((rs, n) -> new SaveDataDto.CompletedMilestone(rs.getString("milestone_id"),
+        .query((rs, n) -> new SaveContent.CompletedMilestone(rs.getString("milestone_id"),
             rs.getObject("play_time_sec", Integer.class), rs.getObject("completed_at", OffsetDateTime.class)))
         .list()).value();
 
-    return new SaveDataDto(
+    return new SaveContent(
         save.version(),
         head.character(),
         head.chapter(),
         head.scene(),
         head.posX() == null || head.posY() == null ? null
-            : new SaveDataDto.Position(head.posX().doubleValue(), head.posY().doubleValue()),
+            : new SaveContent.Position(head.posX().doubleValue(), head.posY().doubleValue()),
         head.health(),
         readStats(id),
         inventory,
@@ -255,20 +256,20 @@ class SaveRepositoryJdbc implements SaveRepository {
   }
 
   @Override
-  public SaveStatsDto readStats(UUID saveId) {
+  public SaveStats readStats(UUID saveId) {
     return QueryTimer.time(() -> jdbc.sql("""
             select play_time_sec, enemies_defeated, deaths, materials_collected, items_crafted
             from save_stats where save_id = :saveId
             """)
         .param("saveId", saveId)
-        .query((rs, n) -> new SaveStatsDto(rs.getInt("play_time_sec"), rs.getInt("enemies_defeated"), rs.getInt("deaths"),
+        .query((rs, n) -> new SaveStats(rs.getInt("play_time_sec"), rs.getInt("enemies_defeated"), rs.getInt("deaths"),
             rs.getInt("materials_collected"), rs.getInt("items_crafted")))
         .optional()).value()
-        .orElse(new SaveStatsDto(0, 0, 0, 0, 0));
+        .orElse(SaveStats.EMPTY);
   }
 
   @Override
-  public List<SaveDetailDto.Item> readInventoryDetail(UUID saveId) {
+  public List<InventoryItem> readInventoryDetail(UUID saveId) {
     return QueryTimer.time(() -> jdbc.sql("""
             select i.id, i.name, i.type, i.rarity, i.icon_key, inv.quantity
             from inventory inv join items i on i.id = inv.item_id
@@ -276,13 +277,13 @@ class SaveRepositoryJdbc implements SaveRepository {
             order by i.type, i.name
             """)
         .param("saveId", saveId)
-        .query((rs, n) -> new SaveDetailDto.Item(rs.getString("id"), rs.getString("name"), rs.getString("type"),
+        .query((rs, n) -> new InventoryItem(rs.getString("id"), rs.getString("name"), rs.getString("type"),
             rs.getString("rarity"), rs.getString("icon_key"), rs.getInt("quantity")))
         .list()).value();
   }
 
   @Override
-  public List<SaveDetailDto.Milestone> readMilestones(UUID saveId) {
+  public List<MilestoneStatus> readMilestones(UUID saveId) {
     return QueryTimer.time(() -> jdbc.sql("""
             select m.id, m.title, m.chapter, sp.completed_at
             from story_milestones m
@@ -290,18 +291,18 @@ class SaveRepositoryJdbc implements SaveRepository {
             order by m.sort_order
             """)
         .param("saveId", saveId)
-        .query((rs, n) -> new SaveDetailDto.Milestone(rs.getString("id"), rs.getString("title"), rs.getInt("chapter"),
+        .query((rs, n) -> new MilestoneStatus(rs.getString("id"), rs.getString("title"), rs.getInt("chapter"),
             rs.getObject("completed_at", OffsetDateTime.class)))
         .list()).value();
   }
 
-  private static SaveSummaryDto mapSummary(ResultSet rs, int rowNum) throws SQLException {
+  private static SaveSummary mapSummary(ResultSet rs, int rowNum) throws SQLException {
     String lastId = rs.getString("last_milestone_id");
-    return new SaveSummaryDto(
+    return new SaveSummary(
         rs.getInt("slot"),
         rs.getString("active_character"),
         rs.getInt("current_chapter"),
-        lastId == null ? null : new SaveSummaryDto.MilestoneRef(lastId, rs.getString("last_milestone_title")),
+        lastId == null ? null : new SaveSummary.MilestoneRef(lastId, rs.getString("last_milestone_title")),
         rs.getInt("milestones_completed"),
         rs.getInt("milestones_total"),
         rs.getInt("play_time_sec"),

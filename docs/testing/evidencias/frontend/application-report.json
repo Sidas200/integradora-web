@@ -1,0 +1,113 @@
+[
+  {
+    "step": "PWA-02 en línea, tras consultar",
+    "at": "2026-10-21T20:45:37.408Z",
+    "online": true,
+    "serviceWorker": {
+      "state": "activated",
+      "scriptURL": "http://localhost:4173/sw.js",
+      "controlsPage": true
+    },
+    "cacheStorage": [
+      {
+        "name": "workbox-precache-v2-http://localhost:4173/",
+        "entries": 35,
+        "api": []
+      },
+      {
+        "name": "public-api",
+        "entries": 4,
+        "api": [
+          "/api/v1/achievements",
+          "/api/v1/news?page=0&size=3",
+          "/api/v1/news?page=0&size=6",
+          "/api/v1/news?page=1&size=6"
+        ]
+      }
+    ],
+    "indexedDB": {
+      "databases": [
+        "workbox-expiration"
+      ],
+      "backgroundSyncQueue": []
+    }
+  },
+  {
+    "step": "PWA-07 sin conexión, tras el envío",
+    "at": "2026-10-21T20:45:42.043Z",
+    "online": false,
+    "serviceWorker": {
+      "state": "activated",
+      "scriptURL": "http://localhost:4173/sw.js",
+      "controlsPage": true
+    },
+    "cacheStorage": [
+      {
+        "name": "workbox-precache-v2-http://localhost:4173/",
+        "entries": 35,
+        "api": []
+      },
+      {
+        "name": "public-api",
+        "entries": 5,
+        "api": [
+          "/api/v1/news?page=0&size=6",
+          "/api/v1/news?page=1&size=6",
+          "/api/v1/news/announcing-the-day-i-made-that-promise",
+          "/api/v1/achievements",
+          "/api/v1/news?page=0&size=3"
+        ]
+      }
+    ],
+    "indexedDB": {
+      "databases": [
+        "workbox-background-sync",
+        "workbox-expiration"
+      ],
+      "backgroundSyncQueue": [
+        {
+          "queueName": "subscription-queue",
+          "queuedAt": "2026-10-21T20:45:41.579Z",
+          "method": "POST",
+          "url": "http://localhost:4173/api/v1/subscriptions",
+          "payload": "{\"email\":\"lab-offline-20261021204531@tdimp.test\",\"language\":\"es\",\"consent\":true}"
+        }
+      ]
+    }
+  },
+  {
+    "step": "PWA-08 en línea, tras sincronizar",
+    "at": "2026-10-21T20:45:43.466Z",
+    "online": true,
+    "serviceWorker": {
+      "state": "activated",
+      "scriptURL": "http://localhost:4173/sw.js",
+      "controlsPage": true
+    },
+    "cacheStorage": [
+      {
+        "name": "workbox-precache-v2-http://localhost:4173/",
+        "entries": 35,
+        "api": []
+      },
+      {
+        "name": "public-api",
+        "entries": 5,
+        "api": [
+          "/api/v1/news?page=0&size=6",
+          "/api/v1/news?page=1&size=6",
+          "/api/v1/news/announcing-the-day-i-made-that-promise",
+          "/api/v1/achievements",
+          "/api/v1/news?page=0&size=3"
+        ]
+      }
+    ],
+    "indexedDB": {
+      "databases": [
+        "workbox-background-sync",
+        "workbox-expiration"
+      ],
+      "backgroundSyncQueue": []
+    }
+  }
+]

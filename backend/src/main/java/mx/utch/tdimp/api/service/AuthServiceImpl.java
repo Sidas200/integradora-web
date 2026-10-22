@@ -10,11 +10,12 @@ import java.util.Base64;
 import java.util.HexFormat;
 import java.util.Locale;
 import java.util.UUID;
-import mx.utch.tdimp.api.config.SecurityProperties;
+import mx.utch.tdimp.api.config.TdimpProperties;
 import mx.utch.tdimp.api.dto.LoginRequest;
 import mx.utch.tdimp.api.dto.RegisterRequest;
 import mx.utch.tdimp.api.dto.SessionPlayerDto;
 import mx.utch.tdimp.api.dto.TokenResponse;
+import mx.utch.tdimp.api.exception.ErrorCode;
 import mx.utch.tdimp.api.exception.ConflictException;
 import mx.utch.tdimp.api.exception.InvalidParameterException;
 import mx.utch.tdimp.api.exception.UnauthenticatedException;
@@ -43,20 +44,20 @@ class AuthServiceImpl implements AuthService {
   private final SettingsRepository settings;
   private final PasswordEncoder passwords;
   private final TokenIssuer tokens;
-  private final SecurityProperties properties;
+  private final TdimpProperties.Security properties;
   private final SecureRandom random = new SecureRandom();
   private final Clock clock = Clock.systemUTC();
   // Se compara contra este hash cuando el correo no existe: la respuesta tarda lo mismo.
   private final String dummyHash;
 
   AuthServiceImpl(PlayerRepository players, AuthSessionRepository sessions, SettingsRepository settings,
-                  PasswordEncoder passwords, TokenIssuer tokens, SecurityProperties properties) {
+                  PasswordEncoder passwords, TokenIssuer tokens, TdimpProperties properties) {
     this.players = players;
     this.sessions = sessions;
     this.settings = settings;
     this.passwords = passwords;
     this.tokens = tokens;
-    this.properties = properties;
+    this.properties = properties.security();
     this.dummyHash = passwords.encode("timing-equalizer-password");
   }
 
@@ -68,10 +69,10 @@ class AuthServiceImpl implements AuthService {
     }
     String email = normalize(request.email());
     if (players.emailExists(email)) {
-      throw new ConflictException("EMAIL_IN_USE", "email", "Email is already registered.");
+      throw new ConflictException(ErrorCode.EMAIL_IN_USE, "email", "Email is already registered.");
     }
     if (players.usernameExists(request.username())) {
-      throw new ConflictException("USERNAME_IN_USE", "username", "Username is already taken.");
+      throw new ConflictException(ErrorCode.USERNAME_IN_USE, "username", "Username is already taken.");
     }
     OffsetDateTime now = OffsetDateTime.now(clock);
     Player player;
@@ -81,8 +82,8 @@ class AuthServiceImpl implements AuthService {
       // Dos registros simultáneos con el mismo dato: el índice único decide.
       boolean emailTaken = ex.getMostSpecificCause().getMessage().contains("ux_players_email");
       throw emailTaken
-          ? new ConflictException("EMAIL_IN_USE", "email", "Email is already registered.")
-          : new ConflictException("USERNAME_IN_USE", "username", "Username is already taken.");
+          ? new ConflictException(ErrorCode.EMAIL_IN_USE, "email", "Email is already registered.")
+          : new ConflictException(ErrorCode.USERNAME_IN_USE, "username", "Username is already taken.");
     }
     settings.insertDefaults(player.id());
     log.info("Cuenta creada: jugador={} cliente={}", player.id(), request.client());
@@ -96,7 +97,7 @@ class AuthServiceImpl implements AuthService {
     boolean valid = passwords.matches(request.password(), player.map(Player::passwordHash).orElse(dummyHash));
     if (player.isEmpty() || !valid) {
       log.info("Login rechazado ({})", player.isEmpty() ? "correo no registrado" : "contraseña incorrecta");
-      throw new UnauthenticatedException("INVALID_CREDENTIALS", "Email or password is not valid.");
+      throw new UnauthenticatedException(ErrorCode.INVALID_CREDENTIALS, "Email or password is not valid.");
     }
     OffsetDateTime now = OffsetDateTime.now(clock);
     players.touchLastLogin(player.get().id(), now);
@@ -181,6 +182,6 @@ class AuthServiceImpl implements AuthService {
   }
 
   private static UnauthenticatedException invalidSession() {
-    return new UnauthenticatedException("INVALID_SESSION", "The session is not valid. Log in again.");
+    return new UnauthenticatedException(ErrorCode.INVALID_SESSION, "The session is not valid. Log in again.");
   }
 }

@@ -2,10 +2,8 @@ package mx.utch.tdimp.api.repository;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import mx.utch.tdimp.api.config.QueryTimer;
-import mx.utch.tdimp.api.dto.AchievementDto;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -39,16 +37,6 @@ class CatalogReaderJdbc implements CatalogReader {
     var missing = new HashSet<>(ids);
     known.forEach(missing::remove);
     return missing;
-  }
-
-  @Override
-  public List<AchievementDto> achievements() {
-    return QueryTimer.time(() -> jdbc.sql("""
-            select id, name, description, icon_key, hidden, sort_order from achievements order by sort_order
-            """)
-        .query((rs, n) -> new AchievementDto(rs.getString("id"), rs.getString("name"), rs.getString("description"),
-            rs.getString("icon_key"), rs.getBoolean("hidden"), rs.getInt("sort_order")))
-        .list()).value();
   }
 
   @Override

@@ -1,0 +1,298 @@
+﻿
+> tdimp-pwa@0.1.0-lab test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90mC:/Users/regin/OneDrive/Documents/integradora-web/frontend[39m
+
+ [32m✓[39m src/shared/lab/logger.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m src/shared/api/problems.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+node.exe : [90mstderr[2m | src/features/news/news.test.tsx[2m > 
+[22m[2mnoticias[2m > [22m[2mpagina con Cargar más hasta mostrar todas
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\regin\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo              : NotSpecified:     ([90mstderr[2m...a     
+mostrar todas:Strin    g) [], RemoteExcepti    on
+    + FullyQualifiedErro    rId : NativeCommandE    rror
+ 
+[22m[39mNo `HydrateFallback` element provided to render during initial hydration
+
+[90mstderr[2m | src/app/routes.test.tsx[2m > [22m[2mnavegación[2m > 
+[22m[2muna ruta privada sin sesión manda a /login y recuerda a dónde iba
+[22m[39mNo `HydrateFallback` element provided to render during initial hydration
+
+[90mstderr[2m | src/features/landing/LandingPage.test.tsx[2m > 
+[22m[2mlanding[2m > [22m[2mmuestra todas las secciones y lee noticias y logros 
+de la API
+[22m[39mNo `HydrateFallback` element provided to render during initial hydration
+
+[90mstdout[2m | src/app/routes.test.tsx[2m > [22m[2mnavegación[2m > [22m[2muna ruta privada sin sesión manda a /login y recuerda a dónde iba
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mpagina con Cargar más hasta mostrar todas
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/news?page=0&size=6
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mpagina con Cargar más hasta mostrar todas
+[22m[39mTDIMP API ← 200 GET /api/v1/news en 104 ms · 867 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mpagina con Cargar más hasta mostrar todas
+[22m[39mTDIMP RENDER NewsList renderizó 6 de 8 noticias
+
+[90mstdout[2m | src/app/routes.test.tsx[2m > [22m[2mnavegación[2m > [22m[2muna dirección que no existe muestra la página 404 dentro del layout
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+
+[90mstdout[2m | src/app/routes.test.tsx[2m > [22m[2mnavegación[2m > [22m[2mel layout público ofrece entrar o crear cuenta a quien no tiene sesión
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+
+ [32m✓[39m src/app/routes.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 749[2mms[22m[39m
+   [32m✓[39m navegación [2m(3)[22m
+     [33m[2m✓[22m[39m una ruta privada sin sesión manda a /login y recuerda a dónde iba[33m 597[2mms[22m[39m
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2mlanding[2m > [22m[2mmuestra todas las secciones y lee noticias y logros de la API
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/achievements
+TDIMP API → GET /api/v1/news?page=0&size=3
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mpagina con Cargar más hasta mostrar todas
+[22m[39mTDIMP API → GET /api/v1/news?page=1&size=6
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mpagina con Cargar más hasta mostrar todas
+[22m[39mTDIMP API ← 200 GET /api/v1/news en 31 ms · 339 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2mlanding[2m > [22m[2mmuestra todas las secciones y lee noticias y logros de la API
+[22m[39mTDIMP API ← 200 GET /api/v1/news en 422 ms · 471 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+TDIMP API ← 200 GET /api/v1/achievements en 424 ms · 264 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mpagina con Cargar más hasta mostrar todas
+[22m[39mTDIMP RENDER NewsList renderizó 8 de 8 noticias
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2muna lista vacía explica qué pasa
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/news?page=0&size=6
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2muna lista vacía explica qué pasa
+[22m[39mTDIMP API ← 200 GET /api/v1/news en 14 ms · 76 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2muna lista vacía explica qué pasa
+[22m[39mTDIMP RENDER NewsList renderizó 0 de 0 noticias
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mun error de la API ofrece reintentar
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/news?page=0&size=6
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mun error de la API ofrece reintentar
+[22m[39mTDIMP API ← 500 GET /api/v1/news en 7 ms · 114 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/problem+json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2mlanding[2m > [22m[2msin tienda el botón Comprar está desactivado y dice Próximamente
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/achievements
+TDIMP API → GET /api/v1/news?page=0&size=3
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2mlanding[2m > [22m[2msin tienda el botón Comprar está desactivado y dice Próximamente
+[22m[39mTDIMP API ← 200 GET /api/v1/achievements en 48 ms · 264 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2mlanding[2m > [22m[2msin tienda el botón Comprar está desactivado y dice Próximamente
+[22m[39mTDIMP API ← 200 GET /api/v1/news en 54 ms · 471 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2mvalida en el navegador antes de llamar a la API
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/achievements
+TDIMP API → GET /api/v1/news?page=0&size=3
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2mvalida en el navegador antes de llamar a la API
+[22m[39mTDIMP API ← 200 GET /api/v1/achievements en 28 ms · 264 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2mvalida en el navegador antes de llamar a la API
+[22m[39mTDIMP API ← 200 GET /api/v1/news en 33 ms · 471 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mel detalle convierte el Markdown en HTML
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/news/devlog-01
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mel detalle convierte el Markdown en HTML
+[22m[39mTDIMP API ← 200 GET /api/v1/news/devlog-01 en 16 ms · 184 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2menvía el correo en minúsculas y confirma con 202
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/achievements
+TDIMP API → GET /api/v1/news?page=0&size=3
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2menvía el correo en minúsculas y confirma con 202
+[22m[39mTDIMP API ← 200 GET /api/v1/achievements en 12 ms · 264 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2menvía el correo en minúsculas y confirma con 202
+[22m[39mTDIMP API ← 200 GET /api/v1/news en 17 ms · 471 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mun slug que no existe muestra "Esta noticia no existe"
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/news/no-existe
+
+[90mstdout[2m | src/features/news/news.test.tsx[2m > [22m[2mnoticias[2m > [22m[2mun slug que no existe muestra "Esta noticia no existe"
+[22m[39mTDIMP API ← 404 GET /api/v1/news/no-existe en 12 ms · 99 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/problem+json'[39m
+}
+
+ [32m✓[39m src/features/news/news.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 1514[2mms[22m[39m
+   [32m✓[39m noticias [2m(5)[22m
+     [33m[2m✓[22m[39m pagina con Cargar más hasta mostrar todas[33m 904[2mms[22m[39m
+     [33m[2m✓[22m[39m el detalle convierte el Markdown en HTML[33m 401[2mms[22m[39m
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2menvía el correo en minúsculas y confirma con 202
+[22m[39mTDIMP API Payload del formulario de aviso { email: [32m'felc@example.com'[39m, language: [32m'en'[39m, consent: [33mtrue[39m }
+TDIMP API → POST /api/v1/subscriptions
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2menvía el correo en minúsculas y confirma con 202
+[22m[39mTDIMP API ← 202 POST /api/v1/subscriptions en 27 ms · 0 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [1mnull[22m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2msi el Service Worker la encola avisa que se enviará al volver la red
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/achievements
+TDIMP API → GET /api/v1/news?page=0&size=3
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2msi el Service Worker la encola avisa que se enviará al volver la red
+[22m[39mTDIMP API ← 200 GET /api/v1/achievements en 16 ms · 264 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2msi el Service Worker la encola avisa que se enviará al volver la red
+[22m[39mTDIMP API ← 200 GET /api/v1/news en 20 ms · 471 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2msi el Service Worker la encola avisa que se enviará al volver la red
+[22m[39mTDIMP API Payload del formulario de aviso { email: [32m'felc@example.com'[39m, language: [32m'es'[39m, consent: [33mtrue[39m }
+TDIMP API → POST /api/v1/subscriptions
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2msi el Service Worker la encola avisa que se enviará al volver la red
+[22m[39mTDIMP API ← 202 POST /api/v1/subscriptions en 20 ms · 0 B · EN COLA (sin conexión, Background Sync) {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [1mnull[22m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2mmuestra en el campo el error que regresa la API
+[22m[39mTDIMP PWA Conexión: EN LÍNEA
+TDIMP API → GET /api/v1/achievements
+TDIMP API → GET /api/v1/news?page=0&size=3
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2mmuestra en el campo el error que regresa la API
+[22m[39mTDIMP API ← 200 GET /api/v1/achievements en 13 ms · 264 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2mmuestra en el campo el error que regresa la API
+[22m[39mTDIMP API ← 200 GET /api/v1/news en 19 ms · 471 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/json'[39m
+}
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2mmuestra en el campo el error que regresa la API
+[22m[39mTDIMP API Payload del formulario de aviso { email: [32m'felc@example.com'[39m, language: [32m'es'[39m, consent: [33mtrue[39m }
+TDIMP API → POST /api/v1/subscriptions
+
+[90mstdout[2m | src/features/landing/LandingPage.test.tsx[2m > [22m[2maviso de lanzamiento[2m > [22m[2mmuestra en el campo el error que regresa la API
+[22m[39mTDIMP API ← 400 POST /api/v1/subscriptions en 17 ms · 215 B {
+  requestId: [1mnull[22m,
+  serverTiming: [1mnull[22m,
+  cacheControl: [1mnull[22m,
+  contentType: [32m'application/problem+json'[39m
+}
+
+ [32m✓[39m src/features/landing/LandingPage.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 2993[2mms[22m[39m
+   [32m✓[39m landing [2m(2)[22m
+     [33m[2m✓[22m[39m muestra todas las secciones y lee noticias y logros de la API[33m 1106[2mms[22m[39m
+   [32m✓[39m aviso de lanzamiento [2m(4)[22m
+     [33m[2m✓[22m[39m envía el correo en minúsculas y confirma con 202[33m 591[2mms[22m[39m
+     [33m[2m✓[22m[39m si el Service Worker la encola avisa que se enviará al volver la red[33m 499[2mms[22m[39m
+     [33m[2m✓[22m[39m muestra en el campo el error que regresa la API[33m 506[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+[2m   Start at [22m 15:20:07
+[2m   Duration [22m 7.36s[2m (environment 44%, tests 23%, setup 18%, import 10%, transform 5%)[22m
+

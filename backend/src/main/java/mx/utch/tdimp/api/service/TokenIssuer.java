@@ -2,7 +2,7 @@ package mx.utch.tdimp.api.service;
 
 import java.time.Instant;
 import java.util.UUID;
-import mx.utch.tdimp.api.model.AccessClaims;
+import mx.utch.tdimp.api.service.AccessClaims;
 import mx.utch.tdimp.api.model.ClientType;
 
 public interface TokenIssuer {

@@ -2,8 +2,10 @@ package mx.utch.tdimp.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import mx.utch.tdimp.api.exception.ErrorCode;
 import mx.utch.tdimp.api.exception.UnauthenticatedException;
 import mx.utch.tdimp.api.service.TokenIssuer;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -18,7 +20,8 @@ class BearerAuthInterceptor implements HandlerInterceptor {
 
   private final TokenIssuer tokens;
 
-  BearerAuthInterceptor(TokenIssuer tokens) {
+  // @Lazy: los @WebMvcTest cargan solo la capa web (sin servicios); TokenIssuer se resuelve en la primera petición.
+  BearerAuthInterceptor(@Lazy TokenIssuer tokens) {
     this.tokens = tokens;
   }
 
@@ -27,7 +30,7 @@ class BearerAuthInterceptor implements HandlerInterceptor {
     String header = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (header == null || !header.startsWith(PREFIX)) {
       // Sin token se responde TOKEN_EXPIRED: el cliente intenta /auth/refresh y, si falla, pide login.
-      throw new UnauthenticatedException("TOKEN_EXPIRED", "A Bearer access token is required.");
+      throw new UnauthenticatedException(ErrorCode.TOKEN_EXPIRED, "A Bearer access token is required.");
     }
     request.setAttribute(CLAIMS_ATTRIBUTE, tokens.verify(header.substring(PREFIX.length()).trim()));
     return true;

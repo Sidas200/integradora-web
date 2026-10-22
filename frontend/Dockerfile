@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 # ---------- Stage 1: build the PWA ----------
   FROM node:24-slim AS build
   WORKDIR /app

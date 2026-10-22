@@ -13,6 +13,7 @@ import mx.utch.tdimp.api.exception.InvalidParameterException;
 import mx.utch.tdimp.api.exception.NotFoundException;
 import mx.utch.tdimp.api.exception.VersionConflictException;
 import mx.utch.tdimp.api.model.SaveRecord;
+import mx.utch.tdimp.api.model.SaveSummary;
 import mx.utch.tdimp.api.repository.CatalogReader;
 import mx.utch.tdimp.api.repository.SaveRepository;
 import mx.utch.tdimp.api.repository.TelemetryWriter;
@@ -39,23 +40,22 @@ class SaveServiceImpl implements SaveService {
   @Override
   @Transactional(readOnly = true)
   public List<SaveSummaryDto> list(UUID playerId) {
-    return saves.listSummaries(playerId);
+    return saves.listSummaries(playerId).stream().map(SaveMapper::toDto).toList();
   }
 
   @Override
   @Transactional(readOnly = true)
   public SaveDetailDto detail(UUID playerId, int slot) {
-    SaveSummaryDto s = saves.findSummary(playerId, slot).orElseThrow(() -> slotNotFound(slot));
+    SaveSummary s = saves.findSummary(playerId, slot).orElseThrow(() -> slotNotFound(slot));
     UUID saveId = saves.find(playerId, slot).orElseThrow().id();
-    return new SaveDetailDto(s.slot(), s.activeCharacter(), s.currentChapter(), s.lastMilestone(), s.milestonesCompleted(),
-        s.milestonesTotal(), s.playTimeSec(), s.updatedAt(), s.version(), saves.readStats(saveId),
-        saves.readInventoryDetail(saveId), saves.readMilestones(saveId));
+    return SaveMapper.toDetail(s, saves.readStats(saveId), saves.readInventoryDetail(saveId),
+        saves.readMilestones(saveId));
   }
 
   @Override
   @Transactional(readOnly = true)
   public SaveDataDto download(UUID playerId, int slot) {
-    return saves.readData(saves.find(playerId, slot).orElseThrow(() -> slotNotFound(slot)));
+    return SaveMapper.toDto(saves.readData(saves.find(playerId, slot).orElseThrow(() -> slotNotFound(slot))));
   }
 
   @Override
@@ -74,8 +74,11 @@ class SaveServiceImpl implements SaveService {
       throw new VersionConflictException(serverVersion, current.map(SaveRecord::updatedAt).orElse(null));
     }
 
-    SaveRecord saved = current.isPresent() ? saves.update(current.get().id(), data) : saves.insert(playerId, slot, data);
-    saves.replaceContents(saved.id(), data);
+    var content = SaveMapper.toModel(data);
+    SaveRecord saved = current.isPresent()
+        ? saves.update(current.get().id(), content)
+        : saves.insert(playerId, slot, content);
+    saves.replaceContents(saved.id(), content);
     log.info("Guardado aceptado: jugador={} ranura={} versión={}", playerId, slot, saved.version());
     return new SaveAcceptedDto(saved.version(), saved.updatedAt());
   }
@@ -90,7 +93,7 @@ class SaveServiceImpl implements SaveService {
       }
     }
     UUID saveId = saves.find(playerId, slot).orElseThrow(() -> slotNotFound(slot)).id();
-    int accepted = telemetry.insertSessions(saveId, sessions);
+    int accepted = telemetry.insertSessions(saveId, sessions.stream().map(SaveMapper::toModel).toList());
     return new BatchResultDto(accepted, sessions.size() - accepted);
   }
 
@@ -98,7 +101,7 @@ class SaveServiceImpl implements SaveService {
   @Transactional
   public BatchResultDto uploadEvents(UUID playerId, int slot, List<EventInput> events) {
     UUID saveId = saves.find(playerId, slot).orElseThrow(() -> slotNotFound(slot)).id();
-    int accepted = telemetry.insertEvents(saveId, events);
+    int accepted = telemetry.insertEvents(saveId, events.stream().map(SaveMapper::toModel).toList());
     return new BatchResultDto(accepted, events.size() - accepted);
   }
 

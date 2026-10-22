@@ -1,6 +1,12 @@
 import createClient, { type Middleware } from 'openapi-fetch'
 import type { paths } from './schema'
-import { formatBytes, log } from '../lab/logger'
+import { formatBytes, log } from '@/shared/lab/logger'
+
+/**
+ * Same origin as the page: Vite (dev) and Vercel (prod) forward /api to Spring Boot.
+ * Absolute URL so it also works where fetch has no base URL (Vitest on Node).
+ */
+export const API_BASE_URL = `${globalThis.location?.origin ?? 'http://localhost'}/api/v1`
 
 const started = new WeakMap<Request, number>()
 
@@ -30,5 +36,7 @@ const tracing: Middleware = {
   },
 }
 
-export const api = createClient<paths>({ baseUrl: '/api/v1' })
+// fetch is looked up on every call (not captured at import time) so tools that replace it,
+// like MSW in the tests, see every request.
+export const api = createClient<paths>({ baseUrl: API_BASE_URL, fetch: (request) => globalThis.fetch(request) })
 api.use(tracing)

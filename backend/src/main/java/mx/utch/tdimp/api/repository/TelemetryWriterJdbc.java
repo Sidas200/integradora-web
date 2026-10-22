@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import mx.utch.tdimp.api.config.QueryTimer;
-import mx.utch.tdimp.api.dto.EventInput;
-import mx.utch.tdimp.api.dto.PlaySessionInput;
+import mx.utch.tdimp.api.model.GameEvent;
+import mx.utch.tdimp.api.model.PlaySession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -27,7 +27,7 @@ class TelemetryWriterJdbc implements TelemetryWriter {
   }
 
   @Override
-  public int insertSessions(UUID saveId, List<PlaySessionInput> sessions) {
+  public int insertSessions(UUID saveId, List<PlaySession> sessions) {
     List<Map<String, Object>> rows = sessions.stream().map(s -> {
       Map<String, Object> row = new HashMap<>();
       row.put("id", s.id().toString());
@@ -54,7 +54,7 @@ class TelemetryWriterJdbc implements TelemetryWriter {
   }
 
   @Override
-  public int insertEvents(UUID saveId, List<EventInput> events) {
+  public int insertEvents(UUID saveId, List<GameEvent> events) {
     List<Map<String, Object>> rows = events.stream().map(e -> {
       Map<String, Object> row = new HashMap<>();
       row.put("id", e.id().toString());

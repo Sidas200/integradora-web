@@ -12,7 +12,9 @@
     "isolatedModules": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "types": ["vite/client", "vite-plugin-pwa/client"]
+    "resolveJsonModule": true,
+    "paths": { "@/*": ["./src/*"] },
+    "types": ["vite/client", "vite-plugin-pwa/client", "@testing-library/jest-dom/vitest"]
   },
   "include": ["src"],
   "exclude": ["src/sw.ts"]

@@ -11,7 +11,7 @@ import mx.utch.tdimp.api.dto.PlaySessionDto;
 import mx.utch.tdimp.api.dto.SettingsDto;
 import mx.utch.tdimp.api.dto.UnlockAchievementRequest;
 import mx.utch.tdimp.api.exception.InvalidParameterException;
-import mx.utch.tdimp.api.model.AccessClaims;
+import mx.utch.tdimp.api.service.AccessClaims;
 import mx.utch.tdimp.api.service.AccountService;
 import mx.utch.tdimp.api.service.AchievementService;
 import org.springframework.http.CacheControl;

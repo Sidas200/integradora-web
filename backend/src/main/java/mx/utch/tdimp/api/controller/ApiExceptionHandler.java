@@ -3,8 +3,12 @@ package mx.utch.tdimp.api.controller;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import mx.utch.tdimp.api.exception.ConflictException;
 import mx.utch.tdimp.api.exception.ErrorCode;
+import mx.utch.tdimp.api.exception.InvalidParameterException;
 import mx.utch.tdimp.api.exception.NotFoundException;
+import mx.utch.tdimp.api.exception.UnauthenticatedException;
+import mx.utch.tdimp.api.exception.VersionConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSourceResolvable;
@@ -72,6 +76,41 @@ class ApiExceptionHandler {
   ResponseEntity<ProblemDetail> unreadable(HttpMessageNotReadableException ex) {
     log.warn("Cuerpo JSON ilegible: {}", ex.getMostSpecificCause().getMessage());
     return validation(List.of(fieldError("body", "NotReadable", "Malformed JSON body.")));
+  }
+
+  /** Rules a service checks that do not fit an annotation (catalog ids, date order...). */
+  @ExceptionHandler(InvalidParameterException.class)
+  ResponseEntity<ProblemDetail> invalidParameter(InvalidParameterException ex) {
+    log.warn("Parámetro inválido: {} ({})", ex.field(), ex.getMessage());
+    return validation(List.of(fieldError(ex.field(), ex.code(), ex.getMessage())));
+  }
+
+  // ------------------------------------------------------ 401 Unauthenticated
+
+  @ExceptionHandler(UnauthenticatedException.class)
+  ResponseEntity<ProblemDetail> unauthenticated(UnauthenticatedException ex) {
+    log.info("401 {}: {}", ex.code(), ex.getMessage());
+    var response = problem(HttpStatus.UNAUTHORIZED, "Unauthenticated", ex.code(), ex.getMessage());
+    response.getBody().setType(URI.create(TYPE_BASE + "unauthenticated"));
+    return response;
+  }
+
+  // ----------------------------------------------------------- 409 Conflict
+
+  @ExceptionHandler(ConflictException.class)
+  ResponseEntity<ProblemDetail> conflict(ConflictException ex) {
+    var response = problem(HttpStatus.CONFLICT, "Already exists", ex.code(), null);
+    response.getBody().setType(URI.create(TYPE_BASE + "conflict"));
+    response.getBody().setProperty("errors", List.of(fieldError(ex.field(), "IN_USE", ex.getMessage())));
+    return response;
+  }
+
+  @ExceptionHandler(VersionConflictException.class)
+  ResponseEntity<ProblemDetail> versionConflict(VersionConflictException ex) {
+    var response = problem(HttpStatus.CONFLICT, "Version conflict", ErrorCode.VERSION_CONFLICT, ex.getMessage());
+    response.getBody().setProperty("serverVersion", ex.serverVersion());
+    response.getBody().setProperty("serverUpdatedAt", ex.serverUpdatedAt());
+    return response;
   }
 
   // ------------------------------------------------------------ 404 Not found

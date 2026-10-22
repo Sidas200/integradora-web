@@ -9,8 +9,18 @@ API del proyecto en Spring Boot 4.1 con Java 21. Sigue la arquitectura por capas
 | `GET /api/v1/news?page=&size=` | `NewsController`, `NewsService`, `NewsReader` |
 | `GET /api/v1/news/{slug}` | `NewsController`, `NewsService`, `NewsReader` |
 | `POST /api/v1/subscriptions` | `SubscriptionController`, `SubscriptionService`, `SubscriptionWriter` |
+| `POST /api/v1/auth/register` · `/login` · `/refresh` · `/logout` | `AuthController`, `AuthService`, `PlayerRepository`, `AuthSessionRepository`, `TokenIssuer`, `RefreshChannel` |
+| `GET /api/v1/account` · `GET`/`PUT /account/settings` | `AccountController`, `AccountService`, `SettingsRepository`, `HistoryReader` |
+| `GET /api/v1/account/sessions?slot=` · `GET /account/history?type=` | `AccountController`, `AccountService`, `HistoryReader` |
+| `GET /api/v1/account/achievements` · `PUT /account/achievements/{id}` | `AccountController`, `AchievementService`, `AchievementRepository` |
+| `GET /api/v1/account/saves` · `GET /account/saves/{slot}` | `SaveController`, `SaveService`, `SaveRepository` |
+| `GET`/`PUT /api/v1/account/saves/{slot}/data` | `SaveController`, `SaveService`, `SaveRepository`, `CatalogReader` |
+| `POST /api/v1/account/saves/{slot}/sessions` · `/events` | `SaveController`, `SaveService`, `TelemetryWriter` |
+| `GET /api/v1/achievements` | `AchievementController`, `AchievementService`, `CatalogReader` |
 | `GET /actuator/health` | Actuator |
 | `GET /actuator/metrics/**` | Actuator, solo con el perfil `local` |
+
+Las rutas `/api/v1/account/**` exigen `Authorization: Bearer <access token>` (`BearerAuthInterceptor`); las demás son públicas. El access token es un JWT HS256 de 15 minutos firmado con `JWT_SECRET`. El refresh token dura 30 días, rota en cada uso y en la base solo se guarda su SHA-256. Viaja en la cookie `tdimp_rt` para `WEB` y en el JSON para `UNITY_PC` y `MOBILE`.
 
 ## Variables de entorno
 

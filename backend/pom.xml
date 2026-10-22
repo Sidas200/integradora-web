@@ -44,6 +44,12 @@
       <scope>runtime</scope>
     </dependency>
 
+    <!-- Contraseñas con BCrypt (solo el módulo crypto, sin el filtro de Spring Security) -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-crypto</artifactId>
+    </dependency>
+
     <!-- Migraciones versionadas (esquema game) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

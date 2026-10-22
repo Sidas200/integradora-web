@@ -883,7 +883,7 @@ components:
                 properties:
                   itemId: { type: string }
                   name: { type: string }
-                  type: { type: string, enum: [MATERIAL, EQUIPMENT, KEY] }
+                  type: { type: string, enum: [MATERIAL, CONSUMABLE, EQUIPMENT, UPGRADE, KEY] }
                   rarity: { type: string, enum: [COMMON, RARE, EPIC] }
                   iconKey: { type: [string, 'null'] }
                   quantity: { type: integer, minimum: 1 }

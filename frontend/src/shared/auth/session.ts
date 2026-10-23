@@ -8,6 +8,7 @@ export type SessionPlayer = components['schemas']['SessionPlayer']
 type TokenResponse = components['schemas']['TokenResponse']
 type LoginRequest = components['schemas']['LoginRequest']
 type RegisterRequest = components['schemas']['RegisterRequest']
+type Account = components['schemas']['Account']
 
 /** loading: restoring the session from the refresh cookie when the app opens. */
 export type SessionStatus = 'loading' | 'authenticated' | 'anonymous'
@@ -31,10 +32,12 @@ let session: Session = { status: 'loading', player: null }
 let accessToken: string | null = null
 let accessExpiresAt = 0
 let refreshing: Promise<boolean> | null = null
+let endAfterLeavingApp = false
 const listeners = new Set<() => void>()
 
 function setSession(next: Session) {
-  if (next.status === session.status && next.player?.id === session.player?.id) return
+  if (next.status === session.status && next.player?.id === session.player?.id
+    && next.player?.username === session.player?.username) return
   session = next
   log('pwa', `Sesión: ${next.status}${next.player ? ` (${next.player.username})` : ''}`)
   listeners.forEach((listener) => listener())
@@ -162,4 +165,35 @@ export async function logout(): Promise<void> {
 /** Closes the local session: after revokeSession(), or when the API rejects the token even after renewing it. */
 export function endSession(): void {
   forget()
+}
+
+/**
+ * Confirms the password before a sensitive action (deleting the account). The API answers a new access
+ * token with auth_time = now; the refresh cookie does not change. Throws ApiError INVALID_CREDENTIALS.
+ */
+export async function reauthenticate(password: string): Promise<void> {
+  const { data, error, response } = await api.POST('/auth/reauthenticate', { body: { password } })
+  if (!data) throw toApiError(error, response.status)
+  accept(data)
+}
+
+/** The username changed in /account: the header and the greeting show the new one at once. */
+export function updateSessionPlayer(account: Pick<Account, 'id' | 'username' | 'email'>): void {
+  if (session.status !== 'authenticated' || session.player?.id !== account.id) return
+  setSession({ status: 'authenticated', player: { id: account.id, username: account.username, email: account.email } })
+}
+
+/**
+ * Logout and account deletion leave /app first and close the local session afterwards; closing it
+ * while a private page is still on screen would make RequireAuth bounce to /login.
+ * The layout calls takeScheduledEnd() after each navigation.
+ */
+export function scheduleEndSession(): void {
+  endAfterLeavingApp = true
+}
+
+export function takeScheduledEnd(): boolean {
+  const pending = endAfterLeavingApp
+  endAfterLeavingApp = false
+  return pending
 }

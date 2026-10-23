@@ -196,6 +196,68 @@
     },
     "hours": "{{hours}} h {{minutes}} min"
   },
+  "account": {
+    "profile": {
+      "email": "Correo",
+      "emailHint": "El correo no se puede cambiar.",
+      "memberSince": "Miembro desde",
+      "username": "Nombre de jugador",
+      "usernameHint": "De 3 a 20 letras, números o guion bajo. Así te verán en el juego.",
+      "save": "Guardar nombre",
+      "saving": "Guardando…",
+      "saved": "Listo, tu nombre de jugador se actualizó."
+    },
+    "settings": {
+      "intro": "Es la configuración del juego: se guarda en la nube y el juego la usa al iniciar sesión.",
+      "musicVolume": "Volumen de la música",
+      "sfxVolume": "Volumen de los efectos",
+      "language": "Idioma del juego",
+      "fullscreen": "Pantalla completa",
+      "controls": "Controles",
+      "controlsHint": "Los controles se cambian desde el juego.",
+      "noControls": "Todavía no personalizas los controles.",
+      "save": "Guardar configuración",
+      "saving": "Guardando…",
+      "saved": "Configuración guardada.",
+      "updatedAt": "Última actualización: {{date}}"
+    },
+    "security": {
+      "passwordTitle": "Cambiar contraseña",
+      "currentPassword": "Contraseña actual",
+      "newPassword": "Contraseña nueva",
+      "newPasswordHint": "Entre 8 y 72 caracteres.",
+      "confirmPassword": "Repite la contraseña nueva",
+      "save": "Cambiar contraseña",
+      "saving": "Cambiando…",
+      "saved": "Contraseña actualizada. Se cerró la sesión en tus otros dispositivos.",
+      "wrongCurrent": "La contraseña actual no es correcta.",
+      "devicesTitle": "Dispositivos con sesión",
+      "devicesIntro": "Si no reconoces alguno, cierra su sesión y cambia tu contraseña.",
+      "current": "Este dispositivo",
+      "since": "Sesión iniciada el {{date}}",
+      "lastUsed": "Último uso: {{date}}",
+      "revoke": "Cerrar sesión",
+      "revokeOthers": "Cerrar sesión en todos los demás",
+      "noOthers": "No hay otros dispositivos con sesión.",
+      "clients": {
+        "WEB": "Web",
+        "UNITY_PC": "Juego",
+        "MOBILE": "App móvil"
+      }
+    },
+    "delete": {
+      "warning": "Se borrarán tu cuenta, tus partidas guardadas, tus logros, tu historial y tu configuración. No se puede deshacer.",
+      "webOnly": "Por seguridad, la cuenta solo se puede eliminar desde la web.",
+      "password": "Confirma tu contraseña",
+      "confirm": "Entiendo que se borra todo y que no se puede recuperar",
+      "submit": "Eliminar mi cuenta",
+      "deleting": "Eliminando…",
+      "wrongPassword": "La contraseña no es correcta."
+    }
+  },
+  "notices": {
+    "accountDeleted": "Tu cuenta y todos sus datos se eliminaron."
+  },
   "news": {
     "count": "{{shown}} de {{total}}",
     "publishedOn": "Publicada el {{date}}",
@@ -220,7 +282,10 @@
     "username": "De 3 a 20 letras, números o guion bajo.",
     "passwordLength": "La contraseña debe tener entre 8 y 72 caracteres.",
     "passwordMatch": "Las contraseñas no coinciden.",
-    "privacy": "Debes aceptar el aviso de privacidad para crear la cuenta."
+    "privacy": "Debes aceptar el aviso de privacidad para crear la cuenta.",
+    "volume": "Debe ser un número de 0 a 100.",
+    "confirmDeletion": "Marca la casilla para confirmar que entiendes lo que se borra.",
+    "newPasswordSame": "La contraseña nueva debe ser distinta de la actual."
   },
   "notFound": {
     "title": "Página no encontrada",

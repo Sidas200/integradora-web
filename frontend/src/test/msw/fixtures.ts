@@ -5,6 +5,8 @@ type NewsPost = components['schemas']['NewsPost']
 type Achievement = components['schemas']['Achievement']
 type Account = components['schemas']['Account']
 type TokenResponse = components['schemas']['TokenResponse']
+type Settings = components['schemas']['Settings']
+type Device = components['schemas']['Device']
 
 /** Example data shaped exactly like the contract (the compiler checks it against schema.d.ts). */
 export const newsFixtures: NewsPost[] = Array.from({ length: 8 }, (_, i) => ({
@@ -39,3 +41,18 @@ export const tokenFixture = (accessToken = 'access-1'): TokenResponse => ({
   expiresInSec: 900,
   player: { id: accountFixture.id, username: accountFixture.username, email: accountFixture.email },
 })
+
+export const settingsFixture: Settings = {
+  musicVolume: 80,
+  sfxVolume: 60,
+  language: 'es',
+  fullscreen: true,
+  controls: { attack: '<Mouse>/leftButton', dash: '<Keyboard>/space' },
+  updatedAt: '2026-10-20T18:00:00Z',
+}
+
+/** The browser making the request plus the game on the PC. */
+export const devicesFixture: Device[] = [
+  { id: '0a1b2c3d-0000-4000-8000-000000000001', client: 'WEB', description: 'Chrome · Windows', createdAt: '2026-10-22T18:00:00Z', lastUsedAt: '2026-10-22T19:00:00Z', current: true },
+  { id: '0a1b2c3d-0000-4000-8000-000000000002', client: 'UNITY_PC', description: 'Juego · PC', createdAt: '2026-10-21T18:00:00Z', lastUsedAt: '2026-10-21T20:00:00Z', current: false },
+]

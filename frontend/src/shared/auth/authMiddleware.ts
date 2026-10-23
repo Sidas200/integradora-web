@@ -1,8 +1,8 @@
 import type { Middleware } from 'openapi-fetch'
 import { endSession, getAccessToken, refreshSession } from './session'
 
-/** The only private routes of the API (BearerAuthInterceptor in the backend). */
-const PRIVATE = /^\/api\/v1\/account(\/|$)/
+/** The private routes of the API (BearerAuthInterceptor in the backend). */
+const PRIVATE = /^\/api\/v1\/(account(\/|$)|auth\/reauthenticate$)/
 /** 401 codes that a new access token can fix. INVALID_CREDENTIALS cannot. */
 const RENEWABLE = new Set(['TOKEN_EXPIRED', 'INVALID_SESSION'])
 

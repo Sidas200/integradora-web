@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { accountQuery } from '@/features/account'
 import { useSession } from '@/shared/auth'
 import { formatLongDate } from '@/shared/ui/formatDate'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import { ErrorState, Skeleton } from '@/shared/ui/states'
-import { accountQuery } from '../queries'
 
 /**
  * Minimal summary (phase 3): proves that /account answers with the session's token.

@@ -1,7 +1,9 @@
 import { http, HttpResponse } from 'msw'
 import { API_BASE_URL } from '@/shared/api/client'
 import type { components } from '@/shared/api/schema'
-import { accountFixture, achievementFixtures, newsFixtures, toSummary, tokenFixture } from './fixtures'
+import {
+  accountFixture, achievementFixtures, devicesFixture, newsFixtures, settingsFixture, toSummary, tokenFixture,
+} from './fixtures'
 
 type Problem = components['schemas']['Problem']
 
@@ -44,4 +46,19 @@ export const handlers = [
     request.headers.get('Authorization')?.startsWith('Bearer ')
       ? HttpResponse.json(accountFixture)
       : problem(401, 'TOKEN_EXPIRED')),
+
+  // Account (phase 4)
+  http.post(url('/auth/reauthenticate'), () => HttpResponse.json(tokenFixture('access-reauth'))),
+  http.patch(url('/account'), async ({ request }) => {
+    const { username } = (await request.json()) as { username: string }
+    return HttpResponse.json({ ...accountFixture, username })
+  }),
+  http.delete(url('/account'), () => new HttpResponse(null, { status: 204 })),
+  http.put(url('/account/password'), () => new HttpResponse(null, { status: 204 })),
+  http.get(url('/account/settings'), () => HttpResponse.json(settingsFixture)),
+  http.put(url('/account/settings'), async ({ request }) =>
+    HttpResponse.json({ ...((await request.json()) as object), updatedAt: '2026-10-23T05:00:00Z' })),
+  http.get(url('/account/devices'), () => HttpResponse.json(devicesFixture)),
+  http.delete(url('/account/devices'), () => new HttpResponse(null, { status: 204 })),
+  http.delete(url('/account/devices/:id'), () => new HttpResponse(null, { status: 204 })),
 ]

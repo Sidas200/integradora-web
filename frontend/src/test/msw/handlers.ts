@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { API_BASE_URL } from '@/shared/api/client'
 import type { components } from '@/shared/api/schema'
-import { achievementFixtures, newsFixtures, toSummary } from './fixtures'
+import { accountFixture, achievementFixtures, newsFixtures, toSummary, tokenFixture } from './fixtures'
 
 type Problem = components['schemas']['Problem']
 
@@ -34,4 +34,14 @@ export const handlers = [
   http.get(url('/achievements'), () => HttpResponse.json(achievementFixtures)),
 
   http.post(url('/subscriptions'), () => new HttpResponse(null, { status: 202 })),
+
+  // Auth like the backend in dev: by default there is no session cookie, so refresh answers 401.
+  http.post(url('/auth/refresh'), () => problem(401, 'INVALID_SESSION')),
+  http.post(url('/auth/login'), () => HttpResponse.json(tokenFixture())),
+  http.post(url('/auth/register'), () => HttpResponse.json(tokenFixture(), { status: 201 })),
+  http.post(url('/auth/logout'), () => new HttpResponse(null, { status: 204 })),
+  http.get(url('/account'), ({ request }) =>
+    request.headers.get('Authorization')?.startsWith('Bearer ')
+      ? HttpResponse.json(accountFixture)
+      : problem(401, 'TOKEN_EXPIRED')),
 ]

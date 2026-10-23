@@ -27,7 +27,8 @@
     "settings": "Configuración",
     "security": "Seguridad",
     "profile": "Perfil",
-    "deleteAccount": "Eliminar cuenta"
+    "deleteAccount": "Eliminar cuenta",
+    "logout": "Cerrar sesión"
   },
   "pages": {
     "landing": "Inicio",
@@ -158,6 +159,43 @@
     "queued": "Sin conexión: guardamos tu registro y se enviará solo al volver la red.",
     "synced": "Volvió la conexión: tu registro pendiente ya se envió."
   },
+  "auth": {
+    "email": "Correo",
+    "password": "Contraseña",
+    "passwordHint": "Entre 8 y 72 caracteres.",
+    "confirmPassword": "Repite la contraseña",
+    "username": "Nombre de jugador",
+    "usernameHint": "De 3 a 20 letras, números o guion bajo. Así te verán en el juego.",
+    "privacy": "Acepto el aviso de privacidad",
+    "login": {
+      "submit": "Entrar",
+      "sending": "Entrando…",
+      "noAccount": "¿No tienes cuenta?",
+      "toRegister": "Crea una aquí"
+    },
+    "register": {
+      "submit": "Crear mi cuenta",
+      "sending": "Creando cuenta…",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "toLogin": "Inicia sesión"
+    }
+  },
+  "dashboard": {
+    "greeting": "Hola, {{username}}",
+    "memberSince": "Cuenta creada el {{date}}",
+    "summary": {
+      "title": "Tu progreso",
+      "saves": "Partidas",
+      "playTime": "Tiempo de juego",
+      "enemies": "Enemigos derrotados",
+      "crafted": "Objetos fabricados",
+      "achievements": "Logros",
+      "achievementsValue": "{{unlocked}} de {{total}}",
+      "lastSession": "Última sesión",
+      "never": "Todavía no juegas"
+    },
+    "hours": "{{hours}} h {{minutes}} min"
+  },
   "news": {
     "count": "{{shown}} de {{total}}",
     "publishedOn": "Publicada el {{date}}",
@@ -178,7 +216,11 @@
   "validation": {
     "required": "Este campo es obligatorio.",
     "email": "Escribe un correo válido.",
-    "consent": "Necesitamos tu consentimiento para avisarte."
+    "consent": "Necesitamos tu consentimiento para avisarte.",
+    "username": "De 3 a 20 letras, números o guion bajo.",
+    "passwordLength": "La contraseña debe tener entre 8 y 72 caracteres.",
+    "passwordMatch": "Las contraseñas no coinciden.",
+    "privacy": "Debes aceptar el aviso de privacidad para crear la cuenta."
   },
   "notFound": {
     "title": "Página no encontrada",

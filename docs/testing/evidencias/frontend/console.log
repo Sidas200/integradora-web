@@ -1,0 +1,138 @@
+2026-10-21T20:45:34.155Z [page] [log] TDIMP PWA Arranque de la app · en línea · http://localhost:4173 background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:34.170Z [page] [warning] No `HydrateFallback` element provided to render during initial hydration
+2026-10-21T20:45:34.233Z [page] [log] TDIMP PWA Conexión: EN LÍNEA background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:34.240Z [page] [log] TDIMP API → GET /api/v1/achievements background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:34.240Z [page] [log] TDIMP API → GET /api/v1/news?page=0&size=3 background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:34.259Z [sw] [log] [SW] color:#B4842A;font-weight:bold install: precache de 38 archivos
+2026-10-21T20:45:34.259Z [page] [log] [SW] color:#B4842A;font-weight:bold install: precache de 38 archivos
+2026-10-21T20:45:34.337Z [page] [log] TDIMP PWA Service Worker registrado: /sw.js background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px  ServiceWorkerRegistration
+2026-10-21T20:45:34.346Z [page] [log] TDIMP API ← 200 GET /api/v1/achievements en 99 ms · 850 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: 1537ac82, serverTiming: app;desc="Spring Boot";dur=6.3, db;desc="PostgreSQL";dur=1.5, cacheControl: max-age=3600, public, contentType: application/json}
+2026-10-21T20:45:34.346Z [page] [log] TDIMP API ← 200 GET /api/v1/news en 98 ms · 784 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: 4c1ab9b8, serverTiming: app;desc="Spring Boot";dur=14.1, db;desc="PostgreSQL";dur=10.6, cacheControl: max-age=300, public, contentType: application/json}
+2026-10-21T20:45:34.492Z [sw] [log] [SW] color:#B4842A;font-weight:bold activate: Service Worker activo
+2026-10-21T20:45:34.492Z [page] [log] [SW] color:#B4842A;font-weight:bold activate: Service Worker activo
+2026-10-21T20:45:34.492Z [page] [log] TDIMP PWA App lista para usarse sin conexión (precache completo) background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:34.920Z [page] [log] TDIMP PWA Arranque de la app · en línea · http://localhost:4173 background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:34.932Z [page] [warning] No `HydrateFallback` element provided to render during initial hydration
+2026-10-21T20:45:34.936Z [page] [log] TDIMP PWA Service Worker registrado: /sw.js background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px  ServiceWorkerRegistration
+2026-10-21T20:45:34.946Z [page] [log] TDIMP PWA Conexión: EN LÍNEA background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:34.946Z [page] [log] TDIMP API → GET /api/v1/achievements background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:34.946Z [page] [log] TDIMP API → GET /api/v1/news?page=0&size=3 background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:34.950Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/achievements
+2026-10-21T20:45:34.950Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/achievements
+2026-10-21T20:45:34.951Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news?page=0&size=3
+2026-10-21T20:45:34.951Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news?page=0&size=3
+2026-10-21T20:45:34.959Z [page] [log] TDIMP API ← 200 GET /api/v1/achievements en 10 ms · 850 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: 1537ac82, serverTiming: app;desc="Spring Boot";dur=6.3, db;desc="PostgreSQL";dur=1.5, cacheControl: max-age=3600, public, contentType: application/json}
+2026-10-21T20:45:34.960Z [page] [log] TDIMP API ← 200 GET /api/v1/news en 10 ms · 784 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: 4c1ab9b8, serverTiming: app;desc="Spring Boot";dur=14.1, db;desc="PostgreSQL";dur=10.6, cacheControl: max-age=300, public, contentType: application/json}
+2026-10-21T20:45:34.972Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red ?page=0&size=3
+2026-10-21T20:45:34.972Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red ?page=0&size=3
+2026-10-21T20:45:34.976Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red 
+2026-10-21T20:45:34.976Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red 
+2026-10-21T20:45:36.001Z [page] [log] TDIMP PWA Arranque de la app · en línea · http://localhost:4173 background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:36.004Z [page] [warning] No `HydrateFallback` element provided to render during initial hydration
+2026-10-21T20:45:36.007Z [page] [log] TDIMP PWA Service Worker registrado: /sw.js background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px  ServiceWorkerRegistration
+2026-10-21T20:45:36.011Z [page] [log] TDIMP PWA Conexión: EN LÍNEA background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:36.013Z [page] [log] TDIMP API → GET /api/v1/news?page=0&size=6 background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:36.014Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news?page=0&size=6
+2026-10-21T20:45:36.015Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news?page=0&size=6
+2026-10-21T20:45:36.028Z [page] [log] TDIMP API ← 200 GET /api/v1/news en 14 ms · 1.4 KB background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: c44199c2, serverTiming: app;desc="Spring Boot";dur=5.1, db;desc="PostgreSQL";dur=2.0, cacheControl: max-age=300, public, contentType: application/json}
+2026-10-21T20:45:36.031Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red ?page=0&size=6
+2026-10-21T20:45:36.031Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red ?page=0&size=6
+2026-10-21T20:45:36.031Z [page] [log] TDIMP RENDER NewsList renderizó 6 de 12 noticias background:#2E6B45;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:36.665Z [page] [log] TDIMP API → GET /api/v1/news?page=1&size=6 background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:36.667Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news?page=1&size=6
+2026-10-21T20:45:36.667Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news?page=1&size=6
+2026-10-21T20:45:36.683Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red ?page=1&size=6
+2026-10-21T20:45:36.683Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red ?page=1&size=6
+2026-10-21T20:45:36.690Z [page] [log] TDIMP API ← 200 GET /api/v1/news en 25 ms · 1.4 KB background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: ce03aa8e, serverTiming: app;desc="Spring Boot";dur=6.4, db;desc="PostgreSQL";dur=2.6, cacheControl: max-age=300, public, contentType: application/json}
+2026-10-21T20:45:36.695Z [page] [log] TDIMP RENDER NewsList renderizó 12 de 12 noticias background:#2E6B45;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:37.467Z [page] [log] TDIMP API → GET /api/v1/news/announcing-the-day-i-made-that-promise background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:37.468Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news/announcing-the-day-i-made-that-promise
+2026-10-21T20:45:37.468Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news/announcing-the-day-i-made-that-promise
+2026-10-21T20:45:37.484Z [page] [log] TDIMP API ← 200 GET /api/v1/news/announcing-the-day-i-made-that-promise en 12 ms · 377 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: dec2f614, serverTiming: app;desc="Spring Boot";dur=3.5, db;desc="PostgreSQL";dur=0.9, cacheControl: max-age=300, public, contentType: application/json}
+2026-10-21T20:45:37.485Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red 
+2026-10-21T20:45:37.485Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red 
+2026-10-21T20:45:37.967Z [page] [log] TDIMP PWA Arranque de la app · en línea · http://localhost:4173 background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:37.969Z [page] [warning] No `HydrateFallback` element provided to render during initial hydration
+2026-10-21T20:45:37.973Z [page] [log] TDIMP PWA Service Worker registrado: /sw.js background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px  ServiceWorkerRegistration
+2026-10-21T20:45:37.985Z [page] [log] TDIMP PWA Conexión: EN LÍNEA background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:37.985Z [page] [log] TDIMP API → GET /api/v1/achievements background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:37.986Z [page] [log] TDIMP API → GET /api/v1/news?page=0&size=3 background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:37.989Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/achievements
+2026-10-21T20:45:37.989Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/achievements
+2026-10-21T20:45:37.990Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/news?page=0&size=3
+2026-10-21T20:45:37.990Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/news?page=0&size=3
+2026-10-21T20:45:37.998Z [page] [log] TDIMP API ← 200 GET /api/v1/achievements en 7 ms · 850 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: 1537ac82, serverTiming: app;desc="Spring Boot";dur=6.3, db;desc="PostgreSQL";dur=1.5, cacheControl: max-age=3600, public, contentType: application/json}
+2026-10-21T20:45:37.998Z [page] [log] TDIMP API ← 200 GET /api/v1/news en 6 ms · 784 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: 4c1ab9b8, serverTiming: app;desc="Spring Boot";dur=14.1, db;desc="PostgreSQL";dur=10.6, cacheControl: max-age=300, public, contentType: application/json}
+2026-10-21T20:45:38.000Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red ?page=0&size=3
+2026-10-21T20:45:38.000Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red ?page=0&size=3
+2026-10-21T20:45:38.002Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red 
+2026-10-21T20:45:38.002Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: caché actualizada con la respuesta de la red 
+2026-10-21T20:45:38.728Z [page] [log] TDIMP API Payload del formulario de aviso background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {email: lab-online-20261021204531@tdimp.test, language: es, consent: true}
+2026-10-21T20:45:38.730Z [page] [log] TDIMP API → POST /api/v1/subscriptions background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:38.757Z [page] [log] TDIMP API ← 202 POST /api/v1/subscriptions en 25 ms · 0 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: 78c633d8, serverTiming: app;desc="Spring Boot";dur=7.2, db;desc="PostgreSQL";dur=1.8, cacheControl: null, contentType: null}
+2026-10-21T20:45:38.967Z [page] [log] TDIMP PWA Conexión: SIN CONEXIÓN background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.343Z [page] [log] TDIMP PWA Arranque de la app · sin conexión · http://localhost:4173 background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.347Z [page] [warning] No `HydrateFallback` element provided to render during initial hydration
+2026-10-21T20:45:39.349Z [page] [log] TDIMP PWA Service Worker registrado: /sw.js background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px  ServiceWorkerRegistration
+2026-10-21T20:45:39.352Z [page] [log] TDIMP PWA Conexión: SIN CONEXIÓN background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.353Z [page] [log] TDIMP API → GET /api/v1/news?page=0&size=6 background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.356Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/news?page=0&size=6
+2026-10-21T20:45:39.356Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/news?page=0&size=6
+2026-10-21T20:45:39.359Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada ?page=0&size=6
+2026-10-21T20:45:39.359Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada ?page=0&size=6
+2026-10-21T20:45:39.368Z [page] [log] TDIMP API ← 200 GET /api/v1/news en 13 ms · 1.4 KB background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: c44199c2, serverTiming: app;desc="Spring Boot";dur=5.1, db;desc="PostgreSQL";dur=2.0, cacheControl: max-age=300, public, contentType: application/json}
+2026-10-21T20:45:39.370Z [page] [log] TDIMP RENDER NewsList renderizó 6 de 12 noticias background:#2E6B45;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.600Z [page] [log] TDIMP PWA Arranque de la app · sin conexión · http://localhost:4173 background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.606Z [page] [warning] No `HydrateFallback` element provided to render during initial hydration
+2026-10-21T20:45:39.607Z [page] [log] TDIMP PWA Service Worker registrado: /sw.js background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px  ServiceWorkerRegistration
+2026-10-21T20:45:39.634Z [page] [log] TDIMP PWA Conexión: SIN CONEXIÓN background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.635Z [page] [log] TDIMP API → GET /api/v1/news/announcing-the-day-i-made-that-promise background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.638Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/news/announcing-the-day-i-made-that-promise
+2026-10-21T20:45:39.638Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/news/announcing-the-day-i-made-that-promise
+2026-10-21T20:45:39.639Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada 
+2026-10-21T20:45:39.639Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada 
+2026-10-21T20:45:39.642Z [page] [log] TDIMP API ← 200 GET /api/v1/news/announcing-the-day-i-made-that-promise en 4 ms · 377 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: dec2f614, serverTiming: app;desc="Spring Boot";dur=3.5, db;desc="PostgreSQL";dur=0.9, cacheControl: max-age=300, public, contentType: application/json}
+2026-10-21T20:45:39.801Z [page] [log] TDIMP PWA Arranque de la app · sin conexión · http://localhost:4173 background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.806Z [page] [warning] No `HydrateFallback` element provided to render during initial hydration
+2026-10-21T20:45:39.811Z [page] [log] TDIMP PWA Service Worker registrado: /sw.js background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px  ServiceWorkerRegistration
+2026-10-21T20:45:39.830Z [page] [log] TDIMP PWA Conexión: SIN CONEXIÓN background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.831Z [page] [log] TDIMP API → GET /api/v1/news/lab-devlog-02-tsuki-controls background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:39.833Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news/lab-devlog-02-tsuki-controls
+2026-10-21T20:45:39.833Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news/lab-devlog-02-tsuki-controls
+2026-10-21T20:45:39.835Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada 
+2026-10-21T20:45:39.835Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada 
+2026-10-21T20:45:39.836Z [page] [error] Failed to load resource: net::ERR_FAILED
+2026-10-21T20:45:40.853Z [page] [log] TDIMP API → GET /api/v1/news/lab-devlog-02-tsuki-controls background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:40.859Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news/lab-devlog-02-tsuki-controls
+2026-10-21T20:45:40.859Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: sin copia en caché, va a la red /api/v1/news/lab-devlog-02-tsuki-controls
+2026-10-21T20:45:40.866Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada 
+2026-10-21T20:45:40.866Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada 
+2026-10-21T20:45:40.867Z [page] [error] Failed to load resource: net::ERR_FAILED
+2026-10-21T20:45:41.313Z [page] [log] TDIMP PWA Arranque de la app · sin conexión · http://localhost:4173 background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:41.319Z [page] [warning] No `HydrateFallback` element provided to render during initial hydration
+2026-10-21T20:45:41.325Z [page] [log] TDIMP PWA Service Worker registrado: /sw.js background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px  ServiceWorkerRegistration
+2026-10-21T20:45:41.346Z [page] [log] TDIMP PWA Conexión: SIN CONEXIÓN background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:41.348Z [page] [log] TDIMP API → GET /api/v1/achievements background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:41.348Z [page] [log] TDIMP API → GET /api/v1/news?page=0&size=3 background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:41.352Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/achievements
+2026-10-21T20:45:41.352Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/achievements
+2026-10-21T20:45:41.353Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/news?page=0&size=3
+2026-10-21T20:45:41.353Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: respuesta desde Cache Storage /api/v1/news?page=0&size=3
+2026-10-21T20:45:41.354Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada 
+2026-10-21T20:45:41.355Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada 
+2026-10-21T20:45:41.355Z [sw] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada ?page=0&size=3
+2026-10-21T20:45:41.355Z [page] [log] [SW] color:#B4842A;font-weight:bold public-api: la red falló, se usa la copia guardada ?page=0&size=3
+2026-10-21T20:45:41.362Z [page] [log] TDIMP API ← 200 GET /api/v1/achievements en 8 ms · 850 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: 1537ac82, serverTiming: app;desc="Spring Boot";dur=6.3, db;desc="PostgreSQL";dur=1.5, cacheControl: max-age=3600, public, contentType: application/json}
+2026-10-21T20:45:41.362Z [page] [log] TDIMP API ← 200 GET /api/v1/news en 8 ms · 784 B background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: 4c1ab9b8, serverTiming: app;desc="Spring Boot";dur=14.1, db;desc="PostgreSQL";dur=10.6, cacheControl: max-age=300, public, contentType: application/json}
+2026-10-21T20:45:41.567Z [page] [log] TDIMP API Payload del formulario de aviso background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {email: lab-offline-20261021204531@tdimp.test, language: es, consent: true}
+2026-10-21T20:45:41.567Z [page] [log] TDIMP API → POST /api/v1/subscriptions background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:41.612Z [sw] [log] [SW] color:#B4842A;font-weight:bold POST /api/v1/subscriptions sin red: guardado en IndexedDB (workbox-background-sync › requests)
+2026-10-21T20:45:41.612Z [page] [log] [SW] color:#B4842A;font-weight:bold POST /api/v1/subscriptions sin red: guardado en IndexedDB (workbox-background-sync › requests)
+2026-10-21T20:45:41.623Z [page] [log] TDIMP PWA Mensaje del Service Worker: SUBSCRIPTION_QUEUED background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px  {type: SUBSCRIPTION_QUEUED}
+2026-10-21T20:45:41.630Z [page] [log] TDIMP API ← 202 POST /api/v1/subscriptions en 51 ms · 0 B · EN COLA (sin conexión, Background Sync) background:#1D5C9A;color:#fff;padding:1px 6px;border-radius:4px  {requestId: null, serverTiming: null, cacheControl: null, contentType: null}
+2026-10-21T20:45:42.368Z [page] [log] TDIMP PWA Conexión: EN LÍNEA background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px 
+2026-10-21T20:45:43.192Z [sw] [log] [SW] color:#B4842A;font-weight:bold sync: reenviando la cola subscription-queue
+2026-10-21T20:45:43.192Z [page] [log] [SW] color:#B4842A;font-weight:bold sync: reenviando la cola subscription-queue
+2026-10-21T20:45:43.216Z [sw] [log] [SW] color:#B4842A;font-weight:bold sync: reenviado POST /api/v1/subscriptions -> 202 · estuvo en cola 2 s
+2026-10-21T20:45:43.216Z [page] [log] [SW] color:#B4842A;font-weight:bold sync: reenviado POST /api/v1/subscriptions -> 202 · estuvo en cola 2 s
+2026-10-21T20:45:43.217Z [page] [log] TDIMP PWA Mensaje del Service Worker: SUBSCRIPTION_SENT background:#B4842A;color:#fff;padding:1px 6px;border-radius:4px  {type: SUBSCRIPTION_SENT, count: 1}

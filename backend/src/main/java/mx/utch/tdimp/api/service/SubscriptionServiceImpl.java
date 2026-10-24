@@ -18,10 +18,11 @@ class SubscriptionServiceImpl implements SubscriptionService {
   private static final Logger log = LoggerFactory.getLogger(SubscriptionServiceImpl.class);
 
   private final SubscriptionWriter writer;
-  private final Clock clock = Clock.systemUTC();
+  private final Clock clock;
 
-  SubscriptionServiceImpl(SubscriptionWriter writer) {
+  SubscriptionServiceImpl(SubscriptionWriter writer, Clock clock) {
     this.writer = writer;
+    this.clock = clock;
   }
 
   @Override

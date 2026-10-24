@@ -662,7 +662,7 @@ export interface components {
                 itemId: string;
                 name: string;
                 /** @enum {string} */
-                type: "MATERIAL" | "EQUIPMENT" | "KEY";
+                type: "MATERIAL" | "CONSUMABLE" | "EQUIPMENT" | "UPGRADE" | "KEY";
                 /** @enum {string} */
                 rarity?: "COMMON" | "RARE" | "EPIC";
                 iconKey?: string | null;

@@ -20,8 +20,9 @@ spring:
     enabled: true
     schemas: game
     locations: classpath:db/migration
-    user: ${DB_MIGRATION_USER:${DB_USER}}
-    password: ${DB_MIGRATION_PASSWORD:${DB_PASSWORD}}
+    # Flyway usa el rol dueño del esquema (DDL); si no se indica, el mismo usuario de la API.
+    user: ${DB_MIGRATION_USER:${spring.datasource.username}}
+    password: ${DB_MIGRATION_PASSWORD:${spring.datasource.password}}
 
 server:
   port: ${PORT:8080}
@@ -39,6 +40,7 @@ springdoc:
 
 tdimp:
   security:
+    # Sin valor por defecto: en staging y producción la API no arranca si falta JWT_SECRET.
     jwt-secret: ${JWT_SECRET}
     access-token-ttl: 15m
     refresh-token-ttl: 30d

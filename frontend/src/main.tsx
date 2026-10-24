@@ -1,7 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { App } from './app/App'
+import { RouterProvider } from 'react-router/dom'
 import { Providers } from './app/providers'
+import { router } from './app/router'
 import { startPwa } from './shared/pwa/registerSW'
 import { log } from './shared/lab/logger'
 import './shared/styles/tokens.css'
@@ -13,7 +14,7 @@ startPwa()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Providers>
-      <App />
+      <RouterProvider router={router} />
     </Providers>
   </StrictMode>,
 )

@@ -1,18 +1,15 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
+import { QueryClientProvider, type QueryClient } from '@tanstack/react-query'
+import { useState, type ReactNode } from 'react'
+import { AuthProvider } from '@/shared/auth'
+import { createQueryClient } from '@/shared/query/queryClient'
+import '@/shared/i18n/i18n'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      networkMode: 'offlineFirst',
-      staleTime: 60_000,
-      retry: 1,
-      refetchOnReconnect: true,
-      refetchOnWindowFocus: true,
-    },
-  },
-})
-
-export function Providers({ children }: { children: ReactNode }) {
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+/** Global providers. Phase 8 adds the IndexedDB persistence of the query cache here. */
+export function Providers({ children, client }: { children: ReactNode; client?: QueryClient }) {
+  const [queryClient] = useState(() => client ?? createQueryClient())
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>{children}</AuthProvider>
+    </QueryClientProvider>
+  )
 }

@@ -1,5 +1,6 @@
 package mx.utch.tdimp.api.exception;
 
+// 400 VALIDATION_FAILED por una regla que no cabe en una anotación (ids del catálogo, orden de fechas...).
 public class InvalidParameterException extends RuntimeException {
 
   private final String field;

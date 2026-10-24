@@ -1,57 +1,35 @@
-import { useSyncExternalStore } from 'react'
 import { registerSW } from 'virtual:pwa-register'
 import type { MessageToPage } from './messages'
-import { log } from '../lab/logger'
+import { setPwaState, setUpdater } from './pwaState'
+import { log } from '@/shared/lab/logger'
 
-type PwaState = { needRefresh: boolean; offlineReady: boolean; lastMessage: MessageToPage | null }
-
-let state: PwaState = { needRefresh: false, offlineReady: false, lastMessage: null }
-const listeners = new Set<() => void>()
-const set = (patch: Partial<PwaState>) => {
-  state = { ...state, ...patch }
-  listeners.forEach((l) => l())
-}
-
-let updateSW: ((reload?: boolean) => Promise<void>) | undefined
-
+/** Registers the Service Worker. Only main.tsx calls it. */
 export function startPwa(): void {
   if (!('serviceWorker' in navigator)) {
     log('pwa', 'Este navegador no soporta Service Workers')
     return
   }
-  updateSW = registerSW({
+  setUpdater(registerSW({
     immediate: true,
     onRegisteredSW(url, registration) {
       log('pwa', `Service Worker registrado: ${url}`, registration)
-      if (registration) setInterval(() => void registration.update(), 60 * 60 * 1000)
+      if (registration) setInterval(() => void registration.update(), 60 * 60 * 1000) // README §8.4
     },
     onOfflineReady() {
       log('pwa', 'App lista para usarse sin conexión (precache completo)')
-      set({ offlineReady: true })
+      setPwaState({ offlineReady: true })
     },
     onNeedRefresh() {
       log('pwa', 'Hay una versión nueva esperando')
-      set({ needRefresh: true })
+      setPwaState({ needRefresh: true })
     },
     onRegisterError(error) {
       log('error', 'No se pudo registrar el Service Worker', error)
     },
-  })
+  }))
 
   navigator.serviceWorker.addEventListener('message', (event: MessageEvent<MessageToPage>) => {
     log('pwa', `Mensaje del Service Worker: ${event.data.type}`, event.data)
-    set({ lastMessage: event.data })
+    setPwaState({ lastMessage: event.data })
   })
-}
-
-export const applyUpdate = () => void updateSW?.(true)
-
-export function usePwaState(): PwaState {
-  return useSyncExternalStore(
-    (l) => {
-      listeners.add(l)
-      return () => listeners.delete(l)
-    },
-    () => state,
-  )
 }

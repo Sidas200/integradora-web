@@ -6,11 +6,13 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import mx.utch.tdimp.api.dto.LoginRequest;
+import mx.utch.tdimp.api.dto.ReauthenticateRequest;
 import mx.utch.tdimp.api.dto.RefreshRequest;
 import mx.utch.tdimp.api.dto.RegisterRequest;
 import mx.utch.tdimp.api.dto.TokenResponse;
 import mx.utch.tdimp.api.exception.ErrorCode;
 import mx.utch.tdimp.api.exception.UnauthenticatedException;
+import mx.utch.tdimp.api.service.AccessClaims;
 import mx.utch.tdimp.api.service.AuthResult;
 import mx.utch.tdimp.api.service.AuthService;
 import org.springframework.http.CacheControl;
@@ -69,6 +71,13 @@ class AuthController {
     readToken(request, body).ifPresent(auth::logout);
     channels.forEach(c -> c.clear(response));
     return ResponseEntity.noContent().build();
+  }
+
+  // Necesita el access token (WebConfig la registra en BearerAuthInterceptor). No toca el refresh token.
+  @PostMapping("/reauthenticate")
+  ResponseEntity<TokenResponse> reauthenticate(AccessClaims claims, @Valid @RequestBody ReauthenticateRequest request) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+        .body(auth.reauthenticate(claims, request.password()));
   }
 
   private Optional<String> readToken(HttpServletRequest request, RefreshRequest body) {

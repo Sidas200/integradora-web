@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import mx.utch.tdimp.api.exception.ConflictException;
 import mx.utch.tdimp.api.exception.ErrorCode;
+import mx.utch.tdimp.api.exception.ForbiddenException;
 import mx.utch.tdimp.api.exception.InvalidParameterException;
 import mx.utch.tdimp.api.exception.NotFoundException;
 import mx.utch.tdimp.api.exception.UnauthenticatedException;
@@ -92,6 +93,16 @@ class ApiExceptionHandler {
     log.info("401 {}: {}", ex.code(), ex.getMessage());
     var response = problem(HttpStatus.UNAUTHORIZED, "Unauthenticated", ex.code(), ex.getMessage());
     response.getBody().setType(URI.create(TYPE_BASE + "unauthenticated"));
+    return response;
+  }
+
+  // ------------------------------------------------------------ 403 Forbidden
+
+  @ExceptionHandler(ForbiddenException.class)
+  ResponseEntity<ProblemDetail> forbidden(ForbiddenException ex) {
+    log.info("403 {}: {}", ex.code(), ex.getMessage());
+    var response = problem(HttpStatus.FORBIDDEN, "Operation not allowed", ex.code(), ex.getMessage());
+    response.getBody().setType(URI.create(TYPE_BASE + "operation-not-allowed"));
     return response;
   }
 

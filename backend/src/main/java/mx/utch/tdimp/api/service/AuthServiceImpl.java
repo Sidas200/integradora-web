@@ -142,6 +142,23 @@ class AuthServiceImpl implements AuthService {
         .ifPresent(s -> sessions.revokeFamily(s.familyId(), RevocationReason.LOGOUT, OffsetDateTime.now(clock)));
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public TokenResponse reauthenticate(AccessClaims claims, String password) {
+    OffsetDateTime now = OffsetDateTime.now(clock);
+    // El access token puede seguir vigente aunque su sesión ya se haya cerrado (logout, cambio de contraseña).
+    if (!sessions.familyActive(claims.playerId(), claims.sessionId(), now)) {
+      throw invalidSession();
+    }
+    Player player = players.findById(claims.playerId()).orElseThrow(AuthServiceImpl::invalidSession);
+    if (!passwords.matches(password, player.passwordHash())) {
+      log.info("Reautenticación rechazada: jugador={}", player.id());
+      throw new UnauthenticatedException(ErrorCode.INVALID_CREDENTIALS, "The password is not valid.");
+    }
+    log.info("Reautenticación: jugador={} cliente={}", player.id(), claims.client());
+    return tokenResponse(player, claims.sessionId(), claims.client(), now, null);
+  }
+
   private AuthResult startSession(Player player, ClientType client, String userAgent, OffsetDateTime now) {
     UUID familyId = UUID.randomUUID();
     String raw = newRefreshToken();

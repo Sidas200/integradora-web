@@ -64,6 +64,17 @@ class PlayerRepositoryJdbc implements PlayerRepository {
   }
 
   @Override
+  public boolean usernameTakenByOther(UUID id, String username) {
+    return QueryTimer.time(() -> jdbc.sql("""
+            select exists (select 1 from players where lower(username) = lower(:username) and id <> :id)
+            """)
+        .param("username", username)
+        .param("id", id)
+        .query(Boolean.class)
+        .single()).value();
+  }
+
+  @Override
   public Player insert(String email, String username, String passwordHash, OffsetDateTime privacyAcceptedAt) {
     var timed = QueryTimer.time(() -> jdbc.sql("""
             insert into players (email, username, password_hash, privacy_accepted_at)
@@ -86,6 +97,37 @@ class PlayerRepositoryJdbc implements PlayerRepository {
         .param("at", at)
         .param("id", id)
         .update());
+  }
+
+  @Override
+  public Optional<Player> updateUsername(UUID id, String username) {
+    var timed = QueryTimer.time(() -> jdbc.sql("update players set username = :username where id = :id returning %s"
+            .formatted(COLUMNS))
+        .param("username", username)
+        .param("id", id)
+        .query(PlayerRepositoryJdbc::map)
+        .optional());
+    log.debug("BD UPDATE players (username) -> {} en {} ms", timed.value().isPresent() ? "1 fila" : "0 filas",
+        String.format("%.1f", timed.millis()));
+    return timed.value();
+  }
+
+  @Override
+  public void updatePasswordHash(UUID id, String passwordHash) {
+    var timed = QueryTimer.time(() -> jdbc.sql("update players set password_hash = :hash where id = :id")
+        .param("hash", passwordHash)
+        .param("id", id)
+        .update());
+    log.debug("BD UPDATE players (password_hash) -> filas={}", timed.value());
+  }
+
+  @Override
+  public boolean delete(UUID id) {
+    var timed = QueryTimer.time(() -> jdbc.sql("delete from players where id = :id")
+        .param("id", id)
+        .update());
+    log.debug("BD DELETE players -> filas={} en {} ms", timed.value(), String.format("%.1f", timed.millis()));
+    return timed.value() == 1;
   }
 
   private static Player map(ResultSet rs, int rowNum) throws SQLException {

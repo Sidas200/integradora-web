@@ -3,11 +3,13 @@ package mx.utch.tdimp.api.repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import mx.utch.tdimp.api.config.QueryTimer;
 import mx.utch.tdimp.api.model.AuthSession;
 import mx.utch.tdimp.api.model.ClientType;
+import mx.utch.tdimp.api.model.DeviceSession;
 import mx.utch.tdimp.api.model.RevocationReason;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +85,74 @@ class AuthSessionRepositoryJdbc implements AuthSessionRepository {
         .param("familyId", familyId)
         .update());
     log.debug("BD UPDATE auth_sessions revocar familia={} ({}) -> filas={}", familyId, reason, timed.value());
+    return timed.value();
+  }
+
+  @Override
+  public List<DeviceSession> activeFamilies(UUID playerId, OffsetDateTime now) {
+    var timed = QueryTimer.time(() -> jdbc.sql("""
+            select family_id, client, user_agent, authenticated_at, created_at
+            from auth_sessions
+            where player_id = :playerId and revoked_at is null and expires_at > :now
+            order by created_at desc, authenticated_at desc
+            """)
+        .param("playerId", playerId)
+        .param("now", now)
+        .query((rs, rowNum) -> new DeviceSession(
+            rs.getObject("family_id", UUID.class),
+            ClientType.valueOf(rs.getString("client")),
+            rs.getString("user_agent"),
+            rs.getObject("authenticated_at", OffsetDateTime.class),
+            rs.getObject("created_at", OffsetDateTime.class)))
+        .list());
+    log.debug("BD SELECT auth_sessions activas -> {} dispositivos en {} ms", timed.value().size(),
+        String.format("%.1f", timed.millis()));
+    return timed.value();
+  }
+
+  @Override
+  public boolean familyActive(UUID playerId, UUID familyId, OffsetDateTime now) {
+    return QueryTimer.time(() -> jdbc.sql("""
+            select exists (select 1 from auth_sessions
+                           where player_id = :playerId and family_id = :familyId
+                             and revoked_at is null and expires_at > :now)
+            """)
+        .param("playerId", playerId)
+        .param("familyId", familyId)
+        .param("now", now)
+        .query(Boolean.class)
+        .single()).value();
+  }
+
+  @Override
+  public int revokePlayerFamily(UUID playerId, UUID familyId, RevocationReason reason, OffsetDateTime at) {
+    var timed = QueryTimer.time(() -> jdbc.sql("""
+            update auth_sessions
+            set revoked_at = :at, revocation_reason = :reason
+            where player_id = :playerId and family_id = :familyId and revoked_at is null and expires_at > :at
+            """)
+        .param("at", at)
+        .param("reason", reason.name())
+        .param("playerId", playerId)
+        .param("familyId", familyId)
+        .update());
+    log.debug("BD UPDATE auth_sessions revocar dispositivo={} ({}) -> filas={}", familyId, reason, timed.value());
+    return timed.value();
+  }
+
+  @Override
+  public int revokeOtherFamilies(UUID playerId, UUID keepFamilyId, RevocationReason reason, OffsetDateTime at) {
+    var timed = QueryTimer.time(() -> jdbc.sql("""
+            update auth_sessions
+            set revoked_at = :at, revocation_reason = :reason
+            where player_id = :playerId and family_id <> :keepFamilyId and revoked_at is null and expires_at > :at
+            """)
+        .param("at", at)
+        .param("reason", reason.name())
+        .param("playerId", playerId)
+        .param("keepFamilyId", keepFamilyId)
+        .update());
+    log.debug("BD UPDATE auth_sessions revocar otros dispositivos ({}) -> filas={}", reason, timed.value());
     return timed.value();
   }
 

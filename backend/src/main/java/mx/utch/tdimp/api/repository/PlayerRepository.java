@@ -15,7 +15,18 @@ public interface PlayerRepository {
 
   boolean usernameExists(String username);
 
+  // Igual que usernameExists, sin contar al propio jugador: "felc" → "Felc" no es un conflicto.
+  boolean usernameTakenByOther(UUID id, String username);
+
   Player insert(String email, String username, String passwordHash, OffsetDateTime privacyAcceptedAt);
 
   void touchLastLogin(UUID id, OffsetDateTime at);
+
+  // Lanza DuplicateKeyException (ux_players_username) si otro jugador lo tomó al mismo tiempo.
+  Optional<Player> updateUsername(UUID id, String username);
+
+  void updatePasswordHash(UUID id, String passwordHash);
+
+  // Borra la cuenta; las llaves foráneas borran en cascada sesiones, partidas, logros y configuración.
+  boolean delete(UUID id);
 }

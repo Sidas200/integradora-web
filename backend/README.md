@@ -137,12 +137,3 @@ Resultado esperado: `Tests run: 2, Failures: 0, Errors: 0, Skipped: 0` y `BUILD 
 
 ![BUILD SUCCESS en la terminal](../docs/testing/evidencias/unitarias/05-ejecucion-mvn.png)
 
-### Lista de cotejo
-
-| Criterio | Cumple | Dónde |
-|---|---|---|
-| 1. Configuración del entorno | Sí | `pom.xml`, evidencia 1 |
-| 2. Prueba de findAll | Sí | `AchievementServiceFindAllTest`, evidencia 2 |
-| 3. Prueba de create | Sí | `SubscriptionServiceCreateTest`: atributos del objeto guardado verificados con `assertThat`, evidencia 3 |
-| 4. Uso de Mockito y AssertJ | Sí | `@Mock`, `@InjectMocks`, `when`, `verify` y `assertThat` en ambas clases |
-| 5. Ejecución exitosa | Sí | Evidencias 4 y 5 |

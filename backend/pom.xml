@@ -73,7 +73,13 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- Pruebas: JUnit 5, Mockito, AssertJ y MockMvc (@WebMvcTest) -->
+    <!-- Pruebas unitarias: JUnit 5 (Jupiter), Mockito y AssertJ -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Pruebas de controladores: MockMvc (@WebMvcTest) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webmvc-test</artifactId>

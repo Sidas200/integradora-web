@@ -31,12 +31,14 @@ class HmacTokenIssuer implements TokenIssuer {
   private final SecretKeySpec key;
   private final long ttlSeconds;
   private final JsonMapper json;
-  private final Clock clock = Clock.systemUTC();
+  private final Clock clock;
 
-  HmacTokenIssuer(TdimpProperties properties, JsonMapper json) {
+  // El Clock viene de ClockConfig; las pruebas pasan uno fijo para comprobar el vencimiento.
+  HmacTokenIssuer(TdimpProperties properties, JsonMapper json, Clock clock) {
     this.key = new SecretKeySpec(properties.security().jwtSecret().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
     this.ttlSeconds = properties.security().accessTokenTtl().toSeconds();
     this.json = json;
+    this.clock = clock;
   }
 
   @Override

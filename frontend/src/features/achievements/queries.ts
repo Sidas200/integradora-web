@@ -4,9 +4,15 @@ import { toApiError } from '@/shared/api/problems'
 import type { components } from '@/shared/api/schema'
 
 export type Achievement = components['schemas']['Achievement']
+export type PlayerAchievement = components['schemas']['PlayerAchievement']
 
+/**
+ * The public catalog and the player's status live under different roots: logout removes
+ * everything under 'account' (AuthProvider) and the public catalog stays in the cache.
+ */
 export const achievementsKeys = {
   catalog: ['achievements', 'catalog'] as const,
+  mine: ['account', 'achievements'] as const,
 }
 
 /**
@@ -22,4 +28,15 @@ export const achievementsCatalogQuery = () =>
       return data
     },
     staleTime: 60 * 60 * 1000,
+  })
+
+/** GET /account/achievements: the full catalog with unlocked/unlockedAt of this player. */
+export const myAchievementsQuery = () =>
+  queryOptions({
+    queryKey: achievementsKeys.mine,
+    queryFn: async () => {
+      const { data, error, response } = await api.GET('/account/achievements')
+      if (error || !data) throw toApiError(error, response.status)
+      return data
+    },
   })

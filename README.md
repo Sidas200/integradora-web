@@ -916,6 +916,8 @@ Las secciones 1 a 11 son la propuesta original y se conservan como referencia. E
 |---|---|---|---|
 | Sesión en memoria | `shared/auth/tokenStore.ts` (`TokenStore`) | `shared/auth/session.ts` y `authMiddleware.ts` | Mismo comportamiento: el access token solo vive en memoria. |
 | Pantalla `/lab` | No estaba en la propuesta | Diagnóstico del laboratorio de pruebas; solo existe en `npm run dev` | En `npm run build` no se monta la ruta ni se genera su chunk. |
+| Claves de las consultas del jugador | `['saves']`, `['history', { type }]`, `['sessions', { slot }]`, `['achievements']` (§7.5) | `['account', 'saves']`, `['account', 'history', { type }]`, `['account', 'sessions', { slot }]`, `['account', 'achievements']` | Al cerrar sesión se borra todo lo que empieza con `'account'`; así ningún dato de un jugador queda en caché para el siguiente. El catálogo público sigue en `['achievements', 'catalog']`. `src/app/queryKeys.test.ts` lo comprueba. |
+| Filtro del historial | Se muestra junto con la lista (§7.5) | Se muestra en todos los estados (cargando, error, vacío) | Si un filtro no tiene registros, el jugador puede cambiarlo sin recargar. |
 
 ### 12.3 Calidad y despliegue
 
@@ -929,7 +931,6 @@ Las secciones 1 a 11 son la propuesta original y se conservan como referencia. E
 
 Lo que la propuesta describe y todavía no existe en el código. Se quita de esta lista en el PR que lo implementa.
 
-- Pantallas de partidas, detalle de partida, historial y logros del jugador; dashboard completo (§7.5, §9.4).
 - Datos del jugador sin conexión en IndexedDB, modo lectura y botón "Instalar app" (§8.5, §8.7).
 - CSP estricta (§10).
 - Estilos con CSS Modules, diseño adaptativo y tema Tsuki (§9.2, §9.3).

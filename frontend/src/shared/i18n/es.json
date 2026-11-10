@@ -8,7 +8,10 @@
     "loadMore": "Cargar más",
     "retry": "Reintentar",
     "back": "Volver",
-    "pending": "Pantalla pendiente: se implementa en la fase {{phase}}."
+    "duration": {
+      "hours": "{{hours}} h {{minutes}} min",
+      "minutes": "{{minutes}} min"
+    }
   },
   "nav": {
     "main": "Navegación principal",
@@ -194,7 +197,109 @@
       "lastSession": "Última sesión",
       "never": "Todavía no juegas"
     },
-    "hours": "{{hours}} h {{minutes}} min"
+    "lastSave": {
+      "title": "Tu última partida"
+    },
+    "activity": {
+      "title": "Actividad reciente",
+      "seeAll": "Ver todo el historial"
+    }
+  },
+  "saves": {
+    "intro": "Tus partidas guardadas en la nube. Se actualizan cada vez que guardas en el juego con tu cuenta iniciada.",
+    "slot": "Partida {{slot}}",
+    "open": "Ver detalle de la partida {{slot}}",
+    "backToList": "Volver a partidas",
+    "savedOn": "Guardada el {{date}}",
+    "updatedAt": "Último guardado",
+    "playTime": "Tiempo de juego",
+    "lastMilestone": "Último hito",
+    "noMilestone": "Todavía ninguno",
+    "milestones": "Hitos completados",
+    "milestonesValue": "{{completed}} de {{total}}",
+    "prologue": "Prólogo",
+    "chapter": "Capítulo {{chapter}}",
+    "characters": {
+      "TSUKI": "Tsuki",
+      "HIKARI": "Hikari"
+    },
+    "empty": {
+      "title": "Todavía no tienes partidas en la nube",
+      "text": "Inicia sesión en el juego y guarda tu partida: aparecerá aquí."
+    },
+    "emptySlot": {
+      "title": "Ranura vacía",
+      "text": "Empieza una partida nueva en el juego para usar esta ranura."
+    },
+    "notFound": {
+      "title": "Esta partida no existe",
+      "text": "La ranura está vacía o la dirección está mal escrita. Las partidas van de la 1 a la 3."
+    },
+    "stats": {
+      "title": "Estadísticas",
+      "enemies": "Enemigos derrotados",
+      "deaths": "Derrotas",
+      "materials": "Materiales recolectados",
+      "crafted": "Objetos fabricados"
+    },
+    "story": {
+      "title": "Historia",
+      "progress": "{{completed}} de {{total}} hitos completados",
+      "completedOn": "Completado el {{date}}",
+      "pending": "Pendiente"
+    },
+    "inventory": {
+      "title": "Inventario",
+      "empty": "El inventario está vacío.",
+      "types": {
+        "MATERIAL": "Material",
+        "CONSUMABLE": "Consumible",
+        "EQUIPMENT": "Equipo",
+        "UPGRADE": "Mejora",
+        "KEY": "Objeto clave"
+      },
+      "rarities": {
+        "COMMON": "Común",
+        "RARE": "Raro",
+        "EPIC": "Épico"
+      }
+    },
+    "sessions": {
+      "title": "Sesiones de juego",
+      "count": "{{shown}} de {{total}} sesiones",
+      "empty": "Todavía no hay sesiones registradas en esta partida.",
+      "unfinished": "Sin terminar"
+    },
+    "platforms": {
+      "WINDOWS": "Windows",
+      "MACOS": "macOS",
+      "LINUX": "Linux"
+    }
+  },
+  "history": {
+    "count": "{{shown}} de {{total}} registros",
+    "slot": "Partida {{slot}}",
+    "atPlayTime": "a las {{duration}} de juego",
+    "item": {
+      "SESSION": "Sesión de juego",
+      "ACHIEVEMENT": "Logro desbloqueado: {{title}}",
+      "MILESTONE": "Hito completado: {{title}}"
+    },
+    "filter": {
+      "label": "Filtrar por tipo",
+      "all": "Todo",
+      "SESSION": "Sesiones",
+      "ACHIEVEMENT": "Logros",
+      "MILESTONE": "Hitos"
+    },
+    "empty": {
+      "title": "Aún no hay actividad",
+      "text": "Juega una partida con tu cuenta iniciada y aparecerá aquí."
+    },
+    "emptyFiltered": {
+      "title": "No hay registros de este tipo",
+      "text": "Prueba con otro filtro o elige Todo."
+    }
   },
   "account": {
     "profile": {
@@ -273,7 +378,10 @@
     }
   },
   "achievements": {
-    "empty": "Todavía no hay logros publicados."
+    "empty": "Todavía no hay logros publicados.",
+    "progress": "{{unlocked}} de {{total}} logros desbloqueados",
+    "unlockedOn": "Desbloqueado el {{date}}",
+    "locked": "Bloqueado"
   },
   "validation": {
     "required": "Este campo es obligatorio.",

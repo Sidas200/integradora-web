@@ -918,6 +918,11 @@ Las secciones 1 a 11 son la propuesta original y se conservan como referencia. E
 | Pantalla `/lab` | No estaba en la propuesta | Diagnóstico del laboratorio de pruebas; solo existe en `npm run dev` | En `npm run build` no se monta la ruta ni se genera su chunk. |
 | Claves de las consultas del jugador | `['saves']`, `['history', { type }]`, `['sessions', { slot }]`, `['achievements']` (§7.5) | `['account', 'saves']`, `['account', 'history', { type }]`, `['account', 'sessions', { slot }]`, `['account', 'achievements']` | Al cerrar sesión se borra todo lo que empieza con `'account'`; así ningún dato de un jugador queda en caché para el siguiente. El catálogo público sigue en `['achievements', 'catalog']`. `src/app/queryKeys.test.ts` lo comprueba. |
 | Filtro del historial | Se muestra junto con la lista (§7.5) | Se muestra en todos los estados (cargando, error, vacío) | Si un filtro no tiene registros, el jugador puede cambiarlo sin recargar. |
+| Dueño de los datos guardados | `buster: playerId ?? 'anonymous'` (§8.5) | Persister propio con `idb-keyval` (`shared/query/persister.ts`) que marca cada copia con el id del jugador; la sesión guardada (`tdimp.offline-session` en `localStorage`, sin tokens) dice de quién es | `PersistQueryClientProvider` no vuelve a leer `buster` cuando cambia la sesión; marcar cada copia evita que un jugador vea la caché de otro. Una copia sin consultas borra la entrada, así que al cerrar sesión IndexedDB queda vacío. |
+| Qué se guarda sin conexión | Resumen, partidas, 1.ª página del historial, logros y configuración | Lo mismo, más el detalle de cada partida y la actividad reciente del resumen; del historial sin filtro se guardan las páginas ya cargadas | Así `/app` y `/app/saves/:slot` abren completos sin red. Un historial filtrado necesita conexión. |
+| Cuándo entra el modo lectura | `refresh()` responde `OFFLINE` | Sin red **o** con la API caída (5xx) en el refresh, si hay sesión guardada. Los botones que escriben también se desactivan si el navegador pierde la red con la sesión abierta (`useReadOnly`) | Lo guardado gana a una consulta que falló sin red: las pantallas muestran los datos y no el error. Lo que no se guardó dice que aparecerá al volver la conexión. |
+| Botón "Instalar app" | En el panel y en el pie de la landing (§8.7) | En la navegación del panel y en la sección "Consigue el juego" de la landing | Mismo comportamiento: Chrome/Edge/Android abren el diálogo; iOS muestra los pasos; instalada, no aparece. |
+| Manifiesto | En `vite.config.ts` (§8.1) | `src/shared/pwa/manifest.ts`, importado por `vite.config.ts`; los atajos llevan ícono y `?source=shortcut` | Una prueba comprueba que cada atajo abre una pantalla que existe. |
 
 ### 12.3 Calidad y despliegue
 
@@ -931,7 +936,7 @@ Las secciones 1 a 11 son la propuesta original y se conservan como referencia. E
 
 Lo que la propuesta describe y todavía no existe en el código. Se quita de esta lista en el PR que lo implementa.
 
-- Datos del jugador sin conexión en IndexedDB, modo lectura y botón "Instalar app" (§8.5, §8.7).
 - CSP estricta (§10).
 - Estilos con CSS Modules, diseño adaptativo y tema Tsuki (§9.2, §9.3).
+- Capturas del manifiesto (`screenshots`, §8.1): se toman cuando estén los estilos.
 - Pruebas E2E con Cypress y `cypress-axe` (§11).

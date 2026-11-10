@@ -2,6 +2,7 @@ import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 import { api } from '@/shared/api/client'
 import { toApiError } from '@/shared/api/problems'
 import type { components } from '@/shared/api/schema'
+import { persisted } from '@/shared/query/persister'
 
 export type SaveSummary = components['schemas']['SaveSummary']
 export type SaveDetail = components['schemas']['SaveDetail']
@@ -19,9 +20,10 @@ export const savesKeys = {
   sessions: (slot: number) => ['account', 'sessions', { slot }] as const,
 }
 
-/** GET /account/saves: the slots that have a save (3 at most; an empty slot is not in the list). */
+/** GET /account/saves: the slots that have a save (3 at most; an empty slot is not in the list). Readable offline. */
 export const savesQuery = () =>
   queryOptions({
+    ...persisted,
     queryKey: savesKeys.list,
     queryFn: async () => {
       const { data, error, response } = await api.GET('/account/saves')
@@ -30,9 +32,10 @@ export const savesQuery = () =>
     },
   })
 
-/** GET /account/saves/{slot}: stats, inventory and every milestone of the story. 404 if the slot is empty. */
+/** GET /account/saves/{slot}: stats, inventory and every milestone of the story. 404 if the slot is empty. Readable offline. */
 export const saveDetailQuery = (slot: number) =>
   queryOptions({
+    ...persisted,
     queryKey: savesKeys.detail(slot),
     queryFn: async () => {
       const { data, error, response } = await api.GET('/account/saves/{slot}', { params: { path: { slot } } })

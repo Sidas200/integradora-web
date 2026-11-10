@@ -17,10 +17,11 @@ export function SavesPage() {
         <p>{t('saves.intro')}</p>
       </PageHeader>
 
-      {q.isPending && <Skeleton rows={3} />}
-      {q.isError && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
-      {q.isSuccess && q.data.length === 0 && <EmptyState title={t('saves.empty.title')} text={t('saves.empty.text')} />}
-      {q.isSuccess && q.data.length > 0 && (
+      {q.data === undefined && (q.isError
+        ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+        : <Skeleton rows={3} />)}
+      {q.data?.length === 0 && <EmptyState title={t('saves.empty.title')} text={t('saves.empty.text')} />}
+      {q.data && q.data.length > 0 && (
         <ul data-list="saves">
           {SLOTS.map((slot) => (
             <li key={slot}>

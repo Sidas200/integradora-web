@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '@/shared/api/problems'
+import { useReadOnly } from '@/shared/auth'
 import { Button } from '@/shared/ui/Button'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import { ErrorState } from '@/shared/ui/states'
@@ -13,6 +14,7 @@ import { passwordSchema, type PasswordFormInput, type PasswordFormOutput } from 
 export function SecurityPage() {
   const { t } = useTranslation()
   const change = useChangePassword()
+  const readOnly = useReadOnly()
 
   const form = useForm<PasswordFormInput, unknown, PasswordFormOutput>({
     resolver: zodResolver(passwordSchema),
@@ -72,7 +74,7 @@ export function SecurityPage() {
             {...form.register('confirmPassword')}
           />
           {generalError && <ErrorState error={generalError} />}
-          <Button type="submit" loading={change.isPending}>
+          <Button type="submit" loading={change.isPending} disabled={readOnly}>
             {change.isPending ? t('account.security.saving') : t('account.security.save')}
           </Button>
         </form>

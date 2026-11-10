@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '@/shared/api/problems'
+import { useReadOnly } from '@/shared/auth'
 import { Button } from '@/shared/ui/Button'
 import { formatLongDate } from '@/shared/ui/formatDate'
 import { PageHeader } from '@/shared/ui/PageHeader'
@@ -16,6 +17,7 @@ export function ProfilePage() {
   const { t } = useTranslation()
   const q = useQuery(accountQuery())
   const rename = useRename()
+  const readOnly = useReadOnly()
 
   // `values` keeps the field in sync with the server copy (first load and after saving).
   const form = useForm<ProfileForm>({
@@ -42,9 +44,10 @@ export function ProfilePage() {
   return (
     <section>
       <PageHeader title={t('pages.profile')} />
-      {q.isPending && <Skeleton rows={3} />}
-      {q.isError && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
-      {q.isSuccess && (
+      {q.data === undefined && (q.isError
+        ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+        : <Skeleton rows={3} />)}
+      {q.data && (
         <>
           <dl data-list="profile">
             <dt>{t('account.profile.email')}</dt>
@@ -64,7 +67,7 @@ export function ProfilePage() {
               {...form.register('username')}
             />
             {generalError && <ErrorState error={generalError} />}
-            <Button type="submit" loading={rename.isPending}>
+            <Button type="submit" loading={rename.isPending} disabled={readOnly}>
               {rename.isPending ? t('account.profile.saving') : t('account.profile.save')}
             </Button>
           </form>

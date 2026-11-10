@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { ApiError } from '@/shared/api/problems'
-import { scheduleEndSession } from '@/shared/auth'
+import { scheduleEndSession, useReadOnly } from '@/shared/auth'
 import { Button } from '@/shared/ui/Button'
 import { CheckboxField } from '@/shared/ui/CheckboxField'
 import { PageHeader } from '@/shared/ui/PageHeader'
@@ -16,6 +16,7 @@ export function DeleteAccountPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const remove = useDeleteAccount()
+  const readOnly = useReadOnly()
 
   const form = useForm<DeleteForm>({
     resolver: zodResolver(deleteSchema),
@@ -64,7 +65,7 @@ export function DeleteAccountPage() {
           {...form.register('confirm')}
         />
         {generalError && <ErrorState error={generalError} />}
-        <Button type="submit" variant="danger" loading={remove.isPending}>
+        <Button type="submit" variant="danger" loading={remove.isPending} disabled={readOnly}>
           {remove.isPending ? t('account.delete.deleting') : t('account.delete.submit')}
         </Button>
       </form>

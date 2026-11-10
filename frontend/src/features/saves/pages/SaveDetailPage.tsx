@@ -37,8 +37,8 @@ function SaveDetailView({ slot }: { slot: number }) {
   const duration = useDuration()
   const q = useQuery(saveDetailQuery(slot))
 
-  if (q.isPending) return <Skeleton rows={6} />
-  if (q.isError) {
+  if (q.data === undefined) {
+    if (!q.isError) return <Skeleton rows={6} />
     if (toApiError(q.error).code === 'NOT_FOUND') return <SaveNotFound />
     return <ErrorState error={q.error} onRetry={() => void q.refetch()} />
   }

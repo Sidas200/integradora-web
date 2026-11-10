@@ -3,6 +3,7 @@ import { api } from '@/shared/api/client'
 import { toApiError } from '@/shared/api/problems'
 import type { components } from '@/shared/api/schema'
 import { log } from '@/shared/lab/logger'
+import { clearOfflineSession, readOfflineSession, saveOfflineSession } from './offlineSession'
 
 export type SessionPlayer = components['schemas']['SessionPlayer']
 type TokenResponse = components['schemas']['TokenResponse']
@@ -10,8 +11,12 @@ type LoginRequest = components['schemas']['LoginRequest']
 type RegisterRequest = components['schemas']['RegisterRequest']
 type Account = components['schemas']['Account']
 
-/** loading: restoring the session from the refresh cookie when the app opens. */
-export type SessionStatus = 'loading' | 'authenticated' | 'anonymous'
+/**
+ * loading: restoring the session from the refresh cookie when the app opens.
+ * offline: read-only mode (README §8.5). The server could not be reached and this browser keeps the
+ * player of the last session (no tokens): the saved data is shown and nothing can be changed.
+ */
+export type SessionStatus = 'loading' | 'authenticated' | 'offline' | 'anonymous'
 
 export interface Session {
   status: SessionStatus
@@ -46,14 +51,36 @@ function setSession(next: Session) {
 function accept(tokens: TokenResponse) {
   accessToken = tokens.accessToken
   accessExpiresAt = Date.now() + tokens.expiresInSec * 1000
+  saveOfflineSession(tokens.player)
   setSession({ status: 'authenticated', player: tokens.player })
 }
 
 function forget() {
   accessToken = null
   accessExpiresAt = 0
+  clearOfflineSession()
   setSession({ status: 'anonymous', player: null })
 }
+
+/**
+ * Nobody could say whether the session is still valid (no network, or the API is down).
+ * With a saved session the app goes to read-only mode; without one it is simply closed.
+ */
+function unreachable(reason: string, error?: unknown): boolean {
+  accessToken = null
+  accessExpiresAt = 0
+  const saved = readOfflineSession()
+  if (!saved) {
+    log('error', reason, error)
+    forget()
+    return false
+  }
+  log('pwa', `${reason}: modo lectura con la sesión guardada de ${saved.username}`, error)
+  setSession({ status: 'offline', player: saved })
+  return false
+}
+
+const browserOnline = () => globalThis.navigator?.onLine !== false
 
 // ------------------------------------------------------------------ reading
 
@@ -72,6 +99,8 @@ export function subscribeSession(listener: () => void): () => void {
 export async function getAccessToken(): Promise<string | null> {
   if (accessToken && Date.now() < accessExpiresAt - EXPIRY_MARGIN_MS) return accessToken
   if (session.status === 'anonymous') return null
+  // Read-only mode: do not knock on the server while the browser itself says there is no network.
+  if (session.status === 'offline' && !browserOnline()) return null
   return (await refreshSession()) ? accessToken : null
 }
 
@@ -91,14 +120,13 @@ export function refreshSession(): Promise<boolean> {
         accept(data)
         return true
       }
+      // 502/503/504 from Vercel or Render: the API is down, not the session.
+      if (response.status >= 500) return unreachable(`Refresh sin servidor (${response.status})`)
       log('pwa', `Refresh rechazado (${response.status}): no hay sesión`)
       forget()
       return false
     } catch (error) {
-      // Without network nobody can say whether the session is still valid; it is treated as closed.
-      log('error', 'Refresh sin respuesta del servidor', error)
-      forget()
-      return false
+      return unreachable('Refresh sin respuesta del servidor', error)
     } finally {
       refreshing = null
     }
@@ -180,7 +208,9 @@ export async function reauthenticate(password: string): Promise<void> {
 /** The username changed in /account: the header and the greeting show the new one at once. */
 export function updateSessionPlayer(account: Pick<Account, 'id' | 'username' | 'email'>): void {
   if (session.status !== 'authenticated' || session.player?.id !== account.id) return
-  setSession({ status: 'authenticated', player: { id: account.id, username: account.username, email: account.email } })
+  const player = { id: account.id, username: account.username, email: account.email }
+  saveOfflineSession(player)
+  setSession({ status: 'authenticated', player })
 }
 
 /**

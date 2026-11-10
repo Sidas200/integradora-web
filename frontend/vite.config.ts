@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { manifest } from './src/shared/pwa/manifest'
 
 export default defineConfig(({ mode }) => {
   // Lee .env, .env.local y .env.[mode].local de esta carpeta (los *.local no se suben a git).
@@ -19,24 +20,7 @@ export default defineConfig(({ mode }) => {
         registerType: 'prompt',
         injectRegister: false,
         injectManifest: { globPatterns: ['**/*.{js,css,html,svg,png,woff2}'] },
-        manifest: {
-          id: '/',
-          name: 'The Day I Made That Promise',
-          short_name: 'The Promise',
-          description: 'Tu progreso, tus logros y las noticias del juego.',
-          lang: 'es-MX',
-          start_url: '/app?source=pwa',
-          scope: '/',
-          display: 'standalone',
-          background_color: '#F3F9FE',
-          theme_color: '#A9D6F5',
-          categories: ['games', 'entertainment'],
-          icons: [
-            { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' },
-            { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png' },
-            { src: '/maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
-          ],
-        },
+        manifest, // src/shared/pwa/manifest.ts
         devOptions: { enabled: false },
       }),
     ],

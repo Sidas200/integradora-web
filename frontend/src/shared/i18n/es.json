@@ -11,7 +11,8 @@
     "duration": {
       "hours": "{{hours}} h {{minutes}} min",
       "minutes": "{{minutes}} min"
-    }
+    },
+    "offlineUnavailable": "Sin conexión: esto no se guardó para verse sin red. Aparecerá cuando vuelva la conexión."
   },
   "nav": {
     "main": "Navegación principal",
@@ -362,6 +363,13 @@
   },
   "notices": {
     "accountDeleted": "Tu cuenta y todos sus datos se eliminaron."
+  },
+  "readOnly": {
+    "notice": "Modo lectura: no hay conexión con el servidor. Ves lo último que se guardó en este navegador y los cambios están desactivados hasta que vuelva la red."
+  },
+  "install": {
+    "button": "Instalar app",
+    "iosSteps": "En iPhone o iPad: toca Compartir y luego «Agregar a inicio»."
   },
   "news": {
     "count": "{{shown}} de {{total}}",

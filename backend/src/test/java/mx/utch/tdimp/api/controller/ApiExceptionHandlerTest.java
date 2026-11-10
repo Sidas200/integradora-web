@@ -4,18 +4,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import mx.utch.tdimp.api.exception.ConflictException;
 import mx.utch.tdimp.api.exception.ErrorCode;
 import mx.utch.tdimp.api.exception.ForbiddenException;
 import mx.utch.tdimp.api.exception.InvalidParameterException;
 import mx.utch.tdimp.api.exception.NotFoundException;
+import mx.utch.tdimp.api.exception.TooManyAttemptsException;
 import mx.utch.tdimp.api.exception.UnauthenticatedException;
 import mx.utch.tdimp.api.exception.VersionConflictException;
 import org.junit.jupiter.api.Test;
@@ -75,6 +78,11 @@ class ApiExceptionHandlerTest {
     @GetMapping("/unauthenticated")
     void unauthenticated() {
       throw new UnauthenticatedException(ErrorCode.TOKEN_EXPIRED, "The access token has expired.");
+    }
+
+    @GetMapping("/too-many-attempts")
+    void tooManyAttempts() {
+      throw new TooManyAttemptsException(Duration.ofSeconds(90).plusMillis(200));
     }
 
     @GetMapping("/invalid-parameter")
@@ -149,6 +157,16 @@ class ApiExceptionHandlerTest {
         .andExpect(status().isUnauthorized())
         .andExpect(jsonPath("$.code").value("TOKEN_EXPIRED"))
         .andExpect(jsonPath("$.type").value("https://tdimp.app/problems/unauthenticated"));
+  }
+
+  @Test
+  void tooManyAttemptsIs429WithRetryAfterInWholeSeconds() throws Exception {
+    mvc.perform(get("/test-errors/too-many-attempts"))
+        .andExpect(status().isTooManyRequests())
+        .andExpect(header().string("Retry-After", "91"))
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+        .andExpect(jsonPath("$.code").value("TOO_MANY_ATTEMPTS"))
+        .andExpect(jsonPath("$.type").value("https://tdimp.app/problems/too-many-attempts"));
   }
 
   // ------------------------------------------------------------------ 400 validation

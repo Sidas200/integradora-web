@@ -8,12 +8,14 @@ import mx.utch.tdimp.api.exception.ErrorCode;
 import mx.utch.tdimp.api.exception.ForbiddenException;
 import mx.utch.tdimp.api.exception.InvalidParameterException;
 import mx.utch.tdimp.api.exception.NotFoundException;
+import mx.utch.tdimp.api.exception.TooManyAttemptsException;
 import mx.utch.tdimp.api.exception.UnauthenticatedException;
 import mx.utch.tdimp.api.exception.VersionConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -135,6 +137,19 @@ class ApiExceptionHandler {
   @ExceptionHandler(NoResourceFoundException.class)
   ResponseEntity<ProblemDetail> noRoute(NoResourceFoundException ex) {
     return problem(HttpStatus.NOT_FOUND, "Not found", ErrorCode.NOT_FOUND, null);
+  }
+
+  // ------------------------------------------------------ 429 Too many attempts
+
+  /** Retry-After (seconds) tells the client when it can try again (RFC 9110 §10.2.3). */
+  @ExceptionHandler(TooManyAttemptsException.class)
+  ResponseEntity<ProblemDetail> tooManyAttempts(TooManyAttemptsException ex) {
+    var body = problem(HttpStatus.TOO_MANY_REQUESTS, "Too many attempts", ErrorCode.TOO_MANY_ATTEMPTS, ex.getMessage())
+        .getBody();
+    return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+        .header(HttpHeaders.RETRY_AFTER, String.valueOf(ex.retryAfterSeconds()))
+        .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+        .body(body);
   }
 
   // ---------------------------------------------------------------- 500 Error

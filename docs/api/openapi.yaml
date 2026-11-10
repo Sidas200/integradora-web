@@ -657,7 +657,9 @@ components:
             serverVersion: 9
             serverUpdatedAt: '2026-10-09T23:41:00Z'
     TooManyAttempts:
-      description: Attempt limit exceeded.
+      description: >-
+        Attempt limit exceeded (code TOO_MANY_ATTEMPTS). Login: per IP + email; register and subscriptions: per IP;
+        reauthenticate: per player. Retry-After says how many seconds to wait.
       headers:
         Retry-After:
           schema: { type: integer }

@@ -908,7 +908,7 @@ Las secciones 1 a 11 son la propuesta original y se conservan como referencia. E
 | Jugador de la petición | `Requester` resuelto por `RequesterResolver` | `AccessClaims` resuelto por `CurrentPlayerResolver` | El id del jugador sigue saliendo siempre del token. |
 | Reloj | `ClockConfig` | `ClockConfig` inyectado en todos los services y en `HmacTokenIssuer` | Las pruebas usan `Clock.fixed` para probar vencimientos sin esperar. |
 | Documentación de la API | springdoc genera `/v3/api-docs` | No se usa springdoc | `docs/api/openapi.yaml` es la única fuente de verdad; de él se generan los tipos del frontend y `contract.yml` lo valida. |
-| Límite de intentos | `RateLimiter` con Bucket4j | Pendiente | Ver §12.4. |
+| Límite de intentos | `RateLimiter` con Bucket4j · `NoOpRateLimiter` en pruebas | `RateLimiter` con `InMemoryRateLimiter` (ventana fija en memoria, sin dependencias) y `NoOpRateLimiter` cuando `tdimp.rate-limit.enabled=false` (perfil `test`) | Login: 5 por IP + correo cada 15 min (un login correcto reinicia); registro: 10 por IP cada hora; reautenticación: 5 por jugador cada 15 min; aviso de lanzamiento: 10 por IP cada hora. Se ajusta en `tdimp.rate-limit.*`. Responde 429 `TOO_MANY_ATTEMPTS` con `Retry-After`. Al estar en memoria, cuenta por instancia: con más de una instancia de la API habría que moverlo a la base de datos o a Redis. |
 
 ### 12.2 Frontend
 
@@ -931,6 +931,6 @@ Lo que la propuesta describe y todavía no existe en el código. Se quita de est
 
 - Pantallas de partidas, detalle de partida, historial y logros del jugador; dashboard completo (§7.5, §9.4).
 - Datos del jugador sin conexión en IndexedDB, modo lectura y botón "Instalar app" (§8.5, §8.7).
-- Límite de intentos en login y formularios públicos, y CSP estricta (§10).
+- CSP estricta (§10).
 - Estilos con CSS Modules, diseño adaptativo y tema Tsuki (§9.2, §9.3).
 - Pruebas E2E con Cypress y `cypress-axe` (§11).

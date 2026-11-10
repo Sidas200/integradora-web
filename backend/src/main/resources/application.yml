@@ -34,3 +34,18 @@ tdimp:
     jwt-secret: ${JWT_SECRET}
     access-token-ttl: 15m
     refresh-token-ttl: 30d
+  # Límite de intentos (README §10). Al pasarse: 429 TOO_MANY_ATTEMPTS con Retry-After.
+  rate-limit:
+    enabled: true
+    login:            # por IP + correo; un login correcto reinicia la cuenta
+      max-attempts: 5
+      window: 15m
+    register:         # por IP
+      max-attempts: 10
+      window: 1h
+    reauthenticate:   # por jugador; una contraseña correcta reinicia la cuenta
+      max-attempts: 5
+      window: 15m
+    subscriptions:    # por IP, formulario público del aviso de lanzamiento
+      max-attempts: 10
+      window: 1h

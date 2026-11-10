@@ -52,10 +52,88 @@ Get-Content .env | ForEach-Object { $k, $v = $_ -split '=', 2; Set-Item "env:$k"
 mvn spring-boot:run
 ```
 
-En IntelliJ se abre `backend/pom.xml` y las variables se agregan en la configuración de ejecución.
+En VS Code se abre la carpeta `backend` con el *Extension Pack for Java* instalado; las variables se cargan desde la terminal como se muestra arriba.
 
 El Maven Wrapper (`mvnw`, `mvnw.cmd` y `.mvn/`) está versionado y fija Maven 3.9.11; el pipeline de CI lo usa. También se puede ejecutar con `./mvnw spring-boot:run` (Git Bash) o `.\mvnw.cmd spring-boot:run` (PowerShell) sin instalar Maven.
 
 ## Logs
 
 Con el perfil `local` los logs se escriben en consola y en `logs/tdimp-api.log`. Por cada petición a `/api` se registra la entrada, las consultas a la base con filas afectadas y tiempo, y la salida con código de respuesta, tiempo total, tiempo en base de datos, tamaño de la respuesta y memoria heap.
+
+## Práctica: pruebas unitarias de findAll y create
+
+Asignatura IDGS101 · Unidad *Pruebas de Software y Calidad de Componentes* · JUnit 5 + Mockito + AssertJ.
+
+Las pruebas validan la capa `service` de forma aislada: el repositorio es un `@Mock` de Mockito y el servicio real se construye con `@InjectMocks`, así que no se levanta Spring ni se usa la base de datos.
+
+### Métodos probados
+
+| Operación de la guía | Endpoint | Servicio (código fuente) | Repositorio simulado |
+|---|---|---|---|
+| `findAll` | `GET /api/v1/achievements` | `AchievementServiceImpl.catalog()` | `AchievementReader.findAllOrdered()` |
+| `create` | `POST /api/v1/subscriptions` | `SubscriptionServiceImpl.subscribe()` | `SubscriptionWriter.insertIfAbsent()` |
+
+### Clases de prueba
+
+En `src/test/java/mx/utch/tdimp/api/service/` hay una clase por método. Cada una simula el repositorio con `@Mock` e inyecta el servicio real con `@InjectMocks`.
+
+| Clase | Prueba | Qué valida |
+|---|---|---|
+| `AchievementServiceFindAllTest` | `findAllTest` | El repositorio simulado devuelve 2 logros y el servicio regresa una lista de 2 `AchievementDto`. |
+| `SubscriptionServiceCreateTest` | `createNewSubscription` | Al suscribir `tarja@gmail.com`, el servicio guarda una sola `LaunchSubscription`. Con `ArgumentCaptor` se toma el objeto que llegó al repositorio y se verifican sus atributos: correo, idioma `es`, origen `LANDING` y la fecha del reloj fijo. |
+
+Elementos que se usan: `@ExtendWith(MockitoExtension.class)`, `@Mock`, `@InjectMocks`, `@Spy`, `@DisplayName`, `when(...).thenReturn(...)`, `verify(...)`, `ArgumentCaptor` y `assertThat` de AssertJ en ambas pruebas.
+
+### Dependencias
+
+`pom.xml` incluye `spring-boot-starter-test` con `scope` `test`, que trae JUnit 5 (Jupiter), Mockito y AssertJ:
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-test</artifactId>
+  <scope>test</scope>
+</dependency>
+```
+
+### Ejecución
+
+Solo las pruebas de la práctica:
+
+```bash
+cd backend
+./mvnw test -Dtest='AchievementServiceFindAllTest,SubscriptionServiceCreateTest'
+```
+
+Todas las pruebas unitarias del backend (sin las de integración):
+
+```bash
+./mvnw test -Dtest='!*IntegrationTest'
+```
+
+En la terminal integrada de VS Code con PowerShell se usa `.\mvnw.cmd` con las mismas opciones. También se pueden correr desde la vista **Testing** (extensión *Extension Pack for Java*). `mvn test` sin filtro también corre las pruebas `*IntegrationTest`, que necesitan un PostgreSQL con la base `tdimp_test` (ver `application-test.yml`); sin esa base fallan al cargar el contexto de Spring, aunque las unitarias pasen.
+
+Resultado esperado: `Tests run: 2, Failures: 0, Errors: 0, Skipped: 0` y `BUILD SUCCESS`.
+
+### Evidencias
+
+**1. Dependencias de prueba en `pom.xml`**
+
+![Dependencia spring-boot-starter-test en pom.xml](../docs/testing/evidencias/unitarias/01-pom-dependencias.png)
+
+**2. Prueba de findAll (`AchievementServiceFindAllTest`)**
+
+![Clase AchievementServiceFindAllTest](../docs/testing/evidencias/unitarias/02-test-findall.png)
+
+**3. Prueba de create (`SubscriptionServiceCreateTest`)**
+
+![Clase SubscriptionServiceCreateTest](../docs/testing/evidencias/unitarias/03-test-create.png)
+
+**4. Ejecución en Visual Studio Code (Test Runner for Java)**
+
+![Pruebas en verde en VS Code](../docs/testing/evidencias/unitarias/04-ejecucion-ide.png)
+
+**5. Ejecución en terminal con Maven**
+
+![BUILD SUCCESS en la terminal](../docs/testing/evidencias/unitarias/05-ejecucion-mvn.png)
+

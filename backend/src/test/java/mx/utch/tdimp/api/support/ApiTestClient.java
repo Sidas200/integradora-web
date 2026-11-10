@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.UUID;
 import mx.utch.tdimp.api.model.ClientType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -101,10 +102,30 @@ public final class ApiTestClient {
     return new Session(access, refresh, json(result, "$.player.id"), familyOf(access));
   }
 
-  /** Value of the tdimp_rt cookie, or null if the response did not set it. */
+  /** Value of the tdimp_rt cookie, or null if the response did not set it. Empty when the API clears it. */
   public static String refreshCookie(MvcResult result) {
-    Cookie cookie = result.getResponse().getCookie(REFRESH_COOKIE);
-    return cookie == null ? null : cookie.getValue();
+    String header = refreshCookieHeader(result);
+    if (header == null) {
+      return null;
+    }
+    int end = header.indexOf(';');
+    return header.substring(REFRESH_COOKIE.length() + 1, end < 0 ? header.length() : end);
+  }
+
+  /**
+   * The whole {@code Set-Cookie} line of tdimp_rt (value and attributes), or null.
+   * Read straight from the header so the test sees exactly what the browser would receive.
+   */
+  public static String refreshCookieHeader(MvcResult result) {
+    return result.getResponse().getHeaders(HttpHeaders.SET_COOKIE).stream()
+        .filter(h -> h.startsWith(REFRESH_COOKIE + "="))
+        .findFirst()
+        .orElse(null);
+  }
+
+  /** The tdimp_rt cookie as the browser would send it back. */
+  public static Cookie refreshCookieFor(String value) {
+    return new Cookie(REFRESH_COOKIE, value);
   }
 
   public static <T> T json(MvcResult result, String path) throws Exception {

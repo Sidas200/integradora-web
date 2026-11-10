@@ -23,6 +23,7 @@ Aplicación web progresiva que presenta el juego, administra la cuenta del jugad
 9. [Experiencia de usuario (UI/UX)](#9-experiencia-de-usuario-uiux)
 10. [Seguridad y sesiones](#10-seguridad-y-sesiones)
 11. [Calidad y despliegue](#11-calidad-y-despliegue)
+12. [Cambios respecto a la propuesta](#12-cambios-respecto-a-la-propuesta)
 
 ---
 
@@ -890,3 +891,46 @@ export const config: VercelConfig = {
 ```
 
 El plan gratuito de Render duerme la API tras 15 minutos sin tráfico; Vercel espera hasta 120 s al destino, así que la primera petición no falla y la UI muestra "Despertando el servidor".
+
+---
+
+## 12. Cambios respecto a la propuesta
+
+Las secciones 1 a 11 son la propuesta original y se conservan como referencia. Esta sección registra en qué difiere la implementación; se actualiza en cada PR que introduce una diferencia.
+
+### 12.1 Backend
+
+| Aspecto | Propuesta | Implementación | Notas |
+|---|---|---|---|
+| Autenticación | Spring Security 7 + JWT con Nimbus (`JwtTokenIssuer`, `SecurityConfig` con filtros) | JWT HS256 propio en `service/HmacTokenIssuer` (interfaz `TokenIssuer`) y `controller/BearerAuthInterceptor` para `/api/v1/account/**` y `/auth/reauthenticate` | De Spring Security solo se usa `spring-security-crypto` para el `PasswordEncoder` (BCrypt delegado). Mismo formato de token y mismos claims (`sub`, `sid`, `cli`, `auth_time`, `iat`, `exp`). |
+| Persistencia | Spring Data JPA + `JdbcClient` · MapStruct | Solo `JdbcClient`: cada repositorio es una interfaz con su implementación `*Jdbc`; la conversión `model` ↔ `dto` la hacen los services (`SaveMapper` y métodos `from`) | Sin entidades JPA, sin Hibernate y sin MapStruct; Flyway sigue siendo el único que modifica el esquema. |
+| Paquetes | `security/` aparte y un controlador por recurso (`SettingsController`, `DeviceController`, `HistoryController`, …) | Lo de seguridad vive en `service/` (tokens) y `controller/` (interceptor y canales del refresh token); `AccountController` agrupa `/account/**` excepto partidas (`SaveController`) | Las capas y sus reglas de ArchUnit son las mismas. |
+| Jugador de la petición | `Requester` resuelto por `RequesterResolver` | `AccessClaims` resuelto por `CurrentPlayerResolver` | El id del jugador sigue saliendo siempre del token. |
+| Reloj | `ClockConfig` | `ClockConfig` inyectado en todos los services y en `HmacTokenIssuer` | Las pruebas usan `Clock.fixed` para probar vencimientos sin esperar. |
+| Documentación de la API | springdoc genera `/v3/api-docs` | No se usa springdoc | `docs/api/openapi.yaml` es la única fuente de verdad; de él se generan los tipos del frontend y `contract.yml` lo valida. |
+| Límite de intentos | `RateLimiter` con Bucket4j | Pendiente | Ver §12.4. |
+
+### 12.2 Frontend
+
+| Aspecto | Propuesta | Implementación | Notas |
+|---|---|---|---|
+| Sesión en memoria | `shared/auth/tokenStore.ts` (`TokenStore`) | `shared/auth/session.ts` y `authMiddleware.ts` | Mismo comportamiento: el access token solo vive en memoria. |
+| Pantalla `/lab` | No estaba en la propuesta | Diagnóstico del laboratorio de pruebas; solo existe en `npm run dev` | En `npm run build` no se monta la ruta ni se genera su chunk. |
+
+### 12.3 Calidad y despliegue
+
+| Aspecto | Propuesta | Implementación | Notas |
+|---|---|---|---|
+| Pruebas de integración del backend | `@WebMvcTest` · `@DataJpaTest` contra PostgreSQL | `@SpringBootTest` + MockMvc contra PostgreSQL (`*IntegrationTest`), con `@Transactional` para deshacer cada prueba; helpers en `test/.../support/ApiTestClient` | `@WebMvcTest` se mantiene para controladores aislados. |
+| Cobertura | No definida | JaCoCo en `./mvnw verify` (`target/site/jacoco`) y `npm run test:coverage` (`frontend/coverage`) | CI publica los reportes como artefactos `backend-test-reports` y `web-coverage`. |
+| Docker | Sin Docker en los equipos | `docker-compose.yml` y Dockerfiles para levantar la API, la PWA y PostgreSQL juntos | Opcional; el desarrollo diario sigue con PostgreSQL local. |
+
+### 12.4 Pendiente de implementar
+
+Lo que la propuesta describe y todavía no existe en el código. Se quita de esta lista en el PR que lo implementa.
+
+- Pantallas de partidas, detalle de partida, historial y logros del jugador; dashboard completo (§7.5, §9.4).
+- Datos del jugador sin conexión en IndexedDB, modo lectura y botón "Instalar app" (§8.5, §8.7).
+- Límite de intentos en login y formularios públicos, y CSP estricta (§10).
+- Estilos con CSS Modules, diseño adaptativo y tema Tsuki (§9.2, §9.3).
+- Pruebas E2E con Cypress y `cypress-axe` (§11).

@@ -46,18 +46,20 @@ class AuthServiceImpl implements AuthService {
   private final TokenIssuer tokens;
   private final TdimpProperties.Security properties;
   private final SecureRandom random = new SecureRandom();
-  private final Clock clock = Clock.systemUTC();
+  private final Clock clock;
   // Se compara contra este hash cuando el correo no existe: la respuesta tarda lo mismo.
   private final String dummyHash;
 
+  // El Clock viene de ClockConfig; las pruebas pasan uno fijo para comprobar vencimientos.
   AuthServiceImpl(PlayerRepository players, AuthSessionRepository sessions, SettingsRepository settings,
-                  PasswordEncoder passwords, TokenIssuer tokens, TdimpProperties properties) {
+                  PasswordEncoder passwords, TokenIssuer tokens, TdimpProperties properties, Clock clock) {
     this.players = players;
     this.sessions = sessions;
     this.settings = settings;
     this.passwords = passwords;
     this.tokens = tokens;
     this.properties = properties.security();
+    this.clock = clock;
     this.dummyHash = passwords.encode("timing-equalizer-password");
   }
 

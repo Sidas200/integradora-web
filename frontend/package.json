@@ -13,6 +13,7 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "gen:api": "openapi-typescript ../docs/api/openapi.yaml -o src/shared/api/schema.d.ts",
     "icons": "node scripts/generate-icons.mjs",
     "lab:evidence": "node scripts/lab-evidence.mjs"
@@ -41,6 +42,7 @@
     "@types/react-dom": "^19.3.0",
     "@vercel/config": "^0.13.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "@vitest/coverage-v8": "^5.1.0",
     "eslint": "^9.39.5",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",

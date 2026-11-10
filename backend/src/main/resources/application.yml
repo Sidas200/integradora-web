@@ -10,12 +10,6 @@ spring:
     hikari:
       maximum-pool-size: 5
       schema: game
-  jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate.default_schema: game
   flyway:
     enabled: true
     schemas: game
@@ -33,10 +27,6 @@ management:
     web:
       exposure:
         include: health
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
 
 tdimp:
   security:

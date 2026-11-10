@@ -85,7 +85,7 @@ Aplicación web progresiva que presenta el juego, administra la cuenta del jugad
 | Backend | **Spring Boot 4.1** con **Java 21 LTS**, Maven | API REST en N-capas |
 | Seguridad | Spring Security 7 + JWT (Nimbus) + BCrypt | Sesiones con access y refresh token |
 | Persistencia | Spring Data JPA + `JdbcClient` · **Flyway** · MapStruct | Entidades, consultas de listas y migraciones versionadas |
-| Contrato | **OpenAPI 3.1** (`docs/api/openapi.yaml`) + springdoc | Fuente de verdad de la API |
+| Contrato | **OpenAPI 3.1** (`docs/api/openapi.yaml`) | Fuente de verdad de la API; de él se generan los tipos del frontend |
 | Base de datos | **PostgreSQL** en Supabase (esquema `game`) | Datos de cuentas, partidas e historial |
 | Despliegue | **Vercel** (PWA) · **Render** (API) · GitHub Actions | CDN, API y CI/CD en planes gratuitos |
 | Pruebas | Vitest, Testing Library, MSW, Cypress · JUnit, Mockito, ArchUnit | Unitarias, integración, E2E y reglas de arquitectura |

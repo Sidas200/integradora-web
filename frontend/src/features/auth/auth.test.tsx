@@ -52,6 +52,35 @@ describe('autenticación web', () => {
     expect(router.state.location.pathname).toBe('/login')
   })
 
+  it('demasiados intentos (429) muestra un aviso general y no abre sesión', async () => {
+    const user = userEvent.setup()
+    server.use(http.post(url('/auth/login'), () => problem(429, 'TOO_MANY_ATTEMPTS')))
+    const { router } = renderRoute('/login')
+
+    await user.type(await screen.findByLabelText('Correo'), 'felc@example.com')
+    await user.type(screen.getByLabelText('Contraseña'), 'a-long-passphrase')
+    await user.click(screen.getByRole('button', { name: 'Entrar' }))
+
+    expect(await screen.findByTestId('auth-error')).toHaveTextContent('Demasiados intentos. Espera un momento.')
+    expect(screen.getByLabelText('Correo')).not.toHaveAttribute('aria-invalid', 'true')
+    expect(router.state.location.pathname).toBe('/login')
+  })
+
+  it('el registro también avisa cuando la API limita los intentos', async () => {
+    const user = userEvent.setup()
+    server.use(http.post(url('/auth/register'), () => problem(429, 'TOO_MANY_ATTEMPTS')))
+    renderRoute('/register')
+
+    await user.type(await screen.findByLabelText('Correo'), 'felc@example.com')
+    await user.type(screen.getByLabelText('Nombre de jugador'), 'Felc_2')
+    await user.type(screen.getByLabelText('Contraseña'), 'a-long-passphrase')
+    await user.type(screen.getByLabelText('Repite la contraseña'), 'a-long-passphrase')
+    await user.click(screen.getByLabelText('Acepto el aviso de privacidad'))
+    await user.click(screen.getByRole('button', { name: 'Crear mi cuenta' }))
+
+    expect(await screen.findByTestId('auth-error')).toHaveTextContent('Demasiados intentos. Espera un momento.')
+  })
+
   it('el registro valida en el navegador antes de llamar a la API', async () => {
     const user = userEvent.setup()
     const registers = spy('post', '/auth/register', () => HttpResponse.json(tokenFixture(), { status: 201 }))

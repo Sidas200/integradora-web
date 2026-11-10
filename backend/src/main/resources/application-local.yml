@@ -11,6 +11,15 @@ spring:
 tdimp:
   security:
     jwt-secret: ${JWT_SECRET:local-only-secret-change-me-0123456789abcdef}
+  # En local el límite sigue activo, pero registro y suscripción son más holgados
+  # para que npm run lab:evidence se pueda correr varias veces seguidas.
+  rate-limit:
+    register:
+      max-attempts: 100
+      window: 1h
+    subscriptions:
+      max-attempts: 100
+      window: 1h
 
 management:
   endpoints:

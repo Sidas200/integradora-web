@@ -16,14 +16,3 @@ export function PageHeader({ title, children }: { title: string; children?: Reac
     </header>
   )
 }
-
-/** Temporary content of a screen that a later phase implements. */
-export function PendingPage({ title, phase }: { title: string; phase: number }) {
-  const { t } = useTranslation()
-  return (
-    <section>
-      <PageHeader title={title} />
-      <p>{t('common.pending', { phase })}</p>
-    </section>
-  )
-}

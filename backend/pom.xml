@@ -20,6 +20,7 @@
   <properties>
     <java.version>21</java.version>
     <archunit.version>1.4.1</archunit.version>
+    <jacoco.version>0.8.14</jacoco.version>
   </properties>
 
   <dependencies>
@@ -99,6 +100,34 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <!-- Cobertura de pruebas: ./mvnw verify deja el reporte en target/site/jacoco/index.html -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <configuration>
+          <excludes>
+            <!-- Solo arranca Spring; no tiene lógica que probar -->
+            <exclude>mx/utch/tdimp/api/TdimpApiApplication.class</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <!-- Agrega el agente de JaCoCo al argLine de Surefire antes de correr las pruebas -->
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

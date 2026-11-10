@@ -34,7 +34,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       SPRING_FLYWAY_ENABLED: "true"
     ports:
-      - "18081:8080"   # direct API access for checks (health, Swagger)
+      - "18081:8080"   # direct API access for checks (/actuator/health)
 
   web:
     build: ./frontend

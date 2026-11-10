@@ -12,6 +12,8 @@ type Snapshot = {
 }
 
 async function countQueued(): Promise<number> {
+  // Without IndexedDB (jsdom, some private modes) there is no Background Sync queue to count.
+  if (typeof indexedDB === 'undefined') return 0
   const dbs = (await indexedDB.databases?.()) ?? []
   if (!dbs.some((d) => d.name === 'workbox-background-sync')) return 0
   return new Promise((resolve) => {

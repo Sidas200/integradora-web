@@ -115,6 +115,10 @@ En la terminal integrada de VS Code con PowerShell se usa `.\mvnw.cmd` con las m
 
 Resultado esperado: `Tests run: 2, Failures: 0, Errors: 0, Skipped: 0` y `BUILD SUCCESS`.
 
+### Cobertura (JaCoCo)
+
+`./mvnw verify` corre todas las pruebas (unitarias e integración) y genera el reporte de cobertura en `target/site/jacoco/index.html`. En CI se publica dentro del artefacto `backend-test-reports`.
+
 ### Evidencias
 
 **1. Dependencias de prueba en `pom.xml`**

@@ -13,6 +13,7 @@ import { useDuration } from '@/shared/ui/useDuration'
 /**
  * /app (README §9.4): GET /account, /account/saves and /account/history?size=5.
  * Each block has its own four states, so one failing request does not hide the others.
+ * Data already in the cache (or restored from IndexedDB) wins over a refresh that failed offline.
  */
 export function DashboardPage() {
   const { t } = useTranslation()
@@ -35,8 +36,9 @@ function AccountSummary() {
   const duration = useDuration()
   const q = useQuery(accountQuery())
 
-  if (q.isPending) return <Skeleton rows={4} />
-  if (q.isError) return <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+  if (q.data === undefined) {
+    return q.isError ? <ErrorState error={q.error} onRetry={() => void q.refetch()} /> : <Skeleton rows={4} />
+  }
 
   const { summary } = q.data
   return (
@@ -75,9 +77,10 @@ function LastSave() {
   return (
     <section aria-labelledby="dashboard-last-save" data-testid="last-save">
       <h2 id="dashboard-last-save">{t('dashboard.lastSave.title')}</h2>
-      {q.isPending && <Skeleton rows={2} />}
-      {q.isError && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
-      {q.isSuccess && !save && (
+      {q.data === undefined && (q.isError
+        ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+        : <Skeleton rows={2} />)}
+      {q.data && !save && (
         <EmptyState title={t('saves.empty.title')} text={t('saves.empty.text')} />
       )}
       {save && (
@@ -106,12 +109,13 @@ function RecentActivity() {
   return (
     <section aria-labelledby="dashboard-activity" data-testid="recent-activity">
       <h2 id="dashboard-activity">{t('dashboard.activity.title')}</h2>
-      {q.isPending && <Skeleton rows={3} />}
-      {q.isError && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
-      {q.isSuccess && q.data.length === 0 && (
+      {q.data === undefined && (q.isError
+        ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+        : <Skeleton rows={3} />)}
+      {q.data?.length === 0 && (
         <EmptyState title={t('history.empty.title')} text={t('history.empty.text')} />
       )}
-      {q.isSuccess && q.data.length > 0 && (
+      {q.data && q.data.length > 0 && (
         <>
           <Timeline items={q.data} />
           <Link to="/app/history">{t('dashboard.activity.seeAll')}</Link>

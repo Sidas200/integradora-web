@@ -20,10 +20,11 @@ export function AchievementsPage() {
     <section>
       <PageHeader title={t('pages.achievements')} />
 
-      {q.isPending && <Skeleton rows={6} />}
-      {q.isError && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
-      {q.isSuccess && total === 0 && <EmptyState title={t('achievements.empty')} />}
-      {q.isSuccess && total > 0 && (
+      {q.data === undefined && (q.isError
+        ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+        : <Skeleton rows={6} />)}
+      {q.data && total === 0 && <EmptyState title={t('achievements.empty')} />}
+      {q.data && total > 0 && (
         <>
           <p id="achievements-progress">{t('achievements.progress', { unlocked, total })}</p>
           <progress value={unlocked} max={total} aria-labelledby="achievements-progress" />

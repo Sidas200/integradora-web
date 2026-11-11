@@ -43,7 +43,7 @@ export function PublicLayout() {
           <ul>
             <li><NavLink to="/" end>{t('nav.home')}</NavLink></li>
             <li><NavLink to="/news">{t('nav.news')}</NavLink></li>
-            {status === 'authenticated' ? (
+            {status === 'authenticated' || status === 'offline' ? (
               <>
                 <li><NavLink to="/app">{t('nav.myAccount')}</NavLink></li>
                 <li data-session-player={player?.username}>

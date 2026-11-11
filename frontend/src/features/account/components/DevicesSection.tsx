@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import { useReadOnly } from '@/shared/auth'
 import { Button } from '@/shared/ui/Button'
 import { formatLongDate } from '@/shared/ui/formatDate'
 import { ErrorState, Skeleton } from '@/shared/ui/states'
@@ -14,6 +15,7 @@ export function DevicesSection() {
   const { t } = useTranslation()
   const q = useQuery(devicesQuery())
   const revoke = useRevokeDevices()
+  const readOnly = useReadOnly()
   const others = q.data?.filter((d) => !d.current) ?? []
 
   return (
@@ -37,6 +39,7 @@ export function DevicesSection() {
                   <Button
                     variant="outline"
                     loading={revoke.isPending && revoke.variables === device.id}
+                    disabled={readOnly}
                     onClick={() => revoke.mutate(device.id)}
                     aria-label={`${t('account.security.revoke')}: ${device.description}`}
                   >
@@ -50,7 +53,7 @@ export function DevicesSection() {
             <p>{t('account.security.noOthers')}</p>
           ) : (
             <Button variant="danger" loading={revoke.isPending && revoke.variables === undefined}
-                    onClick={() => revoke.mutate(undefined)}>
+                    disabled={readOnly} onClick={() => revoke.mutate(undefined)}>
               {t('account.security.revokeOthers')}
             </Button>
           )}

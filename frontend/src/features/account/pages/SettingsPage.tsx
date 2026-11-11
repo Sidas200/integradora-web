@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useReadOnly } from '@/shared/auth'
 import { Button } from '@/shared/ui/Button'
 import { CheckboxField } from '@/shared/ui/CheckboxField'
 import { formatLongDate } from '@/shared/ui/formatDate'
@@ -17,6 +18,7 @@ export function SettingsPage() {
   const { t } = useTranslation()
   const q = useQuery(settingsQuery())
   const save = useSaveSettings()
+  const readOnly = useReadOnly()
 
   const form = useForm<SettingsForm>({
     resolver: zodResolver(settingsSchema),
@@ -40,9 +42,10 @@ export function SettingsPage() {
       <PageHeader title={t('pages.settings')}>
         <p>{t('account.settings.intro')}</p>
       </PageHeader>
-      {q.isPending && <Skeleton rows={4} />}
-      {q.isError && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
-      {q.isSuccess && (
+      {q.data === undefined && (q.isError
+        ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+        : <Skeleton rows={4} />)}
+      {q.data && (
         <>
           <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="settings">
             <TextField
@@ -75,7 +78,7 @@ export function SettingsPage() {
             />
             <CheckboxField label={t('account.settings.fullscreen')} {...form.register('fullscreen')} />
             {save.isError && <ErrorState error={save.error} />}
-            <Button type="submit" loading={save.isPending}>
+            <Button type="submit" loading={save.isPending} disabled={readOnly}>
               {save.isPending ? t('account.settings.saving') : t('account.settings.save')}
             </Button>
           </form>

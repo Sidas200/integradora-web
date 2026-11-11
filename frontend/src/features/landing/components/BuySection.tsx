@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { InstallButton } from '@/shared/pwa'
 import { Button } from '@/shared/ui/Button'
 import { STORE_URL } from '../config'
 
@@ -15,6 +16,7 @@ export function BuySection() {
         <Button variant="promise" disabled aria-describedby="buy-unavailable">{t('landing.buy.button')}</Button>
       )}
       {!STORE_URL && <p id="buy-unavailable">{t('landing.buy.unavailable')}</p>}
+      <InstallButton />
     </section>
   )
 }

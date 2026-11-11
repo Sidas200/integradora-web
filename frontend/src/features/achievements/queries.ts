@@ -2,6 +2,7 @@ import { queryOptions } from '@tanstack/react-query'
 import { api } from '@/shared/api/client'
 import { toApiError } from '@/shared/api/problems'
 import type { components } from '@/shared/api/schema'
+import { persisted } from '@/shared/query/persister'
 
 export type Achievement = components['schemas']['Achievement']
 export type PlayerAchievement = components['schemas']['PlayerAchievement']
@@ -30,9 +31,10 @@ export const achievementsCatalogQuery = () =>
     staleTime: 60 * 60 * 1000,
   })
 
-/** GET /account/achievements: the full catalog with unlocked/unlockedAt of this player. */
+/** GET /account/achievements: the full catalog with unlocked/unlockedAt of this player. Readable offline. */
 export const myAchievementsQuery = () =>
   queryOptions({
+    ...persisted,
     queryKey: achievementsKeys.mine,
     queryFn: async () => {
       const { data, error, response } = await api.GET('/account/achievements')

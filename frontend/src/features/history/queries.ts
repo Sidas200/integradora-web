@@ -2,6 +2,7 @@ import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 import { api } from '@/shared/api/client'
 import { toApiError } from '@/shared/api/problems'
 import type { components } from '@/shared/api/schema'
+import { persisted } from '@/shared/query/persister'
 
 export type HistoryItem = components['schemas']['HistoryItem']
 export type HistoryType = HistoryItem['type']
@@ -19,9 +20,13 @@ export const historyKeys = {
   recent: (size: number) => ['account', 'history', 'recent', size] as const,
 }
 
-/** GET /account/history: sessions, achievements and milestones in one timeline, newest first. */
+/**
+ * GET /account/history: sessions, achievements and milestones in one timeline, newest first.
+ * The unfiltered list is readable offline (the pages loaded so far); a filtered one needs the network.
+ */
 export const historyInfiniteQuery = (type?: HistoryType, size: number = HISTORY_PAGE_SIZE) =>
   infiniteQueryOptions({
+    ...(type ? {} : persisted),
     queryKey: historyKeys.list(type),
     initialPageParam: 0,
     queryFn: async ({ pageParam }) => {
@@ -34,9 +39,10 @@ export const historyInfiniteQuery = (type?: HistoryType, size: number = HISTORY_
     getNextPageParam: (last) => (last.page.number + 1 < last.page.totalPages ? last.page.number + 1 : undefined),
   })
 
-/** The last few entries for the dashboard (GET /account/history?size=5). */
+/** The last few entries for the dashboard (GET /account/history?size=5). Readable offline. */
 export const recentHistoryQuery = (size = 5) =>
   queryOptions({
+    ...persisted,
     queryKey: historyKeys.recent(size),
     queryFn: async () => {
       const { data, error, response } = await api.GET('/account/history', { params: { query: { page: 0, size } } })

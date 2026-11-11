@@ -1,5 +1,7 @@
 export { AuthProvider } from './AuthProvider'
 export { RequireAuth } from './RequireAuth'
+export { readOfflineSession } from './offlineSession'
+export { useReadOnly } from './useReadOnly'
 export {
   endSession,
   login,

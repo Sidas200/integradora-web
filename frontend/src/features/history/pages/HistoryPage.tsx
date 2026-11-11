@@ -22,12 +22,13 @@ export function HistoryPage() {
       <PageHeader title={t('pages.history')} />
       <TypeFilter value={type} onChange={setType} />
 
-      {q.isPending && <Skeleton rows={6} />}
-      {q.isError && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
-      {q.isSuccess && items.length === 0 && (type
+      {q.data === undefined && (q.isError
+        ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+        : <Skeleton rows={6} />)}
+      {q.data && items.length === 0 && (type
         ? <EmptyState title={t('history.emptyFiltered.title')} text={t('history.emptyFiltered.text')} />
         : <EmptyState title={t('history.empty.title')} text={t('history.empty.text')} />)}
-      {q.isSuccess && items.length > 0 && (
+      {q.data && items.length > 0 && (
         <>
           <p aria-live="polite">{t('history.count', { shown: items.length, total })}</p>
           <Timeline items={items} />

@@ -923,6 +923,7 @@ Las secciones 1 a 11 son la propuesta original y se conservan como referencia. E
 | Cuándo entra el modo lectura | `refresh()` responde `OFFLINE` | Sin red **o** con la API caída (5xx) en el refresh, si hay sesión guardada. Los botones que escriben también se desactivan si el navegador pierde la red con la sesión abierta (`useReadOnly`) | Lo guardado gana a una consulta que falló sin red: las pantallas muestran los datos y no el error. Lo que no se guardó dice que aparecerá al volver la conexión. |
 | Botón "Instalar app" | En el panel y en el pie de la landing (§8.7) | En la navegación del panel y en la sección "Consigue el juego" de la landing | Mismo comportamiento: Chrome/Edge/Android abren el diálogo; iOS muestra los pasos; instalada, no aparece. |
 | Manifiesto | En `vite.config.ts` (§8.1) | `src/shared/pwa/manifest.ts`, importado por `vite.config.ts`; los atajos llevan ícono y `?source=shortcut` | Una prueba comprueba que cada atajo abre una pantalla que existe. |
+| Reglas del Service Worker | En `src/sw.ts` (§8.3) | Las decisiones (qué se cachea, qué se encola, cómo se reenvía la cola) viven en `src/shared/pwa/swRules.ts`; `sw.ts` solo las conecta con Workbox | Así se prueban sin un worker real (`swRules.test.ts`). La caché `public-api` ahora acepta exactamente `/api/v1/news`, `/api/v1/news/{slug}` y `/api/v1/achievements` (antes cualquier ruta que empezara con `/api/v1/news`). |
 
 ### 12.3 Calidad y despliegue
 
@@ -930,6 +931,7 @@ Las secciones 1 a 11 son la propuesta original y se conservan como referencia. E
 |---|---|---|---|
 | Pruebas de integración del backend | `@WebMvcTest` · `@DataJpaTest` contra PostgreSQL | `@SpringBootTest` + MockMvc contra PostgreSQL (`*IntegrationTest`), con `@Transactional` para deshacer cada prueba; helpers en `test/.../support/ApiTestClient` | `@WebMvcTest` se mantiene para controladores aislados. |
 | Cobertura | No definida | JaCoCo en `./mvnw verify` (`target/site/jacoco`) y `npm run test:coverage` (`frontend/coverage`) | CI publica los reportes como artefactos `backend-test-reports` y `web-coverage`. |
+| Pruebas unitarias del frontend | Pantallas con Vitest + MSW (§11) | Además de las pantallas: sesión y `authMiddleware`, reglas del Service Worker, registro del SW y componentes PWA, persistencia en IndexedDB, esquemas zod, política de reintentos, layouts y errores de ruta | `fake-indexeddb` da IndexedDB en jsdom; `virtual:pwa-register` se sustituye por `src/test/virtualPwaRegister.ts`. |
 | Docker | Sin Docker en los equipos | `docker-compose.yml` y Dockerfiles para levantar la API, la PWA y PostgreSQL juntos | Opcional; el desarrollo diario sigue con PostgreSQL local. |
 
 ### 12.4 Pendiente de implementar

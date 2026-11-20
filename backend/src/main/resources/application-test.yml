@@ -9,6 +9,10 @@ spring:
 tdimp:
   security:
     jwt-secret: ${JWT_SECRET:test-only-secret-not-used-outside-ci-0123456789}
+  # Las pruebas crean muchas cuentas desde 127.0.0.1: sin límite (NoOpRateLimiter).
+  # RateLimitIntegrationTest lo vuelve a encender con límites pequeños.
+  rate-limit:
+    enabled: false
 
 logging:
   level:

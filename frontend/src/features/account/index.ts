@@ -1,2 +1,2 @@
 export { accountRoutes } from './routes'
-export { accountQuery, type Account } from './queries'
+export { accountKeys, accountQuery, type Account } from './queries'

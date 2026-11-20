@@ -1,0 +1,88 @@
+/* Achievement plates (console trophy list): a dark plate with a chamfered medallion on the left,
+   gold rim when unlocked, a misty "?" when hidden. Same look in both themes. */
+.grid {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: var(--s-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+}
+.frame {
+  --rim: #C9A24A;
+  position: relative; display: grid; grid-template-columns: auto 1fr; column-gap: var(--s-4); align-items: center;
+  min-height: 96px; padding: var(--s-4) var(--s-5) var(--s-4) var(--s-4);
+  border-radius: var(--radius-m);
+  background: linear-gradient(135deg, #2B2456, #1A1636 70%);
+  border: 1px solid rgb(201 162 74 / .45);
+  color: #F6F0F8;
+  transition: transform var(--dur-medium) var(--ease), border-color var(--dur-medium);
+}
+.frame::after {   /* thin gold line along the top edge */
+  content: ""; position: absolute; left: var(--s-4); right: var(--s-4); top: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--rim), transparent);
+}
+.frame:hover { transform: translateY(-3px); border-color: var(--rim); }
+.frame > :not(.emblem) { grid-column: 2; }
+.frame h2, .frame h3 { margin: 0; font-family: var(--f-display); font-weight: 600; font-size: var(--t-l); line-height: 1.25; color: #FFFFFF; }
+.frame p { margin: 2px 0 0; color: #C9C1DA; font-size: var(--t-s); line-height: 1.5; }
+
+/* Medallion: chamfered square (pixel-like corners), gold rim, icon inside */
+.emblem {
+  grid-row: 1 / span 3; align-self: center;
+  position: relative; display: grid; place-items: center; width: 64px; height: 64px; color: #FFE7A3;
+  background: linear-gradient(145deg, #F7D982, #B8862B);
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+}
+.emblem::before {   /* inner face */
+  content: ""; position: absolute; inset: 4px;
+  background: radial-gradient(circle at 35% 30%, #4A3B7A, #1E1840);
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+}
+.emblem svg { position: relative; filter: drop-shadow(0 0 6px rgb(247 217 130 / .6)); }
+
+/* Locked: silver rim, muted */
+.frame[data-unlocked="false"] { --rim: #8E86AE; border-color: rgb(142 134 174 / .35); }
+.frame[data-unlocked="false"] .emblem { background: linear-gradient(145deg, #C9C3DC, #6E6790); color: #C9C3DC; }
+.frame[data-unlocked="false"] .emblem svg { filter: none; }
+/* Hidden: misty medallion with a question mark */
+.frame[data-hidden="true"] { --rim: #8E86AE; border-style: dashed; border-color: rgb(142 134 174 / .4); }
+.frame[data-hidden="true"] .emblem { background: linear-gradient(145deg, #A79FC4, #4F4878); color: #D9D3EC; }
+.frame[data-hidden="true"] .emblem svg { animation: mist 3s ease-in-out infinite; filter: none; }
+.frame[data-hidden="true"] h2, .frame[data-hidden="true"] h3 { color: #C9C1DA; }
+/* Unlocked: a slow gleam crossing the plate */
+.frame[data-unlocked="true"] { overflow: hidden; }
+.frame[data-unlocked="true"]::before {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%;
+  background: linear-gradient(100deg, transparent, rgb(255 231 163 / .12), transparent);
+  animation: gleam 6s ease-in-out infinite;
+}
+@keyframes gleam { 0%, 60% { left: -60%; } 100% { left: 130%; } }
+@keyframes mist { 50% { opacity: .55; filter: blur(1px); } }
+
+.status {
+  justify-self: start; display: inline-flex; margin-top: var(--s-2); padding: .15rem .55rem; border-radius: var(--radius-s);
+  font-size: var(--t-xs); font-weight: 700; letter-spacing: .04em;
+}
+.frame[data-unlocked="true"] .status { background: rgb(242 193 78 / .16); color: #F7D982; border: 1px solid rgb(242 193 78 / .4); }
+.frame[data-unlocked="false"] .status { background: transparent; color: #A9A1C2; border: 1px dashed rgb(169 161 194 / .5); }
+
+@media (prefers-reduced-motion: reduce) {
+  .frame[data-unlocked="true"]::before, .frame[data-hidden="true"] .emblem svg { animation: none; }
+  .frame:hover { transform: none; }
+}
+
+/* Progress header */
+.quest {
+  display: grid; gap: var(--s-4); align-items: center;
+  margin-bottom: var(--s-6); padding: var(--s-5); border-radius: var(--radius-l);
+  background: var(--c-glass-strong);
+  border: 1px solid var(--c-line); box-shadow: var(--shadow-glass);
+}
+.questTop { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s-2); }
+.questTop p { margin: 0; font-weight: 800; font-size: var(--t-l); }
+.percent { font-family: var(--f-pixel); font-size: var(--t-2xl); color: var(--c-promise); }
+.bar { appearance: none; width: 100%; height: 14px; border: 0; border-radius: var(--radius-pill); overflow: hidden; background: var(--c-primary-soft); }
+.bar::-webkit-progress-bar { background: var(--c-primary-soft); border-radius: var(--radius-pill); }
+.bar::-webkit-progress-value { background: linear-gradient(90deg, var(--c-promise-glow), var(--c-primary)); border-radius: var(--radius-pill); }
+.bar::-moz-progress-bar { background: linear-gradient(90deg, var(--c-promise-glow), var(--c-primary)); border-radius: var(--radius-pill); }
+.badges { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+.badge { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--radius-s); color: #fff; background: linear-gradient(135deg, #FFE08A, #D99A1E); box-shadow: var(--glow-gold); }
+.badge[data-locked="true"] { background: var(--c-glass); color: var(--c-text-muted); box-shadow: none; border: 1px dashed var(--c-control-border); }

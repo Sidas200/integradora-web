@@ -1,7 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
+import type { CSSProperties } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { CheckCircle2, Gamepad2, Keyboard, Music, Volume2 } from 'lucide-react'
+import { useReadOnly } from '@/shared/auth'
 import { Button } from '@/shared/ui/Button'
 import { CheckboxField } from '@/shared/ui/CheckboxField'
 import { formatLongDate } from '@/shared/ui/formatDate'
@@ -12,11 +15,13 @@ import { TextField } from '@/shared/ui/TextField'
 import { useSaveSettings } from '../mutations'
 import { settingsQuery } from '../queries'
 import { settingsSchema, type SettingsForm } from '../schemas'
+import css from '../account.module.css'
 
 export function SettingsPage() {
   const { t } = useTranslation()
   const q = useQuery(settingsQuery())
   const save = useSaveSettings()
+  const readOnly = useReadOnly()
 
   const form = useForm<SettingsForm>({
     resolver: zodResolver(settingsSchema),
@@ -40,63 +45,77 @@ export function SettingsPage() {
       <PageHeader title={t('pages.settings')}>
         <p>{t('account.settings.intro')}</p>
       </PageHeader>
-      {q.isPending && <Skeleton rows={4} />}
-      {q.isError && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
-      {q.isSuccess && (
-        <>
-          <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="settings">
-            <TextField
-              label={t('account.settings.musicVolume')}
-              type="range"
-              min={0}
-              max={100}
-              step={1}
-              hint={`${music ?? 0} %`}
-              error={message(errors.musicVolume?.message)}
-              {...form.register('musicVolume', { valueAsNumber: true })}
-            />
-            <TextField
-              label={t('account.settings.sfxVolume')}
-              type="range"
-              min={0}
-              max={100}
-              step={1}
-              hint={`${sfx ?? 0} %`}
-              error={message(errors.sfxVolume?.message)}
-              {...form.register('sfxVolume', { valueAsNumber: true })}
-            />
-            <SelectField
-              label={t('account.settings.language')}
-              options={[
-                { value: 'es', label: t('subscribe.languages.es') },
-                { value: 'en', label: t('subscribe.languages.en') },
-              ]}
-              {...form.register('language')}
-            />
-            <CheckboxField label={t('account.settings.fullscreen')} {...form.register('fullscreen')} />
-            {save.isError && <ErrorState error={save.error} />}
-            <Button type="submit" loading={save.isPending}>
-              {save.isPending ? t('account.settings.saving') : t('account.settings.save')}
-            </Button>
-          </form>
-          {save.isSuccess && <p role="status">{t('account.settings.saved')}</p>}
+      {q.data === undefined && (q.isError
+        ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+        : <Skeleton rows={4} />)}
+      {q.data && (
+        <div className={css.columns}>
+          <div className={css.panel}>
+            <h2 className={css.panelTitle}><span className={css.panelIcon} aria-hidden="true"><Volume2 size={18} /></span>{t('account.settings.game')}</h2>
+            <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="settings" className={css.form}>
+              <div className={css.slider}>
+                <Music size={18} aria-hidden="true" className={css.sliderIcon} />
+                <TextField
+                  label={t('account.settings.musicVolume')}
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={1}
+                  hint={`${music ?? 0} %`}
+                  error={message(errors.musicVolume?.message)}
+                  style={{ '--fill': `${music ?? 0}%` } as CSSProperties}
+                  {...form.register('musicVolume', { valueAsNumber: true })}
+                />
+              </div>
+              <div className={css.slider}>
+                <Volume2 size={18} aria-hidden="true" className={css.sliderIcon} />
+                <TextField
+                  label={t('account.settings.sfxVolume')}
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={1}
+                  hint={`${sfx ?? 0} %`}
+                  error={message(errors.sfxVolume?.message)}
+                  style={{ '--fill': `${sfx ?? 0}%` } as CSSProperties}
+                  {...form.register('sfxVolume', { valueAsNumber: true })}
+                />
+              </div>
+              <SelectField
+                label={t('account.settings.language')}
+                options={[
+                  { value: 'es', label: t('subscribe.languages.es') },
+                  { value: 'en', label: t('subscribe.languages.en') },
+                ]}
+                {...form.register('language')}
+              />
+              <CheckboxField label={t('account.settings.fullscreen')} {...form.register('fullscreen')} />
+              {save.isError && <ErrorState error={save.error} />}
+              <Button type="submit" loading={save.isPending} disabled={readOnly}>
+                {save.isPending ? t('account.settings.saving') : t('account.settings.save')}
+              </Button>
+            </form>
+            {save.isSuccess && <p role="status" className={css.saved}><CheckCircle2 size={16} aria-hidden="true" />{t('account.settings.saved')}</p>}
+          </div>
 
-          <h2>{t('account.settings.controls')}</h2>
-          <p>{t('account.settings.controlsHint')}</p>
-          {controls.length === 0 ? (
-            <p>{t('account.settings.noControls')}</p>
-          ) : (
-            <dl data-list="controls">
-              {controls.map(([action, binding]) => (
-                <div key={action}>
-                  <dt>{action}</dt>
-                  <dd><kbd>{binding}</kbd></dd>
-                </div>
-              ))}
-            </dl>
-          )}
-          {q.data.updatedAt && <p>{t('account.settings.updatedAt', { date: formatLongDate(q.data.updatedAt) })}</p>}
-        </>
+          <div className={css.panel}>
+            <h2 className={css.panelTitle}><span className={css.panelIcon} aria-hidden="true"><Keyboard size={18} /></span>{t('account.settings.controls')}</h2>
+            <p className={css.hint}>{t('account.settings.controlsHint')}</p>
+            {controls.length === 0 ? (
+              <p className={css.emptyControls}><Gamepad2 size={18} aria-hidden="true" />{t('account.settings.noControls')}</p>
+            ) : (
+              <dl data-list="controls" className={css.controls}>
+                {controls.map(([action, binding]) => (
+                  <div key={action}>
+                    <dt>{action}</dt>
+                    <dd><kbd>{binding}</kbd></dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            {q.data.updatedAt && <p className={css.hint}>{t('account.settings.updatedAt', { date: formatLongDate(q.data.updatedAt) })}</p>}
+          </div>
+        </div>
       )}
     </section>
   )

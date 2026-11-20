@@ -3,7 +3,10 @@ import { Navigate, useLocation } from 'react-router'
 import { Skeleton } from '@/shared/ui/states'
 import { useSession } from './session'
 
-/** Private routes: without a session it sends to /login?next=<where you wanted to go>. */
+/**
+ * Private routes: without a session it sends to /login?next=<where you wanted to go>.
+ * Read-only mode (status 'offline') also enters: the player sees what was saved on this browser.
+ */
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { status } = useSession()
   const location = useLocation()

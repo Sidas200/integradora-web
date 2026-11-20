@@ -1,7 +1,36 @@
+import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { PendingPage } from '@/shared/ui/PageHeader'
+import { PageHeader } from '@/shared/ui/PageHeader'
+import { EmptyState, ErrorState, Skeleton } from '@/shared/ui/states'
+import { SaveSlotCard } from '../components/SaveSlotCard'
+import { savesQuery } from '../queries'
+import { SLOTS } from '../slots'
+import css from '../saves.module.css'
 
+/** The three slots of the account: the ones with a save show their progress. */
 export function SavesPage() {
   const { t } = useTranslation()
-  return <PendingPage title={t('pages.saves')} phase={7} />
+  const q = useQuery(savesQuery())
+
+  return (
+    <section>
+      <PageHeader title={t('pages.saves')}>
+        <p>{t('saves.intro')}</p>
+      </PageHeader>
+
+      {q.data === undefined && (q.isError
+        ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+        : <Skeleton rows={3} />)}
+      {q.data?.length === 0 && <EmptyState title={t('saves.empty.title')} text={t('saves.empty.text')} />}
+      {q.data && q.data.length > 0 && (
+        <ul data-list="saves" className={css.grid}>
+          {SLOTS.map((slot) => (
+            <li key={slot}>
+              <SaveSlotCard slot={slot} save={q.data.find((s) => s.slot === slot)} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
 }

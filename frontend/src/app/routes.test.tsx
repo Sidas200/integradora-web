@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { renderRoute } from '@/test/renderRoute'
+import { createRoutes } from './routes'
 
 describe('navegación', () => {
   it('una ruta privada sin sesión manda a /login y recuerda a dónde iba', async () => {
@@ -24,5 +25,20 @@ describe('navegación', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Crear cuenta' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Iniciar sesión' })).toHaveAttribute('href', '/login')
     expect(screen.getByRole('link', { name: 'Saltar al contenido' })).toHaveAttribute('href', '#main')
+  })
+})
+
+describe('pantalla /lab', () => {
+  it('en un build de producción /lab no existe y muestra la página 404', async () => {
+    renderRoute('/lab', createRoutes({ lab: false }))
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Página no encontrada' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { level: 1, name: 'Laboratorio de la PWA' })).not.toBeInTheDocument()
+  })
+
+  it('en desarrollo /lab sigue disponible para el laboratorio de pruebas', async () => {
+    renderRoute('/lab', createRoutes({ lab: true }))
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Laboratorio de la PWA' })).toBeInTheDocument()
   })
 })

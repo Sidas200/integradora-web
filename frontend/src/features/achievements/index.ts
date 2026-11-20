@@ -1,3 +1,5 @@
 export { achievementsRoutes } from './routes'
 export { AchievementCatalog } from './components/AchievementCatalog'
-export { achievementsCatalogQuery, achievementsKeys, type Achievement } from './queries'
+export {
+  achievementsCatalogQuery, achievementsKeys, myAchievementsQuery, type Achievement, type PlayerAchievement,
+} from './queries'

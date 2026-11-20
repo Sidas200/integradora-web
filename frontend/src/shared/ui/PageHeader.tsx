@@ -1,8 +1,9 @@
 import { useEffect, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import css from './PageHeader.module.css'
 
 /** Page h1 + document title ("Noticias · The Day I Made That Promise"). */
-export function PageHeader({ title, children }: { title: string; children?: ReactNode }) {
+export function PageHeader({ title, eyebrow, children }: { title: string; eyebrow?: string; children?: ReactNode }) {
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -10,20 +11,10 @@ export function PageHeader({ title, children }: { title: string; children?: Reac
   }, [title, t])
 
   return (
-    <header>
-      <h1>{title}</h1>
-      {children}
+    <header className={css.header}>
+      {eyebrow && <p className={css.eyebrow}>{eyebrow}</p>}
+      <h1 className={css.title}>{title}</h1>
+      {children && <div className={css.sub}>{children}</div>}
     </header>
-  )
-}
-
-/** Temporary content of a screen that a later phase implements. */
-export function PendingPage({ title, phase }: { title: string; phase: number }) {
-  const { t } = useTranslation()
-  return (
-    <section>
-      <PageHeader title={title} />
-      <p>{t('common.pending', { phase })}</p>
-    </section>
   )
 }

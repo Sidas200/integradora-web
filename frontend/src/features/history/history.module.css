@@ -1,0 +1,41 @@
+/* Filter chips (Flix) */
+.filter { display: flex; gap: var(--s-2); overflow-x: auto; padding: var(--s-1) var(--s-1) var(--s-3); margin-bottom: var(--s-3); scrollbar-width: none; }
+.chip {
+  display: inline-flex; align-items: center; gap: var(--s-2); flex: none;
+  min-height: 48px; padding: 0 var(--s-5); border-radius: var(--radius-m);
+  border: 1px solid var(--c-glass-border); background: var(--c-glass); color: var(--c-text);
+  font-weight: 700; cursor: pointer; box-shadow: var(--shadow-glass);
+  transition: transform var(--dur-fast) var(--ease), background var(--dur-medium), color var(--dur-fast);
+}
+.chip:hover { transform: translateY(-2px); }
+.chip[aria-pressed="true"] { background: var(--c-promise); color: var(--c-on-promise); border-color: transparent; box-shadow: var(--glow-promise); }
+
+.count { font-family: var(--f-pixel); color: var(--c-text-muted); margin: 0 0 var(--s-3); }
+.more { margin: var(--s-5) auto 0; display: flex; }
+
+/* Timeline rows ("Continue Progress") */
+.timeline { list-style: none; position: relative; display: grid; gap: var(--s-2); }
+.item {
+  position: relative; display: grid; grid-template-columns: auto 1fr; gap: var(--s-1) var(--s-3); align-items: center;
+  padding: var(--s-3); border-radius: var(--radius-m);
+  background: var(--c-glass-strong); border: 1px solid var(--c-glass-border);
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-medium);
+  animation: slide var(--dur-slow) var(--ease) both;
+}
+.item:hover { transform: translateX(4px); box-shadow: var(--shadow-glass); }
+.icon {
+  grid-row: span 2; display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--radius-m);
+  background: var(--c-primary-soft); color: var(--c-primary);
+}
+.item[data-type="ACHIEVEMENT"] .icon { background: var(--c-gold); color: var(--c-on-gold); box-shadow: var(--glow-gold); }
+.item[data-type="MILESTONE"] .icon { background: var(--c-promise-soft); color: var(--c-promise); }
+.text { min-width: 0; }
+.title, .details { margin: 0; }
+.details { font-size: var(--t-s); color: var(--c-text-muted); }
+.time { font-family: var(--f-pixel); font-size: var(--t-xs); color: var(--c-text-muted); }
+@media (min-width: 640px) {
+  .item { grid-template-columns: auto 1fr auto; }
+  .icon { grid-row: auto; }
+  .time { justify-self: end; }
+}
+@keyframes slide { from { opacity: 0; transform: translateY(8px); } }

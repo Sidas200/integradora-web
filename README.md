@@ -23,6 +23,7 @@ Aplicación web progresiva que presenta el juego, administra la cuenta del jugad
 9. [Experiencia de usuario (UI/UX)](#9-experiencia-de-usuario-uiux)
 10. [Seguridad y sesiones](#10-seguridad-y-sesiones)
 11. [Calidad y despliegue](#11-calidad-y-despliegue)
+12. [Cambios respecto a la propuesta](#12-cambios-respecto-a-la-propuesta)
 
 ---
 
@@ -85,7 +86,7 @@ Aplicación web progresiva que presenta el juego, administra la cuenta del jugad
 | Backend | **Spring Boot 4.1** con **Java 21 LTS**, Maven | API REST en N-capas |
 | Seguridad | Spring Security 7 + JWT (Nimbus) + BCrypt | Sesiones con access y refresh token |
 | Persistencia | Spring Data JPA + `JdbcClient` · **Flyway** · MapStruct | Entidades, consultas de listas y migraciones versionadas |
-| Contrato | **OpenAPI 3.1** (`docs/api/openapi.yaml`) + springdoc | Fuente de verdad de la API |
+| Contrato | **OpenAPI 3.1** (`docs/api/openapi.yaml`) | Fuente de verdad de la API; de él se generan los tipos del frontend |
 | Base de datos | **PostgreSQL** en Supabase (esquema `game`) | Datos de cuentas, partidas e historial |
 | Despliegue | **Vercel** (PWA) · **Render** (API) · GitHub Actions | CDN, API y CI/CD en planes gratuitos |
 | Pruebas | Vitest, Testing Library, MSW, Cypress · JUnit, Mockito, ArchUnit | Unitarias, integración, E2E y reglas de arquitectura |
@@ -890,3 +891,54 @@ export const config: VercelConfig = {
 ```
 
 El plan gratuito de Render duerme la API tras 15 minutos sin tráfico; Vercel espera hasta 120 s al destino, así que la primera petición no falla y la UI muestra "Despertando el servidor".
+
+---
+
+## 12. Cambios respecto a la propuesta
+
+Las secciones 1 a 11 son la propuesta original y se conservan como referencia. Esta sección registra en qué difiere la implementación; se actualiza en cada PR que introduce una diferencia.
+
+### 12.1 Backend
+
+| Aspecto | Propuesta | Implementación | Notas |
+|---|---|---|---|
+| Autenticación | Spring Security 7 + JWT con Nimbus (`JwtTokenIssuer`, `SecurityConfig` con filtros) | JWT HS256 propio en `service/HmacTokenIssuer` (interfaz `TokenIssuer`) y `controller/BearerAuthInterceptor` para `/api/v1/account/**` y `/auth/reauthenticate` | De Spring Security solo se usa `spring-security-crypto` para el `PasswordEncoder` (BCrypt delegado). Mismo formato de token y mismos claims (`sub`, `sid`, `cli`, `auth_time`, `iat`, `exp`). |
+| Persistencia | Spring Data JPA + `JdbcClient` · MapStruct | Solo `JdbcClient`: cada repositorio es una interfaz con su implementación `*Jdbc`; la conversión `model` ↔ `dto` la hacen los services (`SaveMapper` y métodos `from`) | Sin entidades JPA, sin Hibernate y sin MapStruct; Flyway sigue siendo el único que modifica el esquema. |
+| Paquetes | `security/` aparte y un controlador por recurso (`SettingsController`, `DeviceController`, `HistoryController`, …) | Lo de seguridad vive en `service/` (tokens) y `controller/` (interceptor y canales del refresh token); `AccountController` agrupa `/account/**` excepto partidas (`SaveController`) | Las capas y sus reglas de ArchUnit son las mismas. |
+| Jugador de la petición | `Requester` resuelto por `RequesterResolver` | `AccessClaims` resuelto por `CurrentPlayerResolver` | El id del jugador sigue saliendo siempre del token. |
+| Reloj | `ClockConfig` | `ClockConfig` inyectado en todos los services y en `HmacTokenIssuer` | Las pruebas usan `Clock.fixed` para probar vencimientos sin esperar. |
+| Documentación de la API | springdoc genera `/v3/api-docs` | No se usa springdoc | `docs/api/openapi.yaml` es la única fuente de verdad; de él se generan los tipos del frontend y `contract.yml` lo valida. |
+| Límite de intentos | `RateLimiter` con Bucket4j · `NoOpRateLimiter` en pruebas | `RateLimiter` con `InMemoryRateLimiter` (ventana fija en memoria, sin dependencias) y `NoOpRateLimiter` cuando `tdimp.rate-limit.enabled=false` (perfil `test`) | Login: 5 por IP + correo cada 15 min (un login correcto reinicia); registro: 10 por IP cada hora; reautenticación: 5 por jugador cada 15 min; aviso de lanzamiento: 10 por IP cada hora. Se ajusta en `tdimp.rate-limit.*`. Responde 429 `TOO_MANY_ATTEMPTS` con `Retry-After`. Al estar en memoria, cuenta por instancia: con más de una instancia de la API habría que moverlo a la base de datos o a Redis. |
+
+### 12.2 Frontend
+
+| Aspecto | Propuesta | Implementación | Notas |
+|---|---|---|---|
+| Sesión en memoria | `shared/auth/tokenStore.ts` (`TokenStore`) | `shared/auth/session.ts` y `authMiddleware.ts` | Mismo comportamiento: el access token solo vive en memoria. |
+| Pantalla `/lab` | No estaba en la propuesta | Diagnóstico del laboratorio de pruebas; solo existe en `npm run dev` | En `npm run build` no se monta la ruta ni se genera su chunk. |
+| Claves de las consultas del jugador | `['saves']`, `['history', { type }]`, `['sessions', { slot }]`, `['achievements']` (§7.5) | `['account', 'saves']`, `['account', 'history', { type }]`, `['account', 'sessions', { slot }]`, `['account', 'achievements']` | Al cerrar sesión se borra todo lo que empieza con `'account'`; así ningún dato de un jugador queda en caché para el siguiente. El catálogo público sigue en `['achievements', 'catalog']`. `src/app/queryKeys.test.ts` lo comprueba. |
+| Filtro del historial | Se muestra junto con la lista (§7.5) | Se muestra en todos los estados (cargando, error, vacío) | Si un filtro no tiene registros, el jugador puede cambiarlo sin recargar. |
+| Dueño de los datos guardados | `buster: playerId ?? 'anonymous'` (§8.5) | Persister propio con `idb-keyval` (`shared/query/persister.ts`) que marca cada copia con el id del jugador; la sesión guardada (`tdimp.offline-session` en `localStorage`, sin tokens) dice de quién es | `PersistQueryClientProvider` no vuelve a leer `buster` cuando cambia la sesión; marcar cada copia evita que un jugador vea la caché de otro. Una copia sin consultas borra la entrada, así que al cerrar sesión IndexedDB queda vacío. |
+| Qué se guarda sin conexión | Resumen, partidas, 1.ª página del historial, logros y configuración | Lo mismo, más el detalle de cada partida y la actividad reciente del resumen; del historial sin filtro se guardan las páginas ya cargadas | Así `/app` y `/app/saves/:slot` abren completos sin red. Un historial filtrado necesita conexión. |
+| Cuándo entra el modo lectura | `refresh()` responde `OFFLINE` | Sin red **o** con la API caída (5xx) en el refresh, si hay sesión guardada. Los botones que escriben también se desactivan si el navegador pierde la red con la sesión abierta (`useReadOnly`) | Lo guardado gana a una consulta que falló sin red: las pantallas muestran los datos y no el error. Lo que no se guardó dice que aparecerá al volver la conexión. |
+| Botón "Instalar app" | En el panel y en el pie de la landing (§8.7) | En la navegación del panel y en la sección "Consigue el juego" de la landing | Mismo comportamiento: Chrome/Edge/Android abren el diálogo; iOS muestra los pasos; instalada, no aparece. |
+| Manifiesto | En `vite.config.ts` (§8.1) | `src/shared/pwa/manifest.ts`, importado por `vite.config.ts`; los atajos llevan ícono y `?source=shortcut` | Una prueba comprueba que cada atajo abre una pantalla que existe. |
+| Reglas del Service Worker | En `src/sw.ts` (§8.3) | Las decisiones (qué se cachea, qué se encola, cómo se reenvía la cola) viven en `src/shared/pwa/swRules.ts`; `sw.ts` solo las conecta con Workbox | Así se prueban sin un worker real (`swRules.test.ts`). La caché `public-api` ahora acepta exactamente `/api/v1/news`, `/api/v1/news/{slug}` y `/api/v1/achievements` (antes cualquier ruta que empezara con `/api/v1/news`). |
+
+### 12.3 Calidad y despliegue
+
+| Aspecto | Propuesta | Implementación | Notas |
+|---|---|---|---|
+| Pruebas de integración del backend | `@WebMvcTest` · `@DataJpaTest` contra PostgreSQL | `@SpringBootTest` + MockMvc contra PostgreSQL (`*IntegrationTest`), con `@Transactional` para deshacer cada prueba; helpers en `test/.../support/ApiTestClient` | `@WebMvcTest` se mantiene para controladores aislados. |
+| Cobertura | No definida | JaCoCo en `./mvnw verify` (`target/site/jacoco`) y `npm run test:coverage` (`frontend/coverage`) | CI publica los reportes como artefactos `backend-test-reports` y `web-coverage`. |
+| Pruebas unitarias del frontend | Pantallas con Vitest + MSW (§11) | Además de las pantallas: sesión y `authMiddleware`, reglas del Service Worker, registro del SW y componentes PWA, persistencia en IndexedDB, esquemas zod, política de reintentos, layouts y errores de ruta | `fake-indexeddb` da IndexedDB en jsdom; `virtual:pwa-register` se sustituye por `src/test/virtualPwaRegister.ts`. |
+| Docker | Sin Docker en los equipos | `docker-compose.yml` y Dockerfiles para levantar la API, la PWA y PostgreSQL juntos | Opcional; el desarrollo diario sigue con PostgreSQL local. |
+
+### 12.4 Pendiente de implementar
+
+Lo que la propuesta describe y todavía no existe en el código. Se quita de esta lista en el PR que lo implementa.
+
+- CSP estricta (§10).
+- Estilos con CSS Modules, diseño adaptativo y tema Tsuki (§9.2, §9.3).
+- Capturas del manifiesto (`screenshots`, §8.1): se toman cuando estén los estilos.
+- Pruebas E2E con Cypress y `cypress-axe` (§11).

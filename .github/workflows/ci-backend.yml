@@ -112,6 +112,7 @@ jobs:
             backend/target/surefire-reports/
             backend/target/failsafe-reports/
             backend/target/checkstyle-result.xml
+            backend/target/site/jacoco/
           if-no-files-found: ignore
           retention-days: 14
       - name: Publicar JAR

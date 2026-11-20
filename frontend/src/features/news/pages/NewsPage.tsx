@@ -5,7 +5,7 @@ import { NewsList } from '../components/NewsList'
 export function NewsPage() {
   const { t } = useTranslation()
   return (
-    <section>
+    <section className="container">
       <PageHeader title={t('pages.news')} />
       <NewsList />
     </section>

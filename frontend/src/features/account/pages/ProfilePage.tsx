@@ -2,7 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { CalendarDays, CheckCircle2, Mail, PenLine } from 'lucide-react'
 import { ApiError } from '@/shared/api/problems'
+import { useReadOnly } from '@/shared/auth'
 import { Button } from '@/shared/ui/Button'
 import { formatLongDate } from '@/shared/ui/formatDate'
 import { PageHeader } from '@/shared/ui/PageHeader'
@@ -11,11 +13,13 @@ import { TextField } from '@/shared/ui/TextField'
 import { useRename } from '../mutations'
 import { accountQuery } from '../queries'
 import { profileSchema, type ProfileForm } from '../schemas'
+import css from '../account.module.css'
 
 export function ProfilePage() {
   const { t } = useTranslation()
   const q = useQuery(accountQuery())
   const rename = useRename()
+  const readOnly = useReadOnly()
 
   // `values` keeps the field in sync with the server copy (first load and after saving).
   const form = useForm<ProfileForm>({
@@ -42,34 +46,48 @@ export function ProfilePage() {
   return (
     <section>
       <PageHeader title={t('pages.profile')} />
-      {q.isPending && <Skeleton rows={3} />}
-      {q.isError && <ErrorState error={q.error} onRetry={() => void q.refetch()} />}
-      {q.isSuccess && (
-        <>
-          <dl data-list="profile">
-            <dt>{t('account.profile.email')}</dt>
-            <dd>{q.data.email}</dd>
-            <dt>{t('account.profile.memberSince')}</dt>
-            <dd>{formatLongDate(q.data.createdAt)}</dd>
-          </dl>
-          <p>{t('account.profile.emailHint')}</p>
+      {q.data === undefined && (q.isError
+        ? <ErrorState error={q.error} onRetry={() => void q.refetch()} />
+        : <Skeleton rows={3} />)}
+      {q.data && (
+        <div className={css.columns}>
+          <div className={`${css.panel} ${css.idCard}`}>
+            <div className={css.avatar} aria-hidden="true">
+              <span>{q.data.username.slice(0, 1).toUpperCase()}</span>
+            </div>
+            <p className={css.idName} aria-hidden="true">{q.data.username}</p>
+            <dl data-list="profile" className={css.idFacts}>
+              <div>
+                <dt><Mail size={14} aria-hidden="true" />{t('account.profile.email')}</dt>
+                <dd>{q.data.email}</dd>
+              </div>
+              <div>
+                <dt><CalendarDays size={14} aria-hidden="true" />{t('account.profile.memberSince')}</dt>
+                <dd>{formatLongDate(q.data.createdAt)}</dd>
+              </div>
+            </dl>
+            <p className={css.hint}>{t('account.profile.emailHint')}</p>
+          </div>
 
-          <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="profile">
-            <TextField
-              label={t('account.profile.username')}
-              autoComplete="username"
-              maxLength={20}
-              hint={t('account.profile.usernameHint')}
-              error={errors.username?.message ? t(errors.username.message as 'validation.username') : undefined}
-              {...form.register('username')}
-            />
-            {generalError && <ErrorState error={generalError} />}
-            <Button type="submit" loading={rename.isPending}>
-              {rename.isPending ? t('account.profile.saving') : t('account.profile.save')}
-            </Button>
-          </form>
-          {rename.isSuccess && <p role="status">{t('account.profile.saved')}</p>}
-        </>
+          <div className={css.panel}>
+            <h2 className={css.panelTitle}><span className={css.panelIcon} aria-hidden="true"><PenLine size={18} /></span>{t('account.profile.username')}</h2>
+            <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="profile" className={css.form}>
+              <TextField
+                label={t('account.profile.username')}
+                autoComplete="username"
+                maxLength={20}
+                hint={t('account.profile.usernameHint')}
+                error={errors.username?.message ? t(errors.username.message as 'validation.username') : undefined}
+                {...form.register('username')}
+              />
+              {generalError && <ErrorState error={generalError} />}
+              <Button type="submit" loading={rename.isPending} disabled={readOnly}>
+                {rename.isPending ? t('account.profile.saving') : t('account.profile.save')}
+              </Button>
+            </form>
+            {rename.isSuccess && <p role="status" className={css.saved}><CheckCircle2 size={16} aria-hidden="true" />{t('account.profile.saved')}</p>}
+          </div>
+        </div>
       )}
     </section>
   )

@@ -2,6 +2,7 @@ import { queryOptions } from '@tanstack/react-query'
 import { api } from '@/shared/api/client'
 import { toApiError } from '@/shared/api/problems'
 import type { components } from '@/shared/api/schema'
+import { persisted } from '@/shared/query/persister'
 
 export type Account = components['schemas']['Account']
 export type Settings = components['schemas']['Settings']
@@ -14,9 +15,10 @@ export const accountKeys = {
   devices: ['account', 'devices'] as const,
 }
 
-/** GET /account: profile and summary. Needs the access token (authMiddleware adds it). */
+/** GET /account: profile and summary. Needs the access token (authMiddleware adds it). Readable offline. */
 export const accountQuery = () =>
   queryOptions({
+    ...persisted,
     queryKey: accountKeys.profile,
     queryFn: async () => {
       const { data, error, response } = await api.GET('/account')
@@ -25,9 +27,10 @@ export const accountQuery = () =>
     },
   })
 
-/** GET /account/settings: the game's settings saved in the cloud. */
+/** GET /account/settings: the game's settings saved in the cloud. Readable offline. */
 export const settingsQuery = () =>
   queryOptions({
+    ...persisted,
     queryKey: accountKeys.settings,
     queryFn: async () => {
       const { data, error, response } = await api.GET('/account/settings')

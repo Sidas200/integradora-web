@@ -1049,7 +1049,7 @@ export interface components {
                 };
             };
         };
-        /** @description Attempt limit exceeded. */
+        /** @description Attempt limit exceeded (code TOO_MANY_ATTEMPTS). Login: per IP + email; register and subscriptions: per IP; reauthenticate: per player. Retry-After says how many seconds to wait. */
         TooManyAttempts: {
             headers: {
                 "Retry-After"?: number;

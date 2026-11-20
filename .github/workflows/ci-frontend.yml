@@ -5,6 +5,7 @@
 #   lint       -> eslint .
 #   typecheck  -> tsc -b --noEmit (o tsc --noEmit)
 #   test       -> vitest run
+#   test:coverage -> vitest run --coverage (reporte en frontend/coverage/)
 #   build      -> tsc -b && vite build
 #   api:check  -> (opcional) regenera src/shared/api/schema.d.ts con openapi-typescript
 #                y falla si difiere del archivo versionado
@@ -86,8 +87,16 @@ jobs:
         run: npm run lint
       - name: Typecheck
         run: npm run typecheck
-      - name: Pruebas (Vitest)
-        run: npm test
+      - name: Pruebas y cobertura (Vitest)
+        run: npm run test:coverage
+      - name: Publicar cobertura
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-coverage
+          path: frontend/coverage/
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Build
         run: npm run build
       - name: Publicar dist

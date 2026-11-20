@@ -1,5 +1,7 @@
 export { OfflineBanner } from './OfflineBanner'
 export { UpdatePrompt } from './UpdatePrompt'
 export { PwaStatus } from './PwaStatus'
+export { InstallButton } from './InstallButton'
+export { listenForInstall } from './install'
 export { usePwaState, applyUpdate } from './pwaState'
 export { useOnline } from './useOnline'

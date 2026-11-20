@@ -1,27 +1,31 @@
 import { useTranslation } from 'react-i18next'
 import { AchievementCatalog } from '@/features/achievements'
 import { LatestNews } from '@/features/news'
+import { AppSection } from '../components/AppSection'
 import { BuySection } from '../components/BuySection'
 import { CharactersSection } from '../components/CharactersSection'
+import { Fireflies } from '../components/Fireflies'
 import { HeroSection } from '../components/HeroSection'
 import { LoopSection } from '../components/LoopSection'
-import { SpecsSection } from '../components/SpecsSection'
 import { StorySection } from '../components/StorySection'
 import { SubscribeForm } from '../components/SubscribeForm'
+import css from '../landing.module.css'
 
 /** Anchors of the one-page landing, in the order they appear. */
-const SECTIONS = ['story', 'loop', 'characters', 'specs', 'achievements', 'news', 'buy'] as const
+const SECTIONS = ['story', 'loop', 'characters', 'achievements', 'news', 'app', 'buy'] as const
 
 export function LandingPage() {
   const { t } = useTranslation()
   return (
-    <>
+    <div className={css.landing}>
       <HeroSection />
 
-      <nav aria-label={t('nav.landing')}>
-        <ul>
+      <nav aria-label={t('nav.landing')} className={css.anchors}>
+        <ul className="glass">
           {SECTIONS.map((id) => (
-            <li key={id}><a href={`#${id}`}>{t(`landing.sections.${id}`)}</a></li>
+            <li key={id}>
+              <a href={`#${id}`}>{t(`landing.sections.${id}`)}</a>
+            </li>
           ))}
         </ul>
       </nav>
@@ -29,21 +33,34 @@ export function LandingPage() {
       <StorySection />
       <LoopSection />
       <CharactersSection />
-      <SpecsSection />
 
-      <section id="achievements" aria-labelledby="achievements-title" data-section="achievements">
-        <h2 id="achievements-title">{t('landing.achievements.title')}</h2>
-        <p>{t('landing.achievements.text')}</p>
-        <AchievementCatalog />
+      <section id="achievements" aria-labelledby="achievements-title" data-section="achievements"
+               className={`${css.section} ${css.night}`}>
+        <Fireflies count={14} />
+        <div className={css.inner}>
+          <div className={`${css.center} ${css.reveal}`}>
+            <h2 id="achievements-title" className={css.h2}>{t('landing.achievements.title')}</h2>
+            <p className={css.lead}>{t('landing.achievements.text')}</p>
+          </div>
+          <AchievementCatalog />
+        </div>
       </section>
 
-      <section id="news" aria-labelledby="latest-news-title" data-section="news">
-        <h2 id="latest-news-title">{t('landing.news.title')}</h2>
-        <LatestNews size={3} />
+      <section id="news" aria-labelledby="latest-news-title" data-section="news" className={css.section}>
+        <div className={css.inner}>
+          <h2 id="latest-news-title" className={`${css.h2} ${css.reveal}`}>{t('landing.news.title')}</h2>
+          <LatestNews size={3} />
+        </div>
       </section>
 
-      <BuySection />
-      <SubscribeForm />
-    </>
+      <AppSection />
+
+      <div className={`${css.section} ${css.closing}`}>
+        <div className={`${css.inner} ${css.closingGrid}`}>
+          <BuySection />
+          <SubscribeForm />
+        </div>
+      </div>
+    </div>
   )
 }

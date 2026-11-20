@@ -44,4 +44,31 @@ class NewsServiceImplTest {
 
     assertThatThrownBy(() -> service.get("missing")).isInstanceOf(NotFoundException.class);
   }
+
+  @Test
+  void getReturnsTheWholePostWithItsMarkdown() {
+    var post = new NewsPost("devlog-1", "Devlog 1", "Resumen", "# Texto", "cover_1", PUBLISHED);
+    when(reader.findPublishedBySlug("devlog-1")).thenReturn(Optional.of(post));
+
+    var dto = service.get("devlog-1");
+
+    assertThat(dto.slug()).isEqualTo("devlog-1");
+    assertThat(dto.title()).isEqualTo("Devlog 1");
+    assertThat(dto.summary()).isEqualTo("Resumen");
+    assertThat(dto.coverKey()).isEqualTo("cover_1");
+    assertThat(dto.publishedAt()).isEqualTo(PUBLISHED);
+    assertThat(dto.contentMd()).isEqualTo("# Texto");
+  }
+
+  @Test
+  void anEmptyListHasNoPages() {
+    when(reader.findPublished(20, 0L)).thenReturn(List.of());
+    when(reader.countPublished()).thenReturn(0L);
+
+    var result = service.list(new PageQuery(0, 20));
+
+    assertThat(result.content()).isEmpty();
+    assertThat(result.page().totalElements()).isZero();
+    assertThat(result.page().totalPages()).isZero();
+  }
 }

@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '@/shared/api/problems'
 import { usePwaState } from '@/shared/pwa'
@@ -8,6 +9,7 @@ import { CheckboxField } from '@/shared/ui/CheckboxField'
 import { SelectField } from '@/shared/ui/SelectField'
 import { TextField } from '@/shared/ui/TextField'
 import { useSubscribe } from '../mutations'
+import css from '../landing.module.css'
 import { subscribeSchema, type SubscribeFormInput, type SubscribeFormOutput } from '../schemas'
 
 type ValidationKey = 'validation.required' | 'validation.email' | 'validation.consent'
@@ -58,9 +60,9 @@ export function SubscribeForm() {
     : null
 
   return (
-    <section aria-labelledby="subscribe-title" id="subscribe">
-      <h2 id="subscribe-title">{t('subscribe.title')}</h2>
-      <form onSubmit={(e) => void onSubmit(e)} noValidate>
+    <section aria-labelledby="subscribe-title" id="subscribe" className={`${css.panel} glass`}>
+      <h2 id="subscribe-title" className={css.h2}>{t('subscribe.title')}</h2>
+      <form onSubmit={(e) => void onSubmit(e)} noValidate className={css.subscribeForm}>
         <TextField
           label={t('subscribe.email')}
           type="email"
@@ -83,12 +85,13 @@ export function SubscribeForm() {
           error={message(errors.consent?.message)}
           {...form.register('consent')}
         />
+        <p className={css.legalLink}>{t('studio.legal.simplifiedSubscribe')} <Link to="/privacidad" target="_blank">{t('studio.legal.read')}</Link></p>
         <Button type="submit" variant="promise" loading={subscribe.isPending}>
           {subscribe.isPending ? t('subscribe.sending') : t('subscribe.submit')}
         </Button>
       </form>
       {result && (
-        <p role="status" data-kind={result.kind} data-testid="subscribe-result">{result.text}</p>
+        <p role="status" data-kind={result.kind} data-testid="subscribe-result" className={css.result}>{result.text}</p>
       )}
     </section>
   )

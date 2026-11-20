@@ -1,10 +1,12 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
+import { Monitor } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/shared/ui/Button'
 import { formatDateTime } from '@/shared/ui/formatDate'
 import { EmptyState, ErrorState, Skeleton } from '@/shared/ui/states'
 import { useDuration } from '@/shared/ui/useDuration'
 import { slotSessionsInfiniteQuery } from '../queries'
+import css from '../saves.module.css'
 
 /** Play sessions of one slot with the four states and "Cargar más" (README §7.5). */
 export function SessionList({ slot }: { slot: number }) {
@@ -21,10 +23,11 @@ export function SessionList({ slot }: { slot: number }) {
 
   return (
     <div data-list="sessions">
-      <p aria-live="polite">{t('saves.sessions.count', { shown: sessions.length, total })}</p>
-      <ul>
+      <p aria-live="polite" className={css.count}>{t('saves.sessions.count', { shown: sessions.length, total })}</p>
+      <ul className={css.sessions}>
         {sessions.map((s) => (
-          <li key={s.id} data-testid="session-item">
+          <li key={s.id} data-testid="session-item" data-open={s.durationSec === null || s.durationSec === undefined}>
+            <span className={css.sessionIcon} aria-hidden="true"><Monitor size={16} /></span>
             <time dateTime={s.startedAt}>{formatDateTime(s.startedAt)}</time>
             {' · '}
             {s.durationSec === null || s.durationSec === undefined ? t('saves.sessions.unfinished') : duration(s.durationSec)}
@@ -34,7 +37,7 @@ export function SessionList({ slot }: { slot: number }) {
         ))}
       </ul>
       {q.hasNextPage && (
-        <Button variant="outline" onClick={() => void q.fetchNextPage()} loading={q.isFetchingNextPage}>
+        <Button variant="outline" size="s" className={css.more} onClick={() => void q.fetchNextPage()} loading={q.isFetchingNextPage}>
           {t('common.loadMore')}
         </Button>
       )}

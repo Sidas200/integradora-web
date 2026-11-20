@@ -1,8 +1,11 @@
+import { Flag, Gamepad2, LayoutGrid, Trophy } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Button } from '@/shared/ui/Button'
 import { HISTORY_TYPES, type HistoryType } from '../queries'
+import css from '../history.module.css'
 
-/** "Todo · Sesiones · Logros · Hitos". aria-pressed tells screen readers which one is active. */
+const ICONS = { ALL: LayoutGrid, SESSION: Gamepad2, ACHIEVEMENT: Trophy, MILESTONE: Flag } as const
+
+/** "Todo · Sesiones · Logros · Hitos" as big chips (Flix categories). aria-pressed marks the active one. */
 export function TypeFilter({ value, onChange }: { value?: HistoryType; onChange: (type: HistoryType | undefined) => void }) {
   const { t } = useTranslation()
   const options: { type: HistoryType | undefined; label: string }[] = [
@@ -11,12 +14,16 @@ export function TypeFilter({ value, onChange }: { value?: HistoryType; onChange:
   ]
 
   return (
-    <div role="group" aria-label={t('history.filter.label')}>
-      {options.map((o) => (
-        <Button key={o.type ?? 'ALL'} variant="outline" aria-pressed={value === o.type} onClick={() => onChange(o.type)}>
-          {o.label}
-        </Button>
-      ))}
+    <div role="group" aria-label={t('history.filter.label')} className={css.filter}>
+      {options.map((o) => {
+        const Icon = ICONS[o.type ?? 'ALL']
+        return (
+          <button key={o.type ?? 'ALL'} type="button" className={css.chip} aria-pressed={value === o.type} onClick={() => onChange(o.type)}>
+            <Icon size={18} aria-hidden="true" />
+            {o.label}
+          </button>
+        )
+      })}
     </div>
   )
 }

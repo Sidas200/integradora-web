@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { TriangleAlert } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 import type { ErrorCode } from '@/shared/api/problems'
@@ -9,9 +10,11 @@ import { Button } from '@/shared/ui/Button'
 import { CheckboxField } from '@/shared/ui/CheckboxField'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import { TextField } from '@/shared/ui/TextField'
+import { AuthShell } from '../components/AuthShell'
 import { nextPath } from '../nextPath'
 import { registerSchema, type RegisterFormInput, type RegisterFormOutput } from '../schemas'
 import { applyServerErrors } from '../serverErrors'
+import css from '../auth.module.css'
 
 export function RegisterPage() {
   const { t } = useTranslation()
@@ -47,8 +50,9 @@ export function RegisterPage() {
 
   return (
     <section>
-      <PageHeader title={t('pages.register')} />
-      <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="register">
+      <AuthShell mode="register">
+      <PageHeader title={t('pages.register')} eyebrow={t('nav.myAccount')} />
+      <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="register" className={css.form}>
         <TextField
           label={t('auth.email')}
           type="email"
@@ -87,15 +91,21 @@ export function RegisterPage() {
           error={message(errors.acceptedPrivacyNotice?.message)}
           {...form.register('acceptedPrivacyNotice')}
         />
-        {failure && <p role="alert" data-testid="auth-error">{t(`errors.${failure}`)}</p>}
+        <p className={css.legalLink}>{t('studio.legal.simplifiedAccount')} <Link to="/privacidad" target="_blank">{t('studio.legal.read')}</Link></p>
+        {failure && (
+          <p role="alert" data-testid="auth-error" className={css.alert}>
+            <TriangleAlert size={18} aria-hidden="true" />{t(`errors.${failure}`)}
+          </p>
+        )}
         <Button type="submit" variant="promise" loading={isSubmitting}>
           {isSubmitting ? t('auth.register.sending') : t('auth.register.submit')}
         </Button>
       </form>
-      <p>
+      <p className={css.switch}>
         {t('auth.register.hasAccount')}{' '}
         <Link to={`/login${location.search}`}>{t('auth.register.toLogin')}</Link>
       </p>
+      </AuthShell>
     </section>
   )
 }

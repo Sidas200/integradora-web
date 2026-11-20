@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { CheckCircle2, KeyRound } from 'lucide-react'
 import { ApiError } from '@/shared/api/problems'
 import { useReadOnly } from '@/shared/auth'
 import { Button } from '@/shared/ui/Button'
@@ -10,6 +11,7 @@ import { TextField } from '@/shared/ui/TextField'
 import { DevicesSection } from '../components/DevicesSection'
 import { useChangePassword } from '../mutations'
 import { passwordSchema, type PasswordFormInput, type PasswordFormOutput } from '../schemas'
+import css from '../account.module.css'
 
 export function SecurityPage() {
   const { t } = useTranslation()
@@ -44,10 +46,11 @@ export function SecurityPage() {
   return (
     <section>
       <PageHeader title={t('pages.security')} />
+      <div className={css.columns}>
 
-      <section aria-labelledby="password-title">
-        <h2 id="password-title">{t('account.security.passwordTitle')}</h2>
-        <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="password">
+      <section aria-labelledby="password-title" className={css.panel}>
+        <h2 id="password-title" className={css.panelTitle}><span className={css.panelIcon} aria-hidden="true"><KeyRound size={18} /></span>{t('account.security.passwordTitle')}</h2>
+        <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="password" className={css.form}>
           <TextField
             label={t('account.security.currentPassword')}
             type="password"
@@ -78,10 +81,11 @@ export function SecurityPage() {
             {change.isPending ? t('account.security.saving') : t('account.security.save')}
           </Button>
         </form>
-        {change.isSuccess && <p role="status">{t('account.security.saved')}</p>}
+        {change.isSuccess && <p role="status" className={css.saved}><CheckCircle2 size={16} aria-hidden="true" />{t('account.security.saved')}</p>}
       </section>
 
       <DevicesSection />
+      </div>
     </section>
   )
 }

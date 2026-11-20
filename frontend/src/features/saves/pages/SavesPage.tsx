@@ -5,6 +5,7 @@ import { EmptyState, ErrorState, Skeleton } from '@/shared/ui/states'
 import { SaveSlotCard } from '../components/SaveSlotCard'
 import { savesQuery } from '../queries'
 import { SLOTS } from '../slots'
+import css from '../saves.module.css'
 
 /** The three slots of the account: the ones with a save show their progress. */
 export function SavesPage() {
@@ -22,7 +23,7 @@ export function SavesPage() {
         : <Skeleton rows={3} />)}
       {q.data?.length === 0 && <EmptyState title={t('saves.empty.title')} text={t('saves.empty.text')} />}
       {q.data && q.data.length > 0 && (
-        <ul data-list="saves">
+        <ul data-list="saves" className={css.grid}>
           {SLOTS.map((slot) => (
             <li key={slot}>
               <SaveSlotCard slot={slot} save={q.data.find((s) => s.slot === slot)} />

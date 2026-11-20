@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { EmptyState, ErrorState, Skeleton } from '@/shared/ui/states'
 import { latestNewsQuery } from '../queries'
 import { NewsCard } from './NewsCard'
+import css from '../news.module.css'
 
 /** The newest posts for the landing, with a link to the full list. */
 export function LatestNews({ size = 3 }: { size?: number }) {
@@ -16,14 +17,14 @@ export function LatestNews({ size = 3 }: { size?: number }) {
 
   return (
     <div data-list="latest-news">
-      <ul>
+      <ul className={css.grid}>
         {q.data.map((n) => (
           <li key={n.slug}>
             <NewsCard news={n} />
           </li>
         ))}
       </ul>
-      <Link to="/news">{t('landing.news.seeAll')}</Link>
+      <Link to="/news" className={css.seeAll}>{t('landing.news.seeAll')}</Link>
     </div>
   )
 }

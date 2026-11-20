@@ -1,0 +1,13 @@
+.toggle {
+  display: inline-grid; place-items: center;
+  width: 44px; height: 44px; border-radius: var(--radius-pill);
+  border: 1px solid var(--c-glass-border);
+  background: var(--c-glass-strong);
+  color: var(--c-text);
+  cursor: pointer;
+  box-shadow: var(--shadow-glass);
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-medium) var(--ease);
+}
+.toggle:hover { transform: translateY(-1px) rotate(-8deg); box-shadow: var(--glow-primary); }
+.icon { display: grid; animation: spin var(--dur-slow) var(--ease-spring); }
+@keyframes spin { from { transform: rotate(-90deg) scale(.6); opacity: 0; } }

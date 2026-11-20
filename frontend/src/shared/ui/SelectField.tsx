@@ -1,4 +1,5 @@
 import { useId, type Ref, type SelectHTMLAttributes } from 'react'
+import css from './Field.module.css'
 
 export interface SelectOption {
   value: string
@@ -19,12 +20,13 @@ export function SelectField({ label, options, error, id, ref, ...select }: Selec
   const errorId = error ? `${selectId}-error` : undefined
 
   return (
-    <div data-field="select">
-      <label htmlFor={selectId}>{label}</label>
-      <select {...select} id={selectId} ref={ref} aria-invalid={error ? true : undefined} aria-describedby={errorId}>
+    <div data-field="select" className={css.field}>
+      <label htmlFor={selectId} className={css.label}>{label}</label>
+      <select {...select} id={selectId} ref={ref} className={css.control}
+              aria-invalid={error ? true : undefined} aria-describedby={errorId}>
         {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
-      {error && <p id={errorId} role="alert">{error}</p>}
+      {error && <p id={errorId} role="alert" className={css.error}>{error}</p>}
     </div>
   )
 }

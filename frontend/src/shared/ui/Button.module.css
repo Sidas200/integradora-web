@@ -1,0 +1,36 @@
+.button {
+  --bg: var(--c-primary); --fg: var(--c-on-primary); --bd: transparent; --sh: var(--glow-primary);
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
+  min-height: 46px; padding: 0 var(--s-5);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--bd);
+  background: var(--bg); color: var(--fg);
+  font-weight: 700; font-size: var(--t-s); letter-spacing: .01em;
+  text-decoration: none; white-space: nowrap;
+  cursor: pointer;
+  box-shadow: var(--sh);
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-medium) var(--ease), filter var(--dur-fast);
+}
+.button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.05); }
+.button:active:not(:disabled) { transform: translateY(0) scale(.98); }
+.button:disabled { cursor: not-allowed; opacity: .55; box-shadow: none; }
+.button[aria-busy="true"] { opacity: .8; cursor: progress; }
+.button svg { flex: none; }
+
+.button[data-size="s"] { min-height: 38px; padding: 0 var(--s-4); font-size: var(--t-xs); }
+
+.button[data-variant="promise"] { --bg: var(--c-promise); --fg: var(--c-on-promise); --sh: var(--glow-promise); }
+.button[data-variant="danger"]  { --bg: var(--c-danger); --fg: var(--c-on-danger); --sh: 0 10px 24px rgb(180 35 60 / .3); }
+.button[data-variant="outline"] {
+  --bg: var(--c-glass-strong); --fg: var(--c-text); --bd: var(--c-glass-border); --sh: var(--shadow-glass);
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+}
+.button[data-variant="ghost"] { --bg: transparent; --fg: var(--c-text); --sh: none; }
+.button[data-variant="ghost"]:hover:not(:disabled) { --bg: var(--c-glass); }
+
+.spinner {
+  width: 1em; height: 1em; border-radius: 50%;
+  border: 2px solid currentColor; border-right-color: transparent;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

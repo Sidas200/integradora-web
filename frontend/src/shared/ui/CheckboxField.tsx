@@ -1,4 +1,5 @@
 import { useId, type InputHTMLAttributes, type ReactNode, type Ref } from 'react'
+import css from './Field.module.css'
 
 export interface CheckboxFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label: ReactNode
@@ -14,11 +15,11 @@ export function CheckboxField({ label, error, id, ref, ...input }: CheckboxField
   const errorId = error ? `${inputId}-error` : undefined
 
   return (
-    <div data-field="checkbox">
-      <input {...input} type="checkbox" id={inputId} ref={ref}
+    <div data-field="checkbox" className={css.check}>
+      <input {...input} type="checkbox" id={inputId} ref={ref} className={css.box}
              aria-invalid={error ? true : undefined} aria-describedby={errorId} />
-      <label htmlFor={inputId}>{label}</label>
-      {error && <p id={errorId} role="alert">{error}</p>}
+      <label htmlFor={inputId} className={css.label}>{label}</label>
+      {error && <p id={errorId} role="alert" className={css.error}>{error}</p>}
     </div>
   )
 }

@@ -1,0 +1,64 @@
+/* Shared by TextField, SelectField and CheckboxField. */
+.field { display: grid; gap: var(--s-1); margin-bottom: var(--s-4); }
+.label { font-weight: 700; font-size: var(--t-s); }
+.hint { margin: 0; font-size: var(--t-xs); color: var(--c-text-muted); }
+.error {
+  display: flex; align-items: center; gap: var(--s-1);
+  margin: 0; font-size: var(--t-xs); font-weight: 600; color: var(--c-error);
+}
+.error::before { content: "!"; display: inline-grid; place-items: center; flex: none;
+  width: 1.15rem; height: 1.15rem; border-radius: 50%; background: var(--c-error); color: var(--c-on-danger);
+  font-size: .7rem; font-weight: 800; }
+
+.control {
+  width: 100%; min-height: 48px; padding: 0 var(--s-4);
+  border-radius: var(--radius-s);
+  border: 1.5px solid var(--c-control-border);
+  background: var(--c-glass-strong);
+  color: var(--c-text);
+  transition: border-color var(--dur-fast), box-shadow var(--dur-medium) var(--ease);
+}
+.control::placeholder { color: var(--c-text-muted); opacity: .8; }
+.control:hover { border-color: var(--c-primary); }
+.control:focus-visible { outline: none; border-color: var(--c-primary); box-shadow: 0 0 0 4px var(--c-primary-soft); }
+.control[aria-invalid="true"] { border-color: var(--c-error); box-shadow: 0 0 0 4px var(--c-error-soft); }
+select.control { appearance: none; padding-right: var(--s-7); cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 22px) 52%, calc(100% - 16px) 52%;
+  background-size: 6px 6px; background-repeat: no-repeat; }
+
+/* Range: pink track with a chunky "pixel" thumb */
+.control[type="range"] {
+  min-height: 0; height: 10px; padding: 0; border: 0; border-radius: var(--radius-pill);
+  appearance: none; cursor: pointer;
+  background: linear-gradient(90deg, var(--c-promise-glow), var(--c-primary)) 0 0 / var(--fill, 100%) 100% no-repeat, var(--c-primary-soft);
+  box-shadow: inset 0 1px 2px rgb(35 32 47 / .12);
+  margin: var(--s-3) 0;
+}
+.control[type="range"]::-webkit-slider-thumb {
+  appearance: none; width: 22px; height: 22px; border-radius: 6px;
+  background: #fff; border: 3px solid var(--c-promise); box-shadow: 0 4px 12px rgb(0 0 0 / .2);
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+.control[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.15) rotate(8deg); }
+.control[type="range"]:focus-visible { box-shadow: 0 0 0 4px var(--c-primary-soft); }
+.control[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 6px; background: #fff; border: 3px solid var(--c-promise);
+}
+
+/* Checkbox with the label at its side */
+.check { display: grid; grid-template-columns: auto 1fr; align-items: start; gap: var(--s-1) var(--s-3); margin-bottom: var(--s-4); }
+.check .error { grid-column: 1 / -1; }
+.box {
+  appearance: none; width: 24px; height: 24px; margin: 1px 0 0; border-radius: 8px;
+  border: 1.5px solid var(--c-control-border); background: var(--c-glass-strong);
+  display: grid; place-items: center; cursor: pointer;
+  transition: background var(--dur-fast), border-color var(--dur-fast);
+}
+.box::after { content: ""; width: 12px; height: 7px; border: 3px solid var(--c-on-promise);
+  border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px) scale(0);
+  transition: transform var(--dur-medium) var(--ease-spring); }
+.box:checked { background: var(--c-promise); border-color: var(--c-promise); }
+.box:checked::after { transform: rotate(-45deg) translate(1px, -1px) scale(1); }
+.box[aria-invalid="true"] { border-color: var(--c-error); }
+.check .label { font-weight: 600; cursor: pointer; }

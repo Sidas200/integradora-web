@@ -1,17 +1,27 @@
 import type { ButtonHTMLAttributes } from 'react'
+import css from './Button.module.css'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'promise' | 'outline' | 'danger'
+  variant?: 'primary' | 'promise' | 'outline' | 'danger' | 'ghost'
+  size?: 'm' | 's'
   loading?: boolean
 }
 
-/**
- * No styles yet: `data-variant` and `aria-busy` are the hooks for Button.module.css
- * in the design phase. type="button" by default so it never submits a form by accident.
- */
-export function Button({ variant = 'primary', loading = false, disabled, type = 'button', children, ...rest }: ButtonProps) {
+/** Pill buttons (README §9.2). type="button" by default so it never submits a form by accident. */
+export function Button({
+  variant = 'primary', size = 'm', loading = false, disabled, type = 'button', className, children, ...rest
+}: ButtonProps) {
   return (
-    <button {...rest} type={type} data-variant={variant} disabled={disabled || loading} aria-busy={loading}>
+    <button
+      {...rest}
+      type={type}
+      data-variant={variant}
+      data-size={size}
+      className={[css.button, className].filter(Boolean).join(' ')}
+      disabled={disabled || loading}
+      aria-busy={loading}
+    >
+      {loading && <span className={css.spinner} aria-hidden="true" />}
       {children}
     </button>
   )

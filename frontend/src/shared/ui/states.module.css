@@ -1,0 +1,43 @@
+.skeleton ul { list-style: none; display: grid; gap: var(--s-3); }
+.skeleton li {
+  height: 58px; border-radius: var(--radius-m);
+  background: linear-gradient(100deg, var(--c-glass) 30%, var(--c-glass-strong) 50%, var(--c-glass) 70%);
+  background-size: 300% 100%;
+  border: 1px solid var(--c-glass-border);
+  animation: shimmer 1.6s ease-in-out infinite both;
+}
+.skeleton[data-state="offline"] li { animation: none; opacity: .55; }
+.offline {
+  display: flex; align-items: center; gap: var(--s-2);
+  margin-bottom: var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--radius-m);
+  background: var(--c-blue); color: var(--c-text); font-size: var(--t-s); font-weight: 600;
+}
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+
+.error {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-4); border-radius: var(--radius-m);
+  background: var(--c-error-soft); color: var(--c-text);
+  border: 1px solid color-mix(in srgb, var(--c-error) 35%, transparent);
+}
+.error p { margin: 0; flex: 1 1 14rem; font-weight: 600; }
+.errorIcon { color: var(--c-error); flex: none; }
+
+/* RPG dialog box with a pixel frame */
+.empty {
+  position: relative;
+  padding: var(--s-5) var(--s-5) var(--s-5) var(--s-6);
+  border-radius: 6px;
+  background: var(--c-glass-strong);
+  border: 3px solid var(--c-text);
+  box-shadow: 4px 4px 0 var(--c-primary), var(--shadow-glass);
+  font-family: var(--f-pixel);
+  max-width: 40rem;
+}
+.emptyTitle { margin: 0 0 var(--s-1); font-size: var(--t-l); }
+.emptyTitle::before { content: "* "; position: absolute; left: var(--s-4); color: var(--c-promise); }
+.emptyText { margin: 0; color: var(--c-text-muted); font-family: var(--f-body); }
+.emptyAction { margin-top: var(--s-3); font-family: var(--f-body); }
+.caret { position: absolute; right: var(--s-4); bottom: var(--s-2); font-size: .7rem; color: var(--c-promise);
+  animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }

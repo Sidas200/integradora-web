@@ -1,0 +1,72 @@
+/* =====================================================================
+   SkyScene — pixel-art layers of floating islands (src/assets/art).
+   Every layer is the same 1586 × 992 canvas with object-fit: cover and
+   the same object-position, so they always line up.
+   ===================================================================== */
+
+.scene {
+  --focus: 60% 70%;
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  background: linear-gradient(#5568C8, #F3B4D0);   /* while the sky image loads */
+}
+:root[data-theme="dark"] .scene { background: linear-gradient(#1A1550, #6A4BC0); }
+.scene[data-variant="hero"] { --focus: 62% 75%; }
+/* In the hero the island steps back a little, so the title and the cards breathe */
+.scene[data-variant="hero"] .island { scale: .84; transform-origin: 100% 40%; }
+@media (max-width: 1023px) { .scene[data-variant="hero"] .island { scale: 1; } }
+
+.layer {
+  position: absolute; left: 0; top: -8%;
+  width: 100%; height: 108%;
+  object-fit: cover; object-position: var(--focus);
+  user-select: none; will-change: transform;
+}
+.sky { top: 0; height: 100%; }
+
+/* The islands float on their own rhythm (no parallax here: that is the hero's job, below) */
+.island { animation: bob 8s ease-in-out infinite; }
+.near { animation: bob 11s ease-in-out infinite reverse; }
+.front { top: 0; height: 104%; }
+
+/* Night: a soft glow behind the island so the shrine lights read on the dark sky */
+:root[data-theme="dark"] .island { filter: drop-shadow(0 0 40px rgb(179 164 255 / .25)); }
+
+/* Falling petals (petal.png from the art set) */
+.petals { position: absolute; inset: 0; }
+.petal {
+  position: absolute; top: -5%; left: var(--x);
+  width: 18px; height: 18px;
+  background: var(--petal-img) center / contain no-repeat;
+  opacity: .9; transform: scale(var(--s));
+  animation: petal var(--d) linear var(--delay) infinite;
+}
+
+/* Parallax with the scroll (Chrome, Edge, Safari 26+). Elsewhere the scene simply stays still. */
+@supports (animation-timeline: scroll()) {
+  .scene[data-variant="hero"] .layer { animation-timeline: scroll(root); animation-range: 0 100vh; animation-timing-function: linear; animation-fill-mode: both; animation-iteration-count: 1; animation-duration: auto; }
+  .scene[data-variant="hero"] .sky    { animation-name: drift-sky; }
+  .scene[data-variant="hero"] .far    { animation-name: drift-far; }
+  .scene[data-variant="hero"] .island { animation-name: drift-island; }
+  .scene[data-variant="hero"] .near   { animation-name: drift-near; }
+  .scene[data-variant="hero"] .front  { animation-name: drift-front; }
+}
+@keyframes drift-sky    { to { transform: translateY(6%); } }
+@keyframes drift-far    { to { transform: translateY(14%); } }
+@keyframes drift-island { to { transform: translateY(24%) scale(1.04); } }
+@keyframes drift-near   { to { transform: translateY(36%); } }
+@keyframes drift-front  { to { transform: translateY(-12%) scale(1.1); } }
+
+@keyframes bob { 50% { transform: translateY(-1.6%); } }
+@keyframes petal {
+  0%   { transform: translate(0, 0) rotate(0) scale(var(--s)); opacity: 0; }
+  10%  { opacity: .95; }
+  100% { transform: translate(var(--drift), 115vh) rotate(540deg) scale(var(--s)); opacity: .2; }
+}
+
+.scene[data-variant="card"] .petal { animation-duration: calc(var(--d) * .6); }
+.scene[data-variant="backdrop"] { position: fixed; z-index: -1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .petals { display: none; }
+  .layer { animation: none !important; }
+}

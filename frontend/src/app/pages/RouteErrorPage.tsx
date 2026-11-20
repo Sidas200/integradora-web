@@ -1,7 +1,9 @@
-import { isRouteErrorResponse, Link, useRouteError } from 'react-router'
+import { isRouteErrorResponse, useRouteError } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { log } from '@/shared/lab/logger'
+import { LostScreen } from './LostScreen'
 import { NotFoundPage } from './NotFoundPage'
+import css from './pages.module.css'
 
 /** Errors while rendering or loading a route (for example a lazy chunk that failed to download). */
 export function RouteErrorPage() {
@@ -13,9 +15,7 @@ export function RouteErrorPage() {
 
   return (
     <main id="main">
-      <h1>{t('routeError.title')}</h1>
-      <p>{t('routeError.text')}</p>
-      <Link to="/">{t('notFound.home')}</Link>
+      <LostScreen full code="!?" heading={<h1 className={css.title}>{t('routeError.title')}</h1>} text={t('routeError.text')} />
     </main>
   )
 }

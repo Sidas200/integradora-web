@@ -1,6 +1,7 @@
 {
   "app": {
     "name": "The Day I Made That Promise",
+    "playerAccount": "Cuenta de jugador · Hex Studio",
     "skipToContent": "Saltar al contenido"
   },
   "common": {
@@ -13,6 +14,10 @@
       "minutes": "{{minutes}} min"
     },
     "offlineUnavailable": "Sin conexión: esto no se guardó para verse sin red. Aparecerá cuando vuelva la conexión."
+  },
+  "theme": {
+    "toDark": "Cambiar al tema oscuro",
+    "toLight": "Cambiar al tema claro"
   },
   "nav": {
     "main": "Navegación principal",
@@ -32,7 +37,8 @@
     "security": "Seguridad",
     "profile": "Perfil",
     "deleteAccount": "Eliminar cuenta",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "studio": "Estudio"
   },
   "pages": {
     "landing": "Inicio",
@@ -53,47 +59,71 @@
   },
   "landing": {
     "hero": {
-      "kicker": "Hex Studio · RPG de acción 2D isométrico",
-      "tagline": "El poder no se encuentra, se fabrica.",
+      "kicker": "Hex Studio presenta",
+      "headline1": "El poder no se encuentra.",
+      "headline2": "Se fabrica.",
+      "lead": "Rompe las reglas del cielo, forja tu propia espada y cumple la promesa que hiciste en las islas flotantes.",
       "ctaBuy": "Comprar",
-      "ctaNotify": "Avísame del lanzamiento"
+      "ctaNotify": "Avísame del lanzamiento",
+      "islandTitle": "Santuario del cielo",
+      "islandText": "La primera isla te espera",
+      "exploreTitle": "Explora las islas",
+      "exploreText": "Del bosque de cerezos al Gran Juzgado, cada zona guarda a su guardián.",
+      "closing1": "Más que un juego,",
+      "closing2": "una promesa.",
+      "titleTop": "The Day I Made",
+      "titleMain": "That Promise"
     },
     "sections": {
       "story": "Historia",
       "loop": "Cómo se juega",
       "characters": "Personajes",
-      "specs": "Ficha técnica",
       "achievements": "Logros",
       "news": "Noticias",
+      "app": "App móvil",
       "buy": "Comprar"
     },
     "story": {
       "title": "Una promesa que desafiará al cielo",
-      "p1": "Hace mil años, un rey desafió a los dioses. Desde entonces, los humanos bendecidos viven en islas suspendidas sobre las nubes y quien rompe las reglas del cielo recibe la marca de un «Rulebreaker».",
+      "p1": "Hace mil años, un rey desafió a los dioses. Desde entonces, los humanos bendecidos viven en islas suspendidas sobre las nubes y quien rompe las reglas del cielo recibe la marca de un <b>Rulebreaker</b>.",
       "p2": "Tsuki hizo una promesa: permanecer junto a Hikari todo el tiempo que les quedara. Cuando alguien se la lleva al cielo, salta tras ella y despierta en una isla flotante con la misma marca en la mano.",
-      "p3": "Para llegar al Gran Juzgado necesita el permiso de los guardianes de cada zona. Con una espada carmesí sin filo y una forja escondida, tendrá que fabricar su propio poder."
+      "p3": "Para llegar al Gran Juzgado necesita el permiso de los guardianes de cada zona. Con una espada carmesí sin filo y una forja escondida, tendrá que fabricar su propio poder.",
+      "eyebrow": "La historia"
     },
     "loop": {
+      "eyebrow": "Cómo se juega",
       "title": "Explora, combate, fabrica",
+      "lead": "Cada paso del juego es también un paso de la historia de Tsuki en las islas del cielo.",
+      "inGame": "En el juego:",
       "explore": {
-        "title": "Explora",
-        "text": "Recorre las zonas de la isla en vista isométrica y vuelve a la base cuando lo necesites."
+        "verb": "Explora",
+        "title": "Una isla que se desvanece",
+        "lore": "Tsuki despierta en una isla que desaparece en cuanto la deja atrás. Un puente lo lleva a tierra firme, donde una investigadora le ofrece lo que nadie más le daría a un <b>Rulebreaker</b>: un refugio escondido entre los árboles.",
+        "play": "recorre las zonas y vuelve a la base cuando lo necesites."
       },
       "fight": {
-        "title": "Combate",
-        "text": "Cada enemigo avisa antes de atacar: lee sus movimientos y responde con la espada."
+        "verb": "Combate",
+        "title": "La marca te delata",
+        "lore": "En el cielo, la marca de <b>Rulebreaker</b> convierte a Tsuki en enemigo de todos. Las criaturas de cada zona no preguntan quién eres: atacan.",
+        "play": "cada enemigo avisa antes de atacar; lee sus movimientos y responde con la espada."
       },
       "collect": {
-        "title": "Recolecta",
-        "text": "Los enemigos y los objetos de la zona sueltan los materiales que necesitas."
+        "verb": "Recolecta",
+        "title": "Nada se regala en las islas",
+        "lore": "Las ruinas, los bosques y las criaturas de cada zona guardan lo que Tsuki necesita. Quien quiere poder en el cielo tiene que reunirlo pieza por pieza.",
+        "play": "los enemigos y los objetos de la zona sueltan los materiales que necesitas."
       },
       "forge": {
-        "title": "Fabrica",
-        "text": "En la forja conviertes los materiales en mejoras: la espada pasa de 15 a 25 de daño."
+        "verb": "Fabrica",
+        "title": "Una espada sin filo",
+        "lore": "La espada carmesí que Tsuki encontró en una cabaña abandonada perdió su filo hace mucho tiempo. En la forja escondida de la investigadora puede devolverle la vida.",
+        "play": "convierte los materiales en mejoras: la espada pasa de 15 a 25 de daño."
       },
       "guardian": {
-        "title": "Desafía al guardián",
-        "text": "Abre el sello y vence al guardián de la zona para obtener su permiso."
+        "verb": "Desafía",
+        "title": "Cuatro guardianes, cuatro permisos",
+        "lore": "El camino al Gran Juzgado está cerrado. Cada zona tiene un guardián, y ninguno le dará su permiso a un <b>Rulebreaker</b> por las buenas.",
+        "play": "abre el sello y vence al guardián de la zona para obtener su permiso."
       }
     },
     "characters": {
@@ -101,7 +131,7 @@
       "tsuki": {
         "name": "Tsuki",
         "role": "Protagonista",
-        "text": "Un humano marcado como «Rulebreaker» que cruza las islas del cielo para cumplir su promesa."
+        "text": "Un humano marcado como <b>Rulebreaker</b> que cruza las islas del cielo para cumplir su promesa."
       },
       "hikari": {
         "name": "Hikari",
@@ -112,24 +142,11 @@
         "name": "La investigadora",
         "role": "Aliada",
         "text": "Nunca había visto a un humano. A cambio de estudiarlo, le ofrece a Tsuki su base y su forja."
-      }
-    },
-    "specs": {
-      "title": "Ficha técnica",
-      "genreLabel": "Género",
-      "genre": "RPG de acción 2D isométrico",
-      "platformLabel": "Plataforma",
-      "platform": "PC (Windows) · teclado y mouse",
-      "engineLabel": "Motor",
-      "engine": "Unity 6",
-      "lengthLabel": "Duración",
-      "length": "Capítulo demo de 20 a 30 minutos",
-      "languageLabel": "Idioma",
-      "language": "Español",
-      "studioLabel": "Estudio",
-      "studio": "Hex Studio",
-      "releaseLabel": "Lanzamiento",
-      "release": "Próximamente"
+      },
+      "prev": "Personaje anterior",
+      "next": "Siguiente personaje",
+      "position": "{{current}} de {{total}}",
+      "show": "Ver a {{name}}"
     },
     "achievements": {
       "title": "Logros por descubrir",
@@ -140,11 +157,29 @@
       "title": "Últimas noticias",
       "seeAll": "Ver todas las noticias"
     },
+    "app": {
+      "eyebrow": "App móvil",
+      "title": "Tu partida, en tu bolsillo",
+      "text": "La app compañera de The Day I Made That Promise usa la misma cuenta que el juego y esta página. Consulta tu progreso desde cualquier lugar.",
+      "features": {
+        "saves": "Tus tres ranuras de guardado, con capítulo y tiempo de juego",
+        "achievements": "Los logros que vas desbloqueando",
+        "news": "Las noticias del estudio",
+        "account": "La misma cuenta del juego y de la web"
+      },
+      "download": "Descargar para Android",
+      "note": "Archivo APK para Android. Desarrollada por Hex Studio.",
+      "mock": {
+        "last": "Última partida",
+        "save": "Partida 1 · Capítulo 1"
+      }
+    },
     "buy": {
       "title": "Consigue el juego",
       "text": "El capítulo demo llegará a PC. Deja tu correo y te avisamos el día del lanzamiento.",
       "button": "Comprar",
-      "unavailable": "Próximamente"
+      "unavailable": "Próximamente",
+      "eyebrow": "Capítulo demo"
     }
   },
   "subscribe": {
@@ -164,6 +199,16 @@
     "synced": "Volvió la conexión: tu registro pendiente ya se envió."
   },
   "auth": {
+    "art": {
+      "login": {
+        "title": "Tu promesa te espera",
+        "text": "Entra para ver tus partidas, logros e historial desde cualquier dispositivo."
+      },
+      "register": {
+        "title": "Empieza tu viaje",
+        "text": "Crea tu cuenta y tus partidas se guardarán en la nube mientras juegas."
+      }
+    },
     "email": "Correo",
     "password": "Contraseña",
     "passwordHint": "Entre 8 y 72 caracteres.",
@@ -314,6 +359,7 @@
       "saved": "Listo, tu nombre de jugador se actualizó."
     },
     "settings": {
+      "game": "Audio, idioma y pantalla",
       "intro": "Es la configuración del juego: se guarda en la nube y el juego la usa al iniciar sesión.",
       "musicVolume": "Volumen de la música",
       "sfxVolume": "Volumen de los efectos",
@@ -427,5 +473,57 @@
     "INTERNAL_ERROR": "Algo falló de nuestro lado. Inténtalo más tarde.",
     "NETWORK_ERROR": "No hay conexión con el servidor. Revisa tu internet.",
     "UNKNOWN": "Ocurrió un error inesperado."
+  },
+  "studio": {
+    "about": {
+      "title": "Sobre Hex Studio",
+      "lead": " ",
+      "productsKicker": "Lo que hacemos",
+      "productsTitle": "Un juego, tres productos",
+      "products": {
+        "game": {
+          "title": "El juego",
+          "text": "Explora las islas del cielo, combate, fabrica y desafía a los guardianes.",
+          "tech": "Unity 6 · PC (Windows)"
+        },
+        "web": {
+          "title": "La web y las cuentas",
+          "text": "Esta página, las noticias y tu cuenta de jugador, con tus partidas, logros e historial; funciona también sin conexión.",
+          "tech": "React · Spring Boot · PostgreSQL"
+        },
+        "mobile": {
+          "title": "La app móvil",
+          "text": "Tu partida en el bolsillo: consulta tu progreso, tus logros y las noticias desde Android.",
+          "tech": "Flutter · Android"
+        }
+      },
+      "repo": "Ver el repositorio",
+      "teamKicker": "El equipo",
+      "teamTitle": "Las personas detrás de la promesa",
+      "teamLead": "Seis personas, tres productos y una sola promesa: que el juego llegue a tus manos.",
+      "contactTitle": "Contacto",
+      "contactText": "¿Prensa, colaboraciones o dudas sobre el juego? Escríbenos a {{email}}.",
+      "contactNews": "Lee las noticias del estudio"
+    },
+    "legal": {
+      "read": "Consulta el aviso de privacidad integral.",
+      "updated": "Última actualización: {{date}}",
+      "contents": "Contenido",
+      "simplifiedAccount": "Hex Studio Kitsune, S. de R.L. de C.V. usa tu correo y nombre de usuario para crear tu cuenta y guardar tu progreso.",
+      "simplifiedSubscribe": "Hex Studio Kitsune, S. de R.L. de C.V. usa tu correo solo para avisarte del lanzamiento."
+    },
+    "footer": {
+      "tagline": " ",
+      "game": "El juego",
+      "players": "Jugadores",
+      "legal": "Legal",
+      "about": "Sobre nosotros",
+      "contact": "Contacto",
+      "android": "App para Android",
+      "privacy": "Aviso de privacidad",
+      "cookies": "Política de cookies",
+      "copyright": "© {{year}} {{studio}}. Todos los derechos reservados.",
+      "trademark": "The Day I Made That Promise y su logotipo son marcas de {{studio}}."
+    }
   }
 }

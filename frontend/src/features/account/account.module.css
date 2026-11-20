@@ -1,0 +1,175 @@
+/* =====================================================================
+   account.module.css — /app/account/*: pill tabs and glass widget
+   panels (Study Together / Kiana).
+   ===================================================================== */
+
+/* ---------- Sub-navigation: glass pill of tabs ---------- */
+.subnav { margin-bottom: var(--s-5); overflow-x: auto; scrollbar-width: none; }
+.subnav::-webkit-scrollbar { display: none; }
+.subnav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--s-2); }
+.subnav a {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  min-height: 36px; padding: 0 var(--s-3); border-radius: var(--radius-m);
+  font-weight: 600; font-size: var(--t-s); white-space: nowrap;
+  color: var(--c-text-muted); text-decoration: none; border: 1px solid transparent;
+  transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+}
+.subnav a:hover { color: var(--c-text); background: var(--c-glass-inset); text-decoration: none; }
+.subnav a[aria-current="page"] { color: var(--c-text); background: var(--c-glass-strong); border-color: var(--c-line); }
+.subnav a[data-danger]:hover, .subnav a[data-danger][aria-current="page"] { color: var(--c-error); }
+
+/* ---------- Layout ---------- */
+.columns {
+  display: grid; gap: var(--s-5); align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+}
+
+/* ---------- Glass panel ---------- */
+.panel {
+  position: relative; padding: var(--s-5);
+  background: var(--c-glass-strong); border: 1px solid var(--c-line);
+  border-radius: var(--radius-l); box-shadow: var(--shadow-glass);
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  animation: rise var(--dur-slow) var(--ease) both;
+}
+.columns > :nth-child(2) { animation-delay: 110ms; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .panel, .subnav ul { background: var(--c-glass-solid); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .panel, .subnav ul { background: var(--c-glass-solid); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+.panelTitle { display: flex; align-items: center; gap: var(--s-3); margin: 0 0 var(--s-4); font-size: var(--t-l); }
+.panelIcon { display: grid; place-items: center; flex: none; color: var(--c-promise); }
+.hint {
+  display: flex; align-items: center; gap: var(--s-1);
+  margin: 0 0 var(--s-4); font-size: var(--t-s); color: var(--c-text-muted);
+}
+.form { display: grid; }
+.form > button[type="submit"] { justify-self: start; margin-top: var(--s-2); }
+
+.saved {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  margin: var(--s-4) 0 0; padding: var(--s-2) var(--s-4); border-radius: var(--radius-pill);
+  font-size: var(--t-s); font-weight: 700;
+  color: var(--c-success); background: var(--c-success-soft);
+  animation: pop var(--dur-medium) var(--ease-spring) both;
+}
+
+/* ---------- Profile: player ID card ---------- */
+.idCard { text-align: center; overflow: hidden; }
+.idCard::before {   /* pastel banner behind the avatar */
+  content: ""; position: absolute; inset: 0 0 auto; height: 96px; z-index: -1;
+  background:
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / .6) 0 18px, transparent 19px),
+    radial-gradient(circle at 78% 60%, rgb(255 255 255 / .45) 0 26px, transparent 27px),
+    linear-gradient(120deg, #FFC9DD, #D9C9FF 55%, #BBD3E5);
+}
+:root[data-theme="dark"] .idCard::before {
+  background:
+    radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent),
+    radial-gradient(1px 1px at 70% 40%, #fff, transparent),
+    linear-gradient(120deg, #3A2F6E, #5A3B6E 55%, #1E3A5A);
+}
+.idCard { isolation: isolate; }
+.avatar {
+  width: 104px; height: 104px; margin: var(--s-6) auto var(--s-3);
+  display: grid; place-items: center; border-radius: var(--radius-m);
+  background: linear-gradient(135deg, var(--c-promise-glow), var(--c-primary));
+  border: 4px solid var(--c-glass-strong);
+  box-shadow: var(--glow-promise);
+}
+.avatar span { font-family: var(--f-pixel); font-size: 3rem; line-height: 1; color: var(--c-on-promise); }
+.idName { margin: 0 0 var(--s-4); font-size: var(--t-xl); font-weight: 800; }
+.idFacts { margin: 0 0 var(--s-4); display: grid; gap: var(--s-2); text-align: left; }
+.idFacts > div {
+  padding: var(--s-3) var(--s-4); border-radius: var(--radius-m);
+  background: var(--c-glass-inset); border: 1px solid var(--c-line);
+}
+.idFacts dt {
+  display: flex; align-items: center; gap: var(--s-1);
+  font-size: var(--t-xs); font-weight: 600; color: var(--c-text-muted); text-transform: uppercase; letter-spacing: .04em;
+}
+.idFacts dd { margin: 2px 0 0; font-weight: 700; overflow-wrap: anywhere; }
+.idCard .hint { justify-content: center; }
+
+/* ---------- Settings ---------- */
+.slider { display: grid; grid-template-columns: auto 1fr; gap: var(--s-3); align-items: start; }
+.sliderIcon {
+  box-sizing: content-box; margin-top: 2px; padding: 8px; border-radius: var(--radius-m);
+  color: var(--c-primary); background: var(--c-primary-soft);
+}
+.controls { margin: 0 0 var(--s-4); display: grid; gap: var(--s-2); }
+.controls > div {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+  padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4); border-radius: var(--radius-m);
+  background: var(--c-glass-inset); border: 1px solid var(--c-line);
+}
+.controls dt { font-weight: 700; text-transform: capitalize; }
+.controls dd { margin: 0; }
+.controls kbd {   /* chunky keycap */
+  display: inline-block; padding: .3rem .6rem; border-radius: 8px;
+  font-family: var(--f-pixel); font-size: var(--t-xs);
+  color: var(--c-text); background: var(--c-glass-strong);
+  border: 1.5px solid var(--c-control-border); border-bottom-width: 4px;
+}
+.emptyControls {
+  display: flex; align-items: center; gap: var(--s-2);
+  padding: var(--s-4); border-radius: var(--radius-m); border: 2px dashed var(--c-control-border);
+  color: var(--c-text-muted);
+}
+
+/* ---------- Security: devices ---------- */
+.devices { list-style: none; margin: 0 0 var(--s-4); padding: 0; display: grid; gap: var(--s-2); }
+.devices li {
+  display: grid; grid-template-columns: auto 1fr; gap: var(--s-1) var(--s-3); align-items: center;
+  padding: var(--s-3); border-radius: var(--radius-m);
+  background: var(--c-glass-inset); border: 1px solid var(--c-line);
+}
+.devices li[data-current="true"] { border-color: color-mix(in srgb, var(--c-primary) 40%, transparent); background: var(--c-primary-soft); }
+.devices li > button { grid-column: 2; justify-self: start; }
+.deviceIcon {
+  grid-row: span 2; align-self: start;
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-m);
+  color: var(--c-hud); background: var(--c-blue);
+}
+.devices li[data-current="true"] .deviceIcon { color: var(--c-on-primary); background: var(--c-primary); }
+.deviceText { min-width: 0; }
+.deviceText p { margin: 0; font-size: var(--t-s); color: var(--c-text-muted); }
+.deviceText p:first-child { color: var(--c-text); font-size: var(--t-m); }
+.current {
+  font-style: normal; font-size: var(--t-xs); font-weight: 700;
+  padding: .1rem .55rem; border-radius: var(--radius-pill);
+  color: var(--c-on-primary); background: var(--c-primary);
+}
+@media (min-width: 640px) {
+  .devices li { grid-template-columns: auto 1fr auto; }
+  .deviceIcon { grid-row: auto; align-self: center; }
+  .devices li > button { grid-column: 3; justify-self: end; }
+}
+
+/* ---------- Delete: danger zone ---------- */
+.danger {
+  max-width: 560px;
+  border: 2px solid color-mix(in srgb, var(--c-danger) 45%, transparent);
+  background:
+    repeating-linear-gradient(-45deg, transparent 0 14px, rgb(180 35 60 / .04) 14px 28px),
+    var(--c-glass);
+}
+.warning {
+  display: flex; gap: var(--s-3); align-items: flex-start;
+  margin: 0 0 var(--s-3); padding: var(--s-4); border-radius: var(--radius-m);
+  color: var(--c-text); background: var(--c-error-soft); font-weight: 600;
+}
+.warning svg { flex: none; color: var(--c-error); animation: wiggle 2.6s ease-in-out infinite; }
+
+/* ---------- Motion ---------- */
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+@keyframes pop { from { opacity: 0; transform: scale(.85); } }
+@keyframes wiggle { 0%, 80%, 100% { rotate: 0deg; } 85% { rotate: -10deg; } 90% { rotate: 10deg; } 95% { rotate: -6deg; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .panel, .saved, .warning svg { animation: none; }
+  .avatar, .idCard:hover .avatar { rotate: 0deg; transition: none; }
+}

@@ -6,6 +6,7 @@ import { Button } from '@/shared/ui/Button'
 import { EmptyState, ErrorState, Skeleton } from '@/shared/ui/states'
 import { newsListInfiniteQuery } from '../queries'
 import { NewsCard } from './NewsCard'
+import css from '../news.module.css'
 
 /** Full paginated list with the four states (README §7.5). */
 export function NewsList() {
@@ -25,8 +26,8 @@ export function NewsList() {
 
   return (
     <div data-list="news">
-      <p aria-live="polite">{t('news.count', { shown: items.length, total })}</p>
-      <ul>
+      <p aria-live="polite" className={css.count}>{t('news.count', { shown: items.length, total })}</p>
+      <ul className={css.grid}>
         {items.map((n) => (
           <li key={n.slug} data-testid="news-item">
             <NewsCard news={n} />
@@ -34,7 +35,7 @@ export function NewsList() {
         ))}
       </ul>
       {q.hasNextPage && (
-        <Button variant="outline" onClick={() => void q.fetchNextPage()} loading={q.isFetchingNextPage}>
+        <Button variant="outline" className={css.loadMore} onClick={() => void q.fetchNextPage()} loading={q.isFetchingNextPage}>
           {t('common.loadMore')}
         </Button>
       )}

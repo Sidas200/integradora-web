@@ -1,0 +1,99 @@
+/* =====================================================================
+   auth.module.css — /login and /register: illustrated side + glass
+   form card (Ananya / Kiana).
+   ===================================================================== */
+
+.shell {
+  display: grid; max-width: 1040px; margin: var(--s-4) auto var(--s-6);
+  border-radius: var(--radius-xl); overflow: hidden;
+  background: var(--c-glass); border: 1px solid var(--c-glass-border);
+  box-shadow: var(--shadow-lift);
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  animation: rise var(--dur-slow) var(--ease) both;
+}
+@media (min-width: 900px) {
+  .shell { grid-template-columns: 1fr 1fr; min-height: 620px; }
+  .shell[data-mode="register"] { grid-template-columns: 5fr 6fr; }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .shell { background: var(--c-glass-solid); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .shell { background: var(--c-glass-solid); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+/* ---------- Illustrated side ---------- */
+.art {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: 220px; padding: var(--s-5);
+  display: flex; align-items: flex-end;
+}
+.art > :first-child { z-index: -2; }
+.art::after {   /* reading veil behind the copy */
+  content: ""; position: absolute; inset: 40% 0 0; z-index: -1;
+  background: linear-gradient(transparent, rgb(255 255 255 / .55));
+}
+:root[data-theme="dark"] .art::after { background: linear-gradient(transparent, rgb(16 24 43 / .7)); }
+
+.artSprite {
+  position: absolute; z-index: -1; right: 7%; bottom: 34%;
+  width: auto; height: clamp(110px, 16vw, 190px);
+  filter: drop-shadow(0 14px 18px rgb(35 32 47 / .35));
+  animation: bob 3.4s ease-in-out infinite;
+}
+
+.artCopy { max-width: 26rem; }
+.artEyebrow {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  padding: .25rem .8rem; border-radius: var(--radius-pill);
+  font-family: var(--f-pixel); font-size: var(--t-xs); letter-spacing: .04em;
+  color: var(--c-on-promise); background: var(--c-promise);
+  box-shadow: var(--glow-promise);
+}
+.artTitle {
+  margin: var(--s-3) 0 var(--s-2);
+  font-size: var(--t-2xl); font-weight: 800; line-height: 1.1; letter-spacing: -.02em; color: var(--c-text);
+}
+.artText { margin: 0; color: var(--c-text-muted); font-weight: 500; }
+@media (max-width: 899px) {
+  .art { min-height: 170px; }
+  .artCopy { display: none; }
+  .artSprite { top: auto; bottom: 12%; right: auto; left: 50%; translate: -50% 0; width: auto; height: 96px; }
+}
+@media (min-width: 900px) { .art { padding: var(--s-6); } }
+
+/* ---------- Form card ---------- */
+.card {
+  padding: var(--s-5);
+  background: var(--c-glass-strong);
+  display: flex; flex-direction: column; justify-content: center;
+}
+@media (min-width: 900px) { .card { padding: var(--s-7) var(--s-7); } }
+.form { display: grid; }
+.form > button[type="submit"] { width: 100%; min-height: 52px; margin-top: var(--s-2); font-size: var(--t-m); }
+
+.alert {
+  display: flex; align-items: center; gap: var(--s-2);
+  margin: 0 0 var(--s-3); padding: var(--s-3) var(--s-4); border-radius: var(--radius-m);
+  font-weight: 600; font-size: var(--t-s);
+  color: var(--c-text); background: var(--c-error-soft);
+  border: 1px solid color-mix(in srgb, var(--c-error) 35%, transparent);
+  animation: shake .4s var(--ease) both;
+}
+.alert svg { flex: none; color: var(--c-error); }
+
+.switch {
+  margin: var(--s-5) 0 0; padding-top: var(--s-4); border-top: 1px solid var(--c-line);
+  text-align: center; color: var(--c-text-muted); font-size: var(--t-s);
+}
+.switch a { font-weight: 700; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(18px) scale(.985); } }
+@keyframes bob { 50% { transform: translateY(-10px); } }
+@keyframes shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .shell, .artSprite, .alert { animation: none; }
+}
+
+.legalLink { margin: calc(-1 * var(--s-2)) 0 var(--s-3); font-size: var(--t-xs); line-height: 1.5; color: var(--c-text-muted); }

@@ -13,8 +13,8 @@ export const manifest: Partial<ManifestOptions> = {
   start_url: '/app?source=pwa',
   scope: '/',
   display: 'standalone',
-  background_color: '#F3F9FE',
-  theme_color: '#A9D6F5',
+  background_color: '#F6EEF6',
+  theme_color: '#F6EEF6',
   categories: ['games', 'entertainment'],
   icons: [
     { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' },

@@ -1,0 +1,62 @@
+/* =====================================================================
+   Player account area: identity band + underline tabs, then the page
+   on the plain background (account portal, not a phone app).
+   ===================================================================== */
+.shell { max-width: var(--content); margin: 0 auto; padding: var(--s-4) var(--s-4) var(--s-9); }
+
+.band {
+  margin-bottom: var(--s-6);
+  border: 1px solid var(--c-line); border-radius: var(--radius-l);
+  background: var(--c-glass-strong);
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+}
+.bandInner {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+  padding: var(--s-4) var(--s-5);
+}
+.player { display: flex; align-items: center; gap: var(--s-3); min-width: 0; }
+.player strong { display: block; font-size: var(--t-l); line-height: 1.2; }
+.player small { display: block; font-size: var(--t-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--c-text-muted); }
+.avatar {
+  display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: var(--radius-m);
+  font-family: var(--f-pixel); font-size: var(--t-l); color: #FFFFFF;
+  background: linear-gradient(135deg, var(--c-promise), var(--c-primary));
+}
+.install { flex: none; }
+.install button { min-height: 38px; font-size: var(--t-s); }
+
+/* Section tabs with an underline, scrollable on narrow screens */
+.tabs { border-top: 1px solid var(--c-line); overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs ul { list-style: none; display: flex; gap: var(--s-1); margin: 0; padding: 0 var(--s-3); }
+.tab {
+  position: relative; display: block; padding: var(--s-3) var(--s-3);
+  font-size: var(--t-s); font-weight: 700; white-space: nowrap;
+  color: var(--c-text-muted); text-decoration: none;
+  transition: color var(--dur-fast);
+}
+.tab::after {
+  content: ""; position: absolute; left: var(--s-3); right: var(--s-3); bottom: -1px; height: 2px;
+  background: var(--c-promise); transform: scaleX(0); transition: transform var(--dur-medium) var(--ease);
+}
+.tab:hover { color: var(--c-text); text-decoration: none; }
+.tab[aria-current="page"] { color: var(--c-text); }
+.tab[aria-current="page"]::after { transform: scaleX(1); }
+
+.content { min-width: 0; animation: fade var(--dur-slow) var(--ease) both; }
+.content h1 { font-size: var(--t-2xl); }
+
+.readOnly {
+  display: flex; align-items: center; gap: var(--s-2);
+  margin: 0 0 var(--s-4); padding: var(--s-3) var(--s-4); border-radius: var(--radius-m);
+  background: var(--c-blue); color: var(--c-text); font-size: var(--t-s); font-weight: 600;
+  border: 1px solid var(--c-line);
+}
+
+@media (max-width: 599px) {
+  .shell { padding: var(--s-3) var(--s-3) var(--s-8); }
+  .bandInner { padding: var(--s-3) var(--s-4); }
+  .install { display: none; }
+}
+@keyframes fade { from { opacity: 0; transform: translateY(8px); } }
+@media (prefers-reduced-motion: reduce) { .content { animation: none; } .tab::after { transition: none; } }

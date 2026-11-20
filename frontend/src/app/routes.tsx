@@ -8,6 +8,7 @@ import { labRoutes } from '@/features/lab'
 import { landingRoutes } from '@/features/landing'
 import { newsRoutes } from '@/features/news'
 import { savesRoutes } from '@/features/saves'
+import { studioRoutes } from '@/features/studio'
 import { RequireAuth } from '@/shared/auth'
 import { AppLayout } from './layouts/AppLayout'
 import { PublicLayout } from './layouts/PublicLayout'
@@ -31,6 +32,7 @@ export function createRoutes({ lab }: RouteOptions): RouteObject[] {
       children: [
         ...landingRoutes,
         ...newsRoutes,
+        ...studioRoutes,
         ...authRoutes,
         ...(lab ? labRoutes : []),
         {

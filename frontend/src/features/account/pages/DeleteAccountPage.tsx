@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
+import { CloudOff, TriangleAlert } from 'lucide-react'
 import { ApiError } from '@/shared/api/problems'
 import { scheduleEndSession, useReadOnly } from '@/shared/auth'
 import { Button } from '@/shared/ui/Button'
@@ -11,6 +12,7 @@ import { ErrorState } from '@/shared/ui/states'
 import { TextField } from '@/shared/ui/TextField'
 import { useDeleteAccount } from '../mutations'
 import { deleteSchema, type DeleteForm } from '../schemas'
+import css from '../account.module.css'
 
 export function DeleteAccountPage() {
   const { t } = useTranslation()
@@ -46,11 +48,14 @@ export function DeleteAccountPage() {
 
   return (
     <section>
-      <PageHeader title={t('pages.deleteAccount')}>
-        <p role="note">{t('account.delete.warning')}</p>
-        <p>{t('account.delete.webOnly')}</p>
-      </PageHeader>
-      <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="delete-account">
+      <PageHeader title={t('pages.deleteAccount')} />
+      <div className={`${css.panel} ${css.danger}`}>
+        <p role="note" className={css.warning}>
+          <TriangleAlert size={22} aria-hidden="true" />
+          <span>{t('account.delete.warning')}</span>
+        </p>
+        <p className={css.hint}><CloudOff size={14} aria-hidden="true" /> {t('account.delete.webOnly')}</p>
+      <form onSubmit={(e) => void onSubmit(e)} noValidate data-form="delete-account" className={css.form}>
         <TextField
           label={t('account.delete.password')}
           type="password"
@@ -69,6 +74,7 @@ export function DeleteAccountPage() {
           {remove.isPending ? t('account.delete.deleting') : t('account.delete.submit')}
         </Button>
       </form>
+      </div>
     </section>
   )
 }

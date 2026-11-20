@@ -1,83 +1,106 @@
 /* =====================================================================
-   tokens.css — The Day I Made That Promise (PWA) · "Sky of the islands"
-   Default theme: Hikari (光, day). Alternate theme: Tsuki (月, starry night).
-   Contrast checked with docs/design/contrast.py (WCAG 2.2 AA).
+   tokens.css — The Day I Made That Promise (PWA) · "Islas pastel"
+   Light theme (default): pastel lilac/pink sky with white glass.
+   Dark theme ([data-theme="dark"]): navy night with neon pink.
+   Contrast (WCAG 2.2 AA) measured over the glass on the darkest sky stop:
+   docs/design/contrast.py.
    ===================================================================== */
 :root {
-  /* ---- Base palette (never used directly in components) ---- */
-  /* Sora 空 · sky */
-  --sora-50:  #F3F9FE;  --sora-100: #DDEEFB;  --sora-200: #BCDDF5;  --sora-300: #8CC4EC;
-  --sora-500: #3F8ED0;  --sora-700: #1D5C9A;  --sora-900: #14335A;
-  /* Kumo 雲 · cloud */
-  --kumo: #FFFFFF;
-  /* Hikari 光 · sunlight */
-  --hikari-300: #FBE3A2;  --hikari-400: #F3C658;  --hikari-600: #B4842A;
-  /* Midori 緑 · islands and meadows */
-  --midori-400: #7FC08E;  --midori-700: #2E6B45;
-  /* Beni 紅 · the crimson sword (irreversible actions only) */
-  --beni-400: #F08A97;  --beni-600: #B23447;
-  /* Yoru 夜 · night (Tsuki theme) */
-  --yoru-900: #0E1F3B;  --yoru-800: #162B4D;  --yoru-700: #203A63;
+  color-scheme: light;
 
-  /* ---- Semantic: Hikari theme (day) ---- */
-  --c-sky:            linear-gradient(180deg, #A9D6F5 0%, #DDEEFB 55%, #F3F9FE 100%);
-  --c-bg:             var(--sora-50);
-  --c-surface:        var(--kumo);
-  --c-surface-raised: var(--sora-100);
-  --c-text:           var(--sora-900);
-  --c-text-muted:     #4B6585;
-  --c-border:         #D3E4F3;            /* decorative */
-  --c-control-border: #6F8BAC;            /* inputs: ≥ 3:1 */
-  --c-primary:        var(--sora-700);    /* active navigation, main button */
-  --c-on-primary:     var(--kumo);
-  --c-link:           var(--sora-700);
-  --c-promise:        var(--hikari-400);  /* buy, progress, achievements */
-  --c-on-promise:     var(--sora-900);
-  --c-danger:         var(--beni-600);    /* irreversible actions */
-  --c-on-danger:      var(--kumo);
-  --c-error:          var(--beni-600);
-  --c-success:        var(--midori-700);
-  --c-focus:          var(--sora-500);
+  /* ---- Color: light (pastel) ---- */
+  --c-sky:            linear-gradient(180deg, #FBF0F7 0%, #EEDFF4 42%, #D9D6F6 72%, #C9D4F2 100%);
+  --c-bg:             #F6EEF6;
+  --c-glass:          rgb(255 255 255 / .72);
+  --c-glass-strong:   rgb(255 255 255 / .86);
+  --c-glass-border:   rgb(255 255 255 / .75);
+  --c-glass-solid:    #F4F1FB;
+  --c-glass-inset:    rgb(255 255 255 / .55);
+  --c-text:           #23202F;   /* 14.3 : 1 */
+  --c-text-muted:     #655E75;   /*  5.5 : 1 */
+  --c-control-border: #7E7696;   /*  3.8 : 1 */
+  --c-line:           rgb(91 69 194 / .14);
+  --c-primary:        #5B45C2;   /*  6.1 : 1 · white text 6.8 : 1 */
+  --c-on-primary:     #FFFFFF;
+  --c-primary-soft:   #ECE7FF;
+  --c-promise:        #C92D65;   /*  4.7 : 1 · white text 5.2 : 1 */
+  --c-on-promise:     #FFFFFF;
+  --c-promise-glow:   #E5487E;   /* decoration only, never text */
+  --c-promise-soft:   #FCE3EE;
+  --c-hud:            #2F6E9E;   /*  4.9 : 1 */
+  --c-gold:           #F2C14E;   /* dark text on it 9.5 : 1 */
+  --c-on-gold:        #23202F;
+  --c-mint:           #CDE0DA;
+  --c-blue:           #BBD3E5;
+  --c-success:        #2C7A5F;   /*  4.6 : 1 */
+  --c-success-soft:   #DDF1E8;
+  --c-error:          #B4233C;   /*  5.8 : 1 */
+  --c-error-soft:     #FBE3E7;
+  --c-danger:         #B4233C;   /* white text 6.5 : 1 */
+  --c-on-danger:      #FFFFFF;
+  --c-focus:          #5B45C2;
+
+  --shadow-glass: 0 1px 2px rgb(35 32 47 / .06), 0 2px 8px rgb(35 32 47 / .05);
+  --shadow-lift:  0 2px 4px rgb(35 32 47 / .08), 0 8px 20px rgb(35 32 47 / .10);
+  --glow-promise: 0 3px 10px rgb(229 72 126 / .22);
+  --glow-primary: 0 3px 10px rgb(91 69 194 / .18);
+  --glow-gold:    0 0 0 1px rgb(242 193 78 / .7), 0 3px 10px rgb(242 193 78 / .3);
 
   /* ---- Typography ---- */
-  --f-heading: "Shippori Mincho", "Noto Serif JP", Georgia, serif;
-  --f-body:    "Zen Kaku Gothic New", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --f-pixel:   "DotGothic16", ui-monospace, monospace;   /* game figures only */
-  /* 1.25 scale (major third), 16 px base */
-  --t-xs: .8rem; --t-s: .875rem; --t-m: 1rem; --t-l: 1.25rem;
-  --t-xl: 1.563rem; --t-2xl: 1.953rem; --t-3xl: 2.441rem;
-  --t-hero: clamp(2.6rem, 1.4rem + 5.2vw, 5.4rem);
-  --leading-body: 1.65;
-  --leading-serif: 1.8;
+  --f-body:  "Plus Jakarta Sans Variable", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-pixel: "Pixelify Sans", ui-monospace, "Cascadia Mono", monospace;   /* game figures, eyebrows */
+  --f-display: "Cinzel Variable", "Cinzel", Georgia, serif;                 /* hero headline, landing titles (matches the wordmark) */
+  --t-xs: .78rem; --t-s: .875rem; --t-m: 1rem; --t-l: 1.2rem;
+  --t-xl: 1.5rem; --t-2xl: clamp(1.6rem, 1.2rem + 1.4vw, 2.1rem); --t-3xl: clamp(2rem, 1.4rem + 2.4vw, 3rem);
+  --t-hero: clamp(2.5rem, 1.3rem + 5vw, 5rem);
+  --leading-body: 1.6;
   --measure: 64ch;
 
   /* ---- Space (4 px base) ---- */
   --s-1: .25rem; --s-2: .5rem; --s-3: .75rem; --s-4: 1rem; --s-5: 1.5rem;
   --s-6: 2rem;  --s-7: 3rem;  --s-8: 4rem;   --s-9: 6rem;
 
-  /* ---- Shape, depth and motion ---- */
-  --radius-s: 4px; --radius-m: 10px; --radius-pill: 999px;
-  --line: 1px solid var(--c-border);
-  --shadow-cloud: 0 1px 0 #FFFFFF inset, 0 10px 30px rgb(29 92 154 / .10);
-  --glow-promise: 0 0 0 1px var(--hikari-600), 0 6px 22px rgb(243 198 88 / .45);
-  --dur-fast: 120ms; --dur-medium: 240ms;
+  /* ---- Shape and motion ---- */
+  --radius-s: 3px; --radius-m: 5px; --radius-l: 7px; --radius-xl: 10px; --radius-pill: 6px;   /* soft corners, closer to pixel art */
+  --blur: blur(18px) saturate(140%);
+  --dur-fast: 140ms; --dur-medium: 260ms; --dur-slow: 700ms;
   --ease: cubic-bezier(.2, .7, .2, 1);
+  --ease-spring: cubic-bezier(.34, 1.4, .5, 1);
+  --content: 1200px;
 }
 
-/* ---- Tsuki theme (starry night) ---- */
-:root[data-theme="tsuki"] {
-  --c-sky: linear-gradient(180deg, #0B1A33 0%, #162B4D 70%, #203A63 100%);
-  --c-bg: var(--yoru-900);  --c-surface: var(--yoru-800);  --c-surface-raised: var(--yoru-700);
-  --c-text: #EAF3FC;  --c-text-muted: #A8BDD6;
-  --c-border: #2A4673;  --c-control-border: #6582AA;
-  --c-primary: #9CCBF2;  --c-on-primary: var(--yoru-900);  --c-link: #9CCBF2;
-  --c-on-promise: var(--yoru-900);
-  --c-error: var(--beni-400);  --c-success: var(--midori-400);  --c-focus: #9CCBF2;
-  --shadow-cloud: 0 10px 30px rgb(0 0 0 / .35);
-}
+/* ---- Dark theme: navy night with neon pink ---- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --c-sky:            linear-gradient(180deg, #0C1226 0%, #161734 45%, #241F4A 78%, #2E2558 100%);
+  --c-bg:             #10182B;
+  --c-glass:          rgb(30 36 66 / .72);
+  --c-glass-strong:   rgb(30 36 66 / .88);
+  --c-glass-border:   rgb(179 164 255 / .22);
+  --c-glass-solid:    #1E233E;
+  --c-glass-inset:    rgb(255 255 255 / .05);
+  --c-text:           #F6F0F8;   /* 13.7 : 1 */
+  --c-text-muted:     #BDB5CF;   /*  7.8 : 1 */
+  --c-control-border: #8E86AE;   /*  4.5 : 1 */
+  --c-line:           rgb(179 164 255 / .16);
+  --c-primary:        #B3A4FF;   /*  7.1 : 1 */
+  --c-on-primary:     #14111F;
+  --c-primary-soft:   rgb(179 164 255 / .16);
+  --c-promise:        #FF6FAE;   /*  6.0 : 1 · dark text 7.2 : 1 */
+  --c-on-promise:     #14111F;
+  --c-promise-glow:   #FF6FAE;
+  --c-promise-soft:   rgb(255 111 174 / .16);
+  --c-hud:            #9FD8FF;   /* 10.1 : 1 */
+  --c-mint:           rgb(127 216 180 / .16);
+  --c-blue:           rgb(159 216 255 / .14);
+  --c-success:        #7FD8B4;
+  --c-success-soft:   rgb(127 216 180 / .14);
+  --c-error:          #FF8FA3;
+  --c-error-soft:     rgb(255 143 163 / .14);
+  --c-focus:          #9FD8FF;
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+  --shadow-glass: 0 1px 2px rgb(0 0 0 / .3), 0 2px 10px rgb(0 0 0 / .2);
+  --shadow-lift:  0 2px 4px rgb(0 0 0 / .35), 0 10px 24px rgb(0 0 0 / .3);
+  --glow-promise: 0 0 0 1px rgb(255 111 174 / .5), 0 3px 12px rgb(255 111 174 / .25);
+  --glow-primary: 0 0 0 1px rgb(179 164 255 / .4), 0 3px 12px rgb(179 164 255 / .2);
 }
-:focus-visible { outline: 3px solid var(--c-focus); outline-offset: 3px; }
-.pixel { image-rendering: pixelated; }

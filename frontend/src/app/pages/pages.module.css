@@ -1,0 +1,86 @@
+/* =====================================================================
+   pages.module.css — 404 and route error: a lost hero over the sky,
+   big pixel code and an RPG dialog box.
+   ===================================================================== */
+
+.lost {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: min(72vh, 640px); margin: var(--s-4) 0 var(--s-6);
+  display: grid; place-items: center; padding: var(--s-6) var(--s-4);
+  border-radius: var(--radius-xl); border: 1px solid var(--c-glass-border);
+  box-shadow: var(--shadow-lift);
+}
+.lost[data-full] { min-height: 100vh; min-height: 100dvh; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+.scene { position: absolute; inset: 0; z-index: -1; background: #1B2150; }
+.scene img { width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; }
+.scene::after {   /* night veil on the left, where the message sits */
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgb(12 14 44 / .7), rgb(12 14 44 / .25) 55%, transparent 80%);
+}
+/* The last petals of the dead tree, falling slowly */
+.fallingPetal {
+  position: absolute; z-index: 1; top: 30%; left: 58%; width: 9px; height: 7px;
+  border-radius: 80% 0 80% 0; background: #FF9EC4; box-shadow: 0 0 6px rgb(255 158 196 / .8);
+  animation: lastPetal 9s linear infinite;
+}
+.fallingPetal:nth-of-type(2) { left: 52%; top: 22%; animation-delay: -3s; animation-duration: 11s; }
+.fallingPetal:nth-of-type(3) { left: 64%; top: 18%; animation-delay: -6s; animation-duration: 13s; }
+@keyframes lastPetal {
+  0% { transform: translate(0, 0) rotate(0); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translate(-120px, 420px) rotate(520deg); opacity: 0; }
+}
+
+.stage { display: grid; justify-items: center; gap: var(--s-4); width: min(100%, 560px); }
+@media (min-width: 1024px) { .lost { place-items: center start; padding-left: 7%; } }
+
+.codeRow { position: relative; display: flex; align-items: flex-end; gap: var(--s-2); }
+.code {
+  font-family: var(--f-pixel); font-size: clamp(5rem, 3rem + 10vw, 9.5rem); line-height: .9;
+  color: transparent;
+  background: linear-gradient(180deg, #FFC6DD, #FF6FAE 55%, #B3A4FF);
+  -webkit-background-clip: text; background-clip: text;
+  filter: drop-shadow(5px 5px 0 rgb(12 14 44 / .85)) drop-shadow(0 0 26px rgb(255 111 174 / .5));
+  animation: glitch 4s steps(1) infinite;
+}
+.sprite {
+  width: auto; height: clamp(110px, 16vw, 170px); margin-bottom: var(--s-1);
+  filter: drop-shadow(0 10px 14px rgb(35 32 47 / .3));
+  animation: lost 3s ease-in-out infinite;
+}
+
+/* RPG dialog box */
+.dialog {
+  position: relative; width: 100%;
+  padding: var(--s-5) var(--s-5) var(--s-5) var(--s-6);
+  border-radius: 6px; border: 3px solid var(--c-text);
+  background: var(--c-glass-strong); box-shadow: 5px 5px 0 var(--c-primary), var(--shadow-glass);
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  animation: rise var(--dur-slow) var(--ease) both .15s;
+}
+.dialog::after {   /* blinking "next" caret */
+  content: ""; position: absolute; right: var(--s-4); bottom: var(--s-3);
+  border: 7px solid transparent; border-top-color: var(--c-promise); border-bottom: 0;
+  animation: blink 1s steps(1) infinite;
+}
+.title { margin: 0 0 var(--s-2); font-family: var(--f-pixel); font-size: var(--t-xl); font-weight: 600; }
+.title::before { content: "* "; position: absolute; left: var(--s-4); color: var(--c-promise); }
+.dialog p { margin: 0 0 var(--s-4); color: var(--c-text-muted); }
+.home {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  min-height: 46px; padding: 0 var(--s-5); border-radius: var(--radius-pill);
+  font-weight: 700; text-decoration: none;
+  color: var(--c-on-promise); background: var(--c-promise); box-shadow: var(--glow-promise);
+  transition: transform var(--dur-fast) var(--ease);
+}
+.home:hover { color: var(--c-on-promise); transform: translateY(-2px); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+@keyframes lost { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes glitch { 0%, 92%, 100% { transform: none; } 93% { transform: translate(3px, -2px) skewX(-6deg); } 96% { transform: translate(-3px, 1px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .code, .sprite, .dialog, .dialog::after, .fallingPetal { animation: none; }
+  .fallingPetal { display: none; }
+}

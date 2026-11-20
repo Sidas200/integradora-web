@@ -7,6 +7,7 @@ import { Timeline } from '../components/Timeline'
 import { TypeFilter } from '../components/TypeFilter'
 import { historyInfiniteQuery } from '../queries'
 import { useTypeFilter } from '../useTypeFilter'
+import css from '../history.module.css'
 
 /** README §7.5. The filter stays visible in every state so an empty filter can be changed. */
 export function HistoryPage() {
@@ -30,10 +31,10 @@ export function HistoryPage() {
         : <EmptyState title={t('history.empty.title')} text={t('history.empty.text')} />)}
       {q.data && items.length > 0 && (
         <>
-          <p aria-live="polite">{t('history.count', { shown: items.length, total })}</p>
+          <p aria-live="polite" className={css.count}>{t('history.count', { shown: items.length, total })}</p>
           <Timeline items={items} />
           {q.hasNextPage && (
-            <Button variant="outline" onClick={() => void q.fetchNextPage()} loading={q.isFetchingNextPage}>
+            <Button variant="outline" className={css.more} onClick={() => void q.fetchNextPage()} loading={q.isFetchingNextPage}>
               {t('common.loadMore')}
             </Button>
           )}

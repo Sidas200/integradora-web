@@ -1,18 +1,29 @@
+/* Floating pills for the offline and update notices (they live inside PublicLayout's notice stack). */
 .offline, .update {
-  position: relative; z-index: 10;
-  padding: var(--s-3) var(--s-4);
-  font-size: var(--t-s);
-  text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-5); border-radius: var(--radius-pill);
+  font-size: var(--t-s); font-weight: 700; text-align: center;
+  border: 1px solid var(--c-glass-border); box-shadow: var(--shadow-glass);
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  animation: drop var(--dur-slow) var(--ease-spring) both;
 }
-.offline { background: var(--hikari-300); color: var(--sora-900); }
-.update { background: var(--sora-700); color: var(--kumo); display: flex; gap: var(--s-3); justify-content: center; align-items: center; }
-.update button { background: var(--kumo); color: var(--sora-900); border: 0; border-radius: var(--radius-pill); padding: var(--s-1) var(--s-4); font: inherit; cursor: pointer; }
+.offline { background: var(--c-glass-strong); color: var(--c-text); }
+.offline::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: var(--c-promise); flex: none;
+  box-shadow: 0 0 0 4px var(--c-promise-soft); animation: pulse 1.6s ease-in-out infinite; }
+.update { background: var(--c-primary); color: var(--c-on-primary); }
+.update button {
+  border: 0; border-radius: var(--radius-pill); padding: var(--s-1) var(--s-4); cursor: pointer; font-weight: 800;
+  background: var(--c-on-primary); color: var(--c-primary);
+}
+@keyframes drop { from { opacity: 0; transform: translateY(-14px) scale(.96); } }
+@keyframes pulse { 50% { box-shadow: 0 0 0 8px transparent; } }
 
+/* Diagnostics panel of /lab */
 .status {
-  background: var(--c-surface); border: var(--line); border-radius: var(--radius-m);
-  padding: var(--s-4) var(--s-5); font-size: var(--t-s);
+  background: var(--c-glass-strong); border: 1px solid var(--c-glass-border); border-radius: var(--radius-m);
+  padding: var(--s-4) var(--s-5); font-size: var(--t-s); box-shadow: var(--shadow-glass);
 }
-.status h2 { font-family: var(--f-heading); font-size: var(--t-l); margin: 0 0 var(--s-3); }
+.status h2 { font-size: var(--t-l); margin: 0 0 var(--s-3); }
 .status dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--s-2) var(--s-4); margin: 0 0 var(--s-4); }
 .status dt { color: var(--c-text-muted); }
 .status dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }

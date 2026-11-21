@@ -15,6 +15,9 @@ export default defineConfig({
     setupFiles: ['src/test/setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     passWithNoTests: true,
+    // Above asyncUtilTimeout (5 s, src/test/setup.ts): a findBy* that does not find anything fails with
+    // its own message (what it looked for and the DOM) instead of a bare "Test timed out".
+    testTimeout: 15_000,
     // npm run test:coverage → coverage/index.html (y coverage/lcov.info para CI)
     coverage: {
       provider: 'v8',

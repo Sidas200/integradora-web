@@ -7,7 +7,7 @@ import { COMPANY } from '../company'
 import css from '../studio.module.css'
 
 
-type FooterLink = { label: string; to?: string; href?: string }
+type FooterLink = { label: string; to?: string; href?: string; download?: boolean }
 
 /** Company footer (publisher style): brand, link columns, legal line. Always dark. */
 export function SiteFooter() {
@@ -34,7 +34,7 @@ export function SiteFooter() {
       id: 'players', title: t('studio.footer.players'), links: [
         { label: t('nav.myAccount'), to: '/app' },
         { label: t('nav.register'), to: '/register' },
-        { label: t('studio.footer.android'), href: MOBILE_APP_URL },
+        { label: t('studio.footer.android'), href: MOBILE_APP_URL, download: true },
       ],
     },
     {
@@ -62,7 +62,9 @@ export function SiteFooter() {
                 <li key={l.label}>
                   {l.to
                     ? <Link to={l.to}>{l.label}</Link>
-                    : <a href={l.href} target="_blank" rel="noreferrer">{l.label}<ArrowUpRight size={12} aria-hidden="true" /></a>}
+                    : l.download
+                      ? <a href={l.href} download>{l.label}</a>
+                      : <a href={l.href} target="_blank" rel="noreferrer">{l.label}<ArrowUpRight size={12} aria-hidden="true" /></a>}
                 </li>
               ))}
             </ul>

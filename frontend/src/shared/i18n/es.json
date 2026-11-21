@@ -183,7 +183,7 @@
         "account": "La misma cuenta del juego y de la web"
       },
       "download": "Descargar para Android",
-      "note": "Archivo APK para Android. Desarrollada por Hex Studio.",
+      "note": "Archivo APK de 48 MB. Al instalarlo, Android te pedirá permitir apps de origen desconocido.",
       "mock": {
         "last": "Última partida",
         "save": "Partida 1 · Capítulo 1"

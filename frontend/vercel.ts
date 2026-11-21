@@ -43,5 +43,11 @@ export const config: VercelConfig = {
     routes.header('/assets/(.*)', [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }]),
     routes.header('/sw.js', [{ key: 'Cache-Control', value: 'no-cache' }]),
     routes.header('/manifest.webmanifest', [{ key: 'Cache-Control', value: 'no-cache' }]),
+    // Android app: installable type, always a download, revalidated (same name for every new build)
+    routes.header('/downloads/(.*).apk', [
+      { key: 'Content-Type', value: 'application/vnd.android.package-archive' },
+      { key: 'Content-Disposition', value: 'attachment' },
+      { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+    ]),
   ],
 }

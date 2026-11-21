@@ -28,7 +28,7 @@ export function AppSection() {
             ))}
           </ul>
           <p className={css.appActions}>
-            <a href={MOBILE_APP_URL} className={css.btnPromise} target="_blank" rel="noreferrer">
+            <a href={MOBILE_APP_URL} className={css.btnPromise} download data-cta="android">
               <Download size={18} aria-hidden="true" />{t('landing.app.download')}
             </a>
             <small>{t('landing.app.note')}</small>

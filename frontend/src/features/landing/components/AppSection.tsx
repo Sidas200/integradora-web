@@ -1,10 +1,9 @@
 import { BookOpen, Download, Newspaper, Save, Trophy } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { CHARACTERS, KEY_ART } from '@/shared/ui/art'
+import { MOBILE_APP_URL } from '../config'
 import css from '../landing.module.css'
 
-/** Latest Android build of the companion app (GitHub Releases of the mobile repository). */
-export const MOBILE_APP_URL = 'https://github.com/Sidas200/integradora_movil/releases/latest'
 
 const FEATURES = [
   { id: 'saves', Icon: Save },

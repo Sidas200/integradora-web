@@ -1,6 +1,6 @@
 import { Compass, Crown, Hammer, Pickaxe, Swords } from 'lucide-react'
 import { Trans, useTranslation } from 'react-i18next'
-import { COVER_ART, type ArtImage } from '@/shared/ui/art'
+import { SHOTS, VARN, type ArtImage } from '@/shared/ui/art'
 import { PixelForest } from './PixelForest'
 import css from '../landing.module.css'
 
@@ -8,15 +8,15 @@ import css from '../landing.module.css'
 type StepId = 'explore' | 'fight' | 'collect' | 'forge' | 'guardian'
 
 const STEPS: readonly { id: StepId; Icon: typeof Compass; art: ArtImage }[] = [
-  { id: 'explore', Icon: Compass, art: COVER_ART.bridge },
-  { id: 'fight', Icon: Swords, art: COVER_ART.cliff },
-  { id: 'collect', Icon: Pickaxe, art: COVER_ART.ruins },
-  { id: 'forge', Icon: Hammer, art: COVER_ART.forge },
-  { id: 'guardian', Icon: Crown, art: COVER_ART.torii },
+  { id: 'explore', Icon: Compass, art: SHOTS.cabin },
+  { id: 'fight', Icon: Swords, art: SHOTS.combat },
+  { id: 'collect', Icon: Pickaxe, art: SHOTS.island },
+  { id: 'forge', Icon: Hammer, art: SHOTS.forge },
+  { id: 'guardian', Icon: Crown, art: SHOTS.varn },
 ]
 
 /**
- * The game loop told as chapters of the story: each step pairs an illustration with a piece of lore
+ * The game loop told as chapters of the story: each step pairs a real screenshot with a piece of lore
  * and what the player does in the game. Rows alternate sides on wide screens.
  */
 export function LoopSection() {
@@ -34,6 +34,7 @@ export function LoopSection() {
             <li key={id} data-step={id} className={`${css.chapter} ${css.reveal}`}>
               <figure className={css.chapterArt} aria-hidden="true">
                 <img src={art.src} srcSet={art.srcSet} sizes="(min-width: 900px) 560px, 92vw" alt="" loading="lazy" decoding="async" draggable={false} />
+                {id === 'guardian' && <img src={VARN} alt="" className={css.chapterBoss} loading="lazy" draggable={false} />}
               </figure>
               <div className={css.chapterText}>
                 <p className={css.chapterVerb}><Icon size={16} aria-hidden="true" />{t(`landing.loop.${id}.verb`)}</p>

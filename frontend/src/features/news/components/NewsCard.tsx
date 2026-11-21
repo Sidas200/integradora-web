@@ -10,7 +10,7 @@ import css from '../news.module.css'
 /** Poster card (Flix / EduVerse). The whole card is a link to /news/:slug. */
 export function NewsCard({ news }: { news: NewsSummary }) {
   const { t } = useTranslation()
-  const cover = coverOf(news.slug)
+  const cover = coverOf(news.slug, news.coverKey)
   return (
     <article data-news-slug={news.slug} className={css.card}>
       <div className={css.cover} aria-hidden="true">

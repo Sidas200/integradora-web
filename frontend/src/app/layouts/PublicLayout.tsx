@@ -75,7 +75,7 @@ export function PublicLayout() {
                   <li><NavLink to="/login" className={navClass}><LogIn size={16} aria-hidden="true" /><span className={css.label}>{t('nav.login')}</span></NavLink></li>
                   <li>
                     <NavLink to="/register" className={({ isActive }) => `${css.cta} ${isActive ? css.ctaActive : ''}`}>
-                      <UserRoundPlus size={16} aria-hidden="true" />{t('nav.register')}
+                      <UserRoundPlus size={16} aria-hidden="true" /><span className={css.ctaLabel}>{t('nav.register')}</span>
                     </NavLink>
                   </li>
                 </>

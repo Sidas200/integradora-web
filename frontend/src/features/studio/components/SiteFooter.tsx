@@ -2,10 +2,10 @@ import { ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { HEX } from '@/shared/ui/art'
+import { MOBILE_APP_URL } from '@/features/landing'
 import { COMPANY } from '../company'
 import css from '../studio.module.css'
 
-const MOBILE_APP_URL = 'https://github.com/Sidas200/integradora_movil/releases/latest'
 
 type FooterLink = { label: string; to?: string; href?: string }
 
@@ -53,7 +53,6 @@ export function SiteFooter() {
             <img src={HEX.mark} alt="" width={128} height={131} className={css.studioMark} />
             <img src={HEX.wordmark} alt="" width={240} height={93} className={css.studioWord} />
           </Link>
-          <p>{t('studio.footer.tagline')}</p>
         </div>
         {columns.map((col) => (
           <nav key={col.id} aria-label={col.title} className={css.footerCol}>

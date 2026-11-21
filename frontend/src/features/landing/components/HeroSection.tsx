@@ -1,13 +1,13 @@
-import { ArrowRight, Bell, Play } from 'lucide-react'
+import { ArrowRight, Bell, ChevronRight } from 'lucide-react'
 import { useEffect, type CSSProperties } from 'react'
 import { useTranslation } from 'react-i18next'
-import { COVER_ART, SHOTS, SPRITE } from '@/shared/ui/art'
+import { COVER_ART, KEY_ART, SPRITE } from '@/shared/ui/art'
 import { SkyScene } from '@/shared/ui/SkyScene'
 import css from '../landing.module.css'
 
 const INDEX = [
   { id: 'story', href: '#story' },
-  { id: 'trailer', href: '#trailer' },
+  { id: 'gallery', href: '#gallery' },
   { id: 'download', href: '#buy' },
 ] as const
 
@@ -66,14 +66,14 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Chip pointing at the island (Aurora's "Sky City"): jumps to the trailer */}
-      <a href="#trailer" className={css.islandChip}>
-        <img src={SHOTS.duel.src} alt="" className={css.islandThumb} />
+      {/* Chip pointing at the island (Aurora's "Sky City"): jumps to the gallery */}
+      <a href="#gallery" className={css.islandChip}>
+        <img src={KEY_ART.src} alt="" className={css.islandThumb} />
         <span>
           <strong>{t('landing.hero.islandTitle')}</strong>
           <small>{t('landing.hero.islandText')}</small>
         </span>
-        <span className={css.islandArrow} aria-hidden="true"><Play size={12} fill="currentColor" /></span>
+        <span className={css.islandArrow} aria-hidden="true"><ChevronRight size={14} /></span>
         <i className={css.islandLine} aria-hidden="true" />
       </a>
 

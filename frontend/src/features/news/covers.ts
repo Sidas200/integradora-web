@@ -1,21 +1,22 @@
-import { COVER_ART, KEY_ART, MENU_ART, SHOTS, STORY_NIGHT, type ArtImage } from '@/shared/ui/art'
+import { COVER_ART, KEY_ART, LEGEND, MENU_ART, STORY_NIGHT, type ArtImage } from '@/shared/ui/art'
 
 type Cover = { image: ArtImage; position: string }
 
-/** Cover of each post by its coverKey (column news_posts.cover_key), with real images of the game. */
+/** Cover of each post by its coverKey (column news_posts.cover_key), with the game's illustrations (the
+ * screenshots only live in the landing gallery). */
 const BY_KEY: Record<string, Cover> = {
   news_announcement: { image: MENU_ART, position: '50% 40%' },
-  news_devlog01: { image: SHOTS.forge, position: '40% 40%' },
-  news_demo: { image: SHOTS.duel, position: '55% 50%' },
-  news_pwa: { image: SHOTS.camp, position: '50% 50%' },
-  news_devlog02: { image: SHOTS.island, position: '50% 55%' },
-  news_devlog03: { image: SHOTS.combat, position: '50% 50%' },
-  news_devlog04: { image: SHOTS.sanctuary, position: '50% 50%' },
-  news_devlog05: { image: SHOTS.varn, position: '55% 50%' },
-  news_devlog06: { image: SHOTS.cabin, position: '40% 40%' },
-  news_devlog07: { image: STORY_NIGHT, position: '50% 45%' },
-  news_devlog08: { image: COVER_ART.bridge, position: '50% 50%' },
-  news_devlog09: { image: KEY_ART, position: '70% 40%' },
+  news_devlog01: { image: COVER_ART.forge, position: '60% 50%' },
+  news_demo: { image: KEY_ART, position: '70% 40%' },
+  news_pwa: { image: COVER_ART.dusk, position: '75% 40%' },
+  news_devlog02: { image: COVER_ART.bridge, position: '50% 50%' },
+  news_devlog03: { image: COVER_ART.cliff, position: '30% 50%' },
+  news_devlog04: { image: COVER_ART.torii, position: '50% 45%' },
+  news_devlog05: { image: COVER_ART.ruins, position: '30% 50%' },
+  news_devlog06: { image: STORY_NIGHT, position: '50% 45%' },
+  news_devlog07: { image: LEGEND[2]!, position: '50% 40%' },
+  news_devlog08: { image: LEGEND[0]!, position: '50% 45%' },
+  news_devlog09: { image: LEGEND[5]!, position: '55% 45%' },
 }
 
 /** Fallback for posts without a known coverKey: picked from the slug, so it never changes between visits. */

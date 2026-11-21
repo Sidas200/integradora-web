@@ -65,7 +65,7 @@ import tsuki from '@/assets/art/tsuki.webp'
 import wordmark1605 from '@/assets/art/wordmark-1605.webp'
 import wordmark900 from '@/assets/art/wordmark-900.webp'
 
-// Game media: real screenshots, the intro panels and the menu art (from the build and the trailer)
+// Game media: real screenshots, the intro panels and the menu art (from the game build)
 import shotIsland800 from '@/assets/art/shot-island-800.webp'
 import shotIsland1600 from '@/assets/art/shot-island-1600.webp'
 import shotCabin800 from '@/assets/art/shot-cabin-800.webp'
@@ -96,7 +96,6 @@ import legend6_600 from '@/assets/art/legend-6-600.webp'
 import legend6_1200 from '@/assets/art/legend-6-1200.webp'
 import menuKeyArt800 from '@/assets/art/menu-key-art-800.webp'
 import menuKeyArt1600 from '@/assets/art/menu-key-art-1600.webp'
-import varnBust from '@/assets/art/varn-466.webp'
 import tsukiArt600 from '@/assets/art/tsuki-art-600.webp'
 import tsukiArt1122 from '@/assets/art/tsuki-art-1122.webp'
 
@@ -189,14 +188,8 @@ export const LEGEND: readonly ArtImage[] = [
   pair(legend6_600, 600, legend6_1200, 1200),
 ]
 
-/** Main menu illustration with the title (trailer poster, download section). */
+/** Main menu illustration with the title (download section). */
 export const MENU_ART = pair(menuKeyArt800, 800, menuKeyArt1600, 1600)
-/** Varn, Guardian of the Threshold (bust, transparent). */
-export const VARN = varnBust
 /** Tsuki, full illustration from the main menu (transparent). */
 export const TSUKI_ART = pair(tsukiArt600, 600, tsukiArt1122, 1122)
 
-/** Trailer of the demo, served as-is from public/media (not hashed, not precached). */
-export const TRAILER_URL = '/media/trailer.mp4'
-/** On-screen texts of the trailer as WebVTT captions. */
-export const TRAILER_CAPTIONS_URL = '/media/trailer.es.vtt'

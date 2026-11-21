@@ -10,11 +10,10 @@ import { HeroSection } from '../components/HeroSection'
 import { LoopSection } from '../components/LoopSection'
 import { StorySection } from '../components/StorySection'
 import { SubscribeForm } from '../components/SubscribeForm'
-import { TrailerSection } from '../components/TrailerSection'
 import css from '../landing.module.css'
 
 /** Anchors of the one-page landing, in the order they appear. */
-const SECTIONS = ['story', 'trailer', 'loop', 'characters', 'gallery', 'achievements', 'news', 'app', 'buy'] as const
+const SECTIONS = ['story', 'loop', 'characters', 'gallery', 'achievements', 'news', 'app', 'buy'] as const
 
 export function LandingPage() {
   const { t } = useTranslation()
@@ -33,7 +32,6 @@ export function LandingPage() {
       </nav>
 
       <StorySection />
-      <TrailerSection />
       <LoopSection />
       <CharactersSection />
       <GallerySection />

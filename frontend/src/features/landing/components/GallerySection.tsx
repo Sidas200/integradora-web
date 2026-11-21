@@ -6,7 +6,10 @@ import css from '../landing.module.css'
 
 const ORDER: readonly ShotId[] = ['island', 'cabin', 'combat', 'forge', 'camp', 'sanctuary', 'varn', 'duel']
 
-/** Screenshots of the demo: a mosaic, and a viewer (native <dialog>) with arrows and Esc to close. */
+/**
+ * The only place with real screenshots of the demo: an even 4×2 grid on one dark panel (same size,
+ * same frame, a number and caption over each), and a viewer (native <dialog>) with arrows and Esc to close.
+ */
 export function GallerySection() {
   const { t } = useTranslation()
   const dialog = useRef<HTMLDialogElement>(null)
@@ -49,8 +52,9 @@ export function GallerySection() {
             return (
               <li key={id} data-shot={id} className={css.reveal}>
                 <button type="button" onClick={() => setOpen(i)} aria-label={t('landing.gallery.open', { caption })}>
-                  <img src={SHOTS[id].src} srcSet={SHOTS[id].srcSet} sizes="(min-width: 900px) 33vw, 50vw"
+                  <img src={SHOTS[id].src} srcSet={SHOTS[id].srcSet} sizes="(min-width: 900px) 25vw, 50vw"
                        alt="" loading="lazy" decoding="async" draggable={false} />
+                  <span className={css.galleryCaption} aria-hidden="true"><b>{String(i + 1).padStart(2, '0')}</b><span>{caption}</span></span>
                 </button>
               </li>
             )

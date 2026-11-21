@@ -11,7 +11,7 @@ describe('landing', () => {
     renderRoute('/')
 
     expect(await screen.findByRole('heading', { level: 1, name: 'The Day I Made That Promise' })).toBeInTheDocument()
-    for (const name of ['Una promesa que desafiará al cielo', 'Explora, combate, fabrica', 'Personajes', 'Tu partida, en tu bolsillo', 'Descarga la demo', 'El capítulo 1 en movimiento', 'Así se ve el juego']) {
+    for (const name of ['Una promesa que desafiará al cielo', 'Explora, combate, fabrica', 'Personajes', 'Tu partida, en tu bolsillo', 'Descarga la demo', 'Así se ve el juego']) {
       expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument()
     }
 

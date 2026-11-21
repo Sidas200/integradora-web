@@ -506,30 +506,43 @@
 .legend li:nth-child(5) figcaption::before { content: "V. "; color: #FF9EC4; }
 .legend li:nth-child(6) figcaption::before { content: "VI. "; color: #FF9EC4; }
 
-/* ===================== Trailer ===================== */
-.trailerSection { background: linear-gradient(180deg, transparent, rgb(91 69 194 / .08) 30%, transparent); }
-.player {
-  position: relative; max-width: 960px; margin: var(--s-6) auto 0; padding: 8px;
-  border-radius: var(--radius-l); background: #0F0C24;
-  box-shadow: 0 0 0 1px rgb(179 164 255 / .25), var(--shadow-lift);
-}
-.player video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius-m); background: #0F0C24; object-fit: cover; }
 
 /* ===================== Gallery ===================== */
 .gallery {
-  list-style: none; margin: var(--s-6) 0 0; padding: 0;
+  list-style: none; margin: var(--s-6) 0 0; padding: var(--s-3);
   display: grid; gap: var(--s-3); grid-template-columns: repeat(2, 1fr);
+  /* One dark "screen" behind every capture, so green, red and night scenes read as one set */
+  border-radius: var(--radius-l); background: linear-gradient(160deg, #1B1640, #2A1D4F 55%, #3A1F4A);
+  border: 1px solid rgb(255 255 255 / .08); box-shadow: var(--shadow-glass);
 }
-@media (min-width: 900px) {
-  .gallery { grid-template-columns: repeat(4, 1fr); }
-  .gallery li:first-child, .gallery li:nth-child(6) { grid-column: span 2; grid-row: span 2; }
-}
+@media (min-width: 900px) { .gallery { grid-template-columns: repeat(4, 1fr); gap: var(--s-4); padding: var(--s-4); } }
 .gallery button {
-  display: block; width: 100%; height: 100%; padding: 0; border: 0; cursor: zoom-in; background: none;
-  border-radius: var(--radius-m); overflow: hidden;
+  position: relative; display: block; width: 100%; padding: 0; cursor: zoom-in; background: #0F0C24;
+  border: 1px solid rgb(255 255 255 / .14); border-radius: var(--radius-m); overflow: hidden;
+  transition: transform var(--dur-medium) var(--ease), border-color var(--dur-medium), box-shadow var(--dur-medium);
 }
-.gallery img { display: block; width: 100%; height: 100%; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 1s var(--ease), filter var(--dur-medium); }
-.gallery button:hover img { transform: scale(1.05); filter: brightness(1.08); }
+.gallery img {
+  display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover;
+  filter: saturate(.9) brightness(.92); transition: transform 1s var(--ease), filter var(--dur-medium);
+}
+/* Number + caption over a soft gradient at the bottom (the HUD of the game stays clear at the top) */
+.galleryCaption {
+  position: absolute; inset: auto 0 0; padding: var(--s-6) var(--s-3) var(--s-2);
+  background: linear-gradient(180deg, transparent, rgb(10 8 26 / .88));
+  color: #FFFFFF; font-size: var(--t-xs); font-weight: 600; line-height: 1.4; text-align: left;
+  opacity: .92; transition: opacity var(--dur-medium);
+}
+.gallery button:hover, .gallery button:focus-visible {
+  transform: translateY(-3px); border-color: rgb(255 158 196 / .7); box-shadow: 0 12px 28px rgb(0 0 0 / .4);
+}
+.gallery button:hover img, .gallery button:focus-visible img { transform: scale(1.04); filter: none; }
+.gallery button:hover .galleryCaption { opacity: 1; }
+.galleryCaption b { margin-right: var(--s-2); color: #FF9EC4; font-family: var(--f-pixel); font-weight: 400; letter-spacing: .06em; }
+/* Phones: two small tiles per row, only the number (the viewer shows the full caption) */
+@media (max-width: 599px) {
+  .galleryCaption { padding: var(--s-4) var(--s-2) var(--s-1); }
+  .galleryCaption span { display: none; }
+}
 
 .viewer {
   width: min(96vw, 1400px); max-height: 94vh; padding: 0; border: 0; overflow: visible;
@@ -550,14 +563,6 @@
 .viewerPrev { left: 8px; }
 .viewerNext { right: 8px; }
 
-/* Varn's bust on the guardian chapter */
-.chapterBoss {
-  position: absolute; right: 2%; bottom: 0; height: 88%; width: auto;
-  filter: drop-shadow(0 8px 18px rgb(0 0 0 / .55));
-  transition: transform 1.2s var(--ease);
-}
-.chapter:hover .chapterBoss { transform: translateY(-4px) scale(1.02); }
-
 /* ===================== Download (closing) ===================== */
 .buy { position: relative; overflow: hidden; display: grid; gap: var(--s-4); }
 @media (min-width: 700px) { .buy { grid-template-columns: 200px 1fr; align-items: end; } }
@@ -570,6 +575,7 @@
 .requirements dd { margin: 0; font-weight: 600; }
 
 @media (prefers-reduced-motion: reduce) {
-  .legend li:hover img, .gallery button:hover img, .chapter:hover .chapterBoss { transform: none; }
+  .legend li:hover img, .gallery button:hover, .gallery button:hover img,
+  .gallery button:focus-visible, .gallery button:focus-visible img { transform: none; }
   .heroIndex em { transition: none; }
 }

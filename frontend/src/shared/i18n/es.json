@@ -64,8 +64,8 @@
       "lead": "Rompe las reglas del cielo, forja tu propia espada y cumple la promesa que hiciste en las islas flotantes.",
       "ctaBuy": "Descargar demo",
       "ctaNotify": "Avísame del lanzamiento",
-      "islandTitle": "Mira el tráiler",
-      "islandText": "Dos minutos del capítulo 1",
+      "islandTitle": "Mira cómo se ve",
+      "islandText": "Ocho capturas del capítulo 1",
       "exploreTitle": "Explora las islas",
       "exploreText": "Del bosque de cerezos al Gran Juzgado, cada zona guarda a su guardián.",
       "closing1": "Más que un juego,",
@@ -74,14 +74,13 @@
       "titleMain": "That Promise",
       "index": {
         "story": "Historia",
-        "trailer": "Tráiler",
+        "gallery": "Galería",
         "download": "Descarga"
       },
       "indexLabel": "Secciones destacadas"
     },
     "sections": {
       "story": "Historia",
-      "trailer": "Tráiler",
       "loop": "Cómo se juega",
       "characters": "Personajes",
       "gallery": "Galería",
@@ -215,13 +214,6 @@
           "Teclado y mouse"
         ]
       }
-    },
-    "trailer": {
-      "eyebrow": "Tráiler",
-      "title": "El capítulo 1 en movimiento",
-      "text": "La intro, la Isla de las Flores, la forja de Kaede, el Santuario y el duelo contra Varn, el Guardián del Umbral.",
-      "label": "Tráiler de The Day I Made That Promise, capítulo 1",
-      "captions": "Subtítulos en español"
     },
     "gallery": {
       "eyebrow": "Galería",

@@ -11,7 +11,7 @@ describe('landing', () => {
     renderRoute('/')
 
     expect(await screen.findByRole('heading', { level: 1, name: 'The Day I Made That Promise' })).toBeInTheDocument()
-    for (const name of ['Una promesa que desafiará al cielo', 'Explora, combate, fabrica', 'Personajes', 'Tu partida, en tu bolsillo', 'Consigue el juego']) {
+    for (const name of ['Una promesa que desafiará al cielo', 'Explora, combate, fabrica', 'Personajes', 'Tu partida, en tu bolsillo', 'Descarga la demo', 'Así se ve el juego']) {
       expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument()
     }
 
@@ -25,12 +25,25 @@ describe('landing', () => {
     expect(within(achievements).getByText('Se revela al desbloquearlo.')).toBeInTheDocument()
   })
 
-  it('sin tienda el botón Comprar está desactivado y dice Próximamente', async () => {
+  it('el botón de descarga lleva a la última versión de la demo y muestra los requisitos', async () => {
     renderRoute('/')
 
-    const buy = await screen.findByRole('region', { name: 'Consigue el juego' })
-    expect(within(buy).getByRole('button', { name: 'Comprar' })).toBeDisabled()
-    expect(within(buy).getByText('Próximamente')).toBeInTheDocument()
+    const buy = await screen.findByRole('region', { name: 'Descarga la demo' })
+    expect(within(buy).getByRole('link', { name: 'Descargar para Windows' }))
+      .toHaveAttribute('href', 'https://github.com/Sidas200/integradora/releases/latest')
+    expect(within(buy).getByText('Windows 10 u 11 (64 bits)')).toBeInTheDocument()
+  })
+
+  it('la galería abre cada captura en grande con su descripción', async () => {
+    const user = userEvent.setup()
+    renderRoute('/')
+
+    const gallery = await screen.findByRole('region', { name: 'Así se ve el juego' })
+    expect(within(gallery).getAllByRole('listitem')).toHaveLength(8)
+    await user.click(within(gallery).getByRole('button', { name: /La forja de Kaede/ }))
+    expect(await screen.findByRole('img', { name: 'La forja de Kaede: materiales, recetas y mejoras.' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Siguiente captura' }))
+    expect(screen.getByRole('img', { name: 'El campamento de Kaede, entre los árboles.' })).toBeInTheDocument()
   })
 })
 

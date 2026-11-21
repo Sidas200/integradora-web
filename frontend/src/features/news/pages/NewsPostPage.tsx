@@ -34,7 +34,7 @@ export function NewsPostPage() {
   }
 
   const post = q.data
-  const cover = coverOf(post.slug)
+  const cover = coverOf(post.slug, post.coverKey)
   return (
     <article className="container-narrow">
       <div className={css.hero} aria-hidden="true">

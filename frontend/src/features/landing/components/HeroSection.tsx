@@ -5,6 +5,12 @@ import { COVER_ART, KEY_ART, SPRITE } from '@/shared/ui/art'
 import { SkyScene } from '@/shared/ui/SkyScene'
 import css from '../landing.module.css'
 
+const INDEX = [
+  { id: 'story', href: '#story' },
+  { id: 'gallery', href: '#gallery' },
+  { id: 'download', href: '#buy' },
+] as const
+
 /** Big petals that drift in front of everything, out of focus (Genshin's landing). */
 const BIG_PETALS = [
   { x: '30%', y: '2%', size: 74, blur: 3, d: 15, delay: 0 },
@@ -33,7 +39,6 @@ export function HeroSection() {
 
       <div className={css.heroInner}>
         <div className={css.heroCopy}>
-          <p className={css.heroKicker}><span aria-hidden="true" />{t('landing.hero.kicker')}</p>
           {/* The game's name as text; the space between the spans keeps the accessible name intact. */}
           <h1 className={css.heroTitle}>
             <span className={css.heroTitleTop}>{t('landing.hero.titleTop')}</span>{' '}
@@ -61,21 +66,27 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Chip pointing at the island (Aurora's "Sky City") */}
-      <div className={css.islandChip} aria-hidden="true">
+      {/* Chip pointing at the island (Aurora's "Sky City"): jumps to the gallery */}
+      <a href="#gallery" className={css.islandChip}>
         <img src={KEY_ART.src} alt="" className={css.islandThumb} />
         <span>
           <strong>{t('landing.hero.islandTitle')}</strong>
           <small>{t('landing.hero.islandText')}</small>
         </span>
-        <span className={css.islandArrow}><ChevronRight size={14} /></span>
-        <i className={css.islandLine} />
-      </div>
+        <span className={css.islandArrow} aria-hidden="true"><ChevronRight size={14} /></span>
+        <i className={css.islandLine} aria-hidden="true" />
+      </a>
 
-      {/* Page indicator 01 · 02 · 03 */}
-      <ol className={css.heroIndex} aria-hidden="true">
-        <li data-active="true">01</li><li /><li>02</li><li>03</li>
-      </ol>
+      {/* Featured sections 01 · 02 · 03 on the right edge (number + name on hover) */}
+      <nav aria-label={t('landing.hero.indexLabel')} className={css.heroIndex}>
+        <ol>
+          {INDEX.map(({ href, id }, i) => (
+            <li key={id}>
+              <a href={href}><span>{String(i + 1).padStart(2, '0')}</span><em>{t(`landing.hero.index.${id}`)}</em></a>
+            </li>
+          ))}
+        </ol>
+      </nav>
 
       {/* Bottom row: explore link on the left, closing line on the right */}
       <div className={css.heroFooter}>

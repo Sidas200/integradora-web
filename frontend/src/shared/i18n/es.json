@@ -59,36 +59,51 @@
   },
   "landing": {
     "hero": {
-      "kicker": "Hex Studio presenta",
       "headline1": "El poder no se encuentra.",
       "headline2": "Se fabrica.",
       "lead": "Rompe las reglas del cielo, forja tu propia espada y cumple la promesa que hiciste en las islas flotantes.",
-      "ctaBuy": "Comprar",
+      "ctaBuy": "Descargar demo",
       "ctaNotify": "Avísame del lanzamiento",
-      "islandTitle": "Santuario del cielo",
-      "islandText": "La primera isla te espera",
+      "islandTitle": "Mira cómo se ve",
+      "islandText": "Ocho capturas del capítulo 1",
       "exploreTitle": "Explora las islas",
       "exploreText": "Del bosque de cerezos al Gran Juzgado, cada zona guarda a su guardián.",
       "closing1": "Más que un juego,",
       "closing2": "una promesa.",
       "titleTop": "The Day I Made",
-      "titleMain": "That Promise"
+      "titleMain": "That Promise",
+      "index": {
+        "story": "Historia",
+        "gallery": "Galería",
+        "download": "Descarga"
+      },
+      "indexLabel": "Secciones destacadas"
     },
     "sections": {
       "story": "Historia",
       "loop": "Cómo se juega",
       "characters": "Personajes",
+      "gallery": "Galería",
       "achievements": "Logros",
       "news": "Noticias",
       "app": "App móvil",
-      "buy": "Comprar"
+      "buy": "Descargar"
     },
     "story": {
       "title": "Una promesa que desafiará al cielo",
       "p1": "Hace mil años, un rey desafió a los dioses. Desde entonces, los humanos bendecidos viven en islas suspendidas sobre las nubes y quien rompe las reglas del cielo recibe la marca de un <b>Rulebreaker</b>.",
       "p2": "Tsuki hizo una promesa: permanecer junto a Hikari todo el tiempo que les quedara. Cuando alguien se la lleva al cielo, salta tras ella y despierta en una isla flotante con la misma marca en la mano.",
       "p3": "Para llegar al Gran Juzgado necesita el permiso de los guardianes de cada zona. Con una espada carmesí sin filo y una forja escondida, tendrá que fabricar su propio poder.",
-      "eyebrow": "La historia"
+      "eyebrow": "La historia",
+      "legendTitle": "La leyenda",
+      "legend": [
+        "Hace mil años, un rey alzó su espada contra los dioses.",
+        "Un rey, un pecador, una bestia y cuatro doncellas se alzaron contra ellos.",
+        "Los humanos bendecidos fueron desterrados a islas en el cielo.",
+        "Tsuki encontró a una chica caída del cielo: Hikari.",
+        "Un rayo de luz cayó del cielo… y se la llevó.",
+        "Tsuki solo tiene una promesa. Y para cumplirla, desafiará al mismo cielo."
+      ]
     },
     "loop": {
       "eyebrow": "Cómo se juega",
@@ -98,7 +113,7 @@
       "explore": {
         "verb": "Explora",
         "title": "Una isla que se desvanece",
-        "lore": "Tsuki despierta en una isla que desaparece en cuanto la deja atrás. Un puente lo lleva a tierra firme, donde una investigadora le ofrece lo que nadie más le daría a un <b>Rulebreaker</b>: un refugio escondido entre los árboles.",
+        "lore": "Tsuki despierta en la Isla de las Flores, que desaparece en cuanto la deja atrás. Un puente lo lleva a tierra firme, donde Kaede, una investigadora, le ofrece lo que nadie más le daría a un <b>Rulebreaker</b>: un refugio escondido entre los árboles.",
         "play": "recorre las zonas y vuelve a la base cuando lo necesites."
       },
       "fight": {
@@ -116,13 +131,13 @@
       "forge": {
         "verb": "Fabrica",
         "title": "Una espada sin filo",
-        "lore": "La espada carmesí que Tsuki encontró en una cabaña abandonada perdió su filo hace mucho tiempo. En la forja escondida de la investigadora puede devolverle la vida.",
+        "lore": "La espada carmesí que Tsuki encontró en una cabaña abandonada perdió su filo hace mucho tiempo. En la forja del campamento de Kaede puede devolverle la vida.",
         "play": "convierte los materiales en mejoras: la espada pasa de 15 a 25 de daño."
       },
       "guardian": {
         "verb": "Desafía",
-        "title": "Cuatro guardianes, cuatro permisos",
-        "lore": "El camino al Gran Juzgado está cerrado. Cada zona tiene un guardián, y ninguno le dará su permiso a un <b>Rulebreaker</b> por las buenas.",
+        "title": "Varn, el Guardián del Umbral",
+        "lore": "El camino al Gran Juzgado está cerrado por cuatro guardianes, y ninguno le dará su permiso a un <b>Rulebreaker</b> por las buenas. El primero es Varn: escudo, puños y, cuando se enfurece, la espada que guarda en el pecho.",
         "play": "abre el sello y vence al guardián de la zona para obtener su permiso."
       }
     },
@@ -139,9 +154,9 @@
         "text": "Lleva la misma marca que Tsuki. Alguien se la llevó de regreso a las islas y nadie sabe por qué."
       },
       "researcher": {
-        "name": "La investigadora",
-        "role": "Aliada",
-        "text": "Nunca había visto a un humano. A cambio de estudiarlo, le ofrece a Tsuki su base y su forja."
+        "name": "Kaede",
+        "role": "Investigadora",
+        "text": "Nunca había visto a un humano. A cambio de estudiarlo, le ofrece a Tsuki su campamento y su forja."
       },
       "prev": "Personaje anterior",
       "next": "Siguiente personaje",
@@ -168,18 +183,55 @@
         "account": "La misma cuenta del juego y de la web"
       },
       "download": "Descargar para Android",
-      "note": "Archivo APK para Android. Desarrollada por Hex Studio.",
+      "note": "Archivo APK de 48 MB. Al instalarlo, Android te pedirá permitir apps de origen desconocido.",
       "mock": {
         "last": "Última partida",
         "save": "Partida 1 · Capítulo 1"
       }
     },
     "buy": {
-      "title": "Consigue el juego",
-      "text": "El capítulo demo llegará a PC. Deja tu correo y te avisamos el día del lanzamiento.",
-      "button": "Comprar",
-      "unavailable": "Próximamente",
-      "eyebrow": "Capítulo demo"
+      "eyebrow": "Capítulo 1",
+      "title": "Descarga la demo",
+      "text": "Juega el capítulo 1 gratis en tu PC: dos zonas, la forja de Kaede y el duelo contra Varn. Dura de 20 a 30 minutos.",
+      "button": "Descargar para Windows",
+      "note": "Archivo ZIP desde GitHub. Descomprímelo y abre TheDayIMadeThatPromise.exe.",
+      "requirementsTitle": "Requisitos mínimos",
+      "requirements": {
+        "os": [
+          "Sistema",
+          "Windows 10 u 11 (64 bits)"
+        ],
+        "gpu": [
+          "Gráficos",
+          "Compatible con DirectX 11 o 12"
+        ],
+        "disk": [
+          "Espacio",
+          "600 MB libres"
+        ],
+        "input": [
+          "Controles",
+          "Teclado y mouse"
+        ]
+      }
+    },
+    "gallery": {
+      "eyebrow": "Galería",
+      "title": "Así se ve el juego",
+      "open": "Ver captura más grande: {{caption}}",
+      "close": "Cerrar",
+      "prev": "Captura anterior",
+      "next": "Siguiente captura",
+      "shots": {
+        "island": "Tsuki despierta en la Isla de las Flores.",
+        "cabin": "La cabaña abandonada y el puente a tierra firme.",
+        "combat": "Las criaturas de la zona atacan en grupo.",
+        "forge": "La forja de Kaede: materiales, recetas y mejoras.",
+        "camp": "El campamento de Kaede, entre los árboles.",
+        "sanctuary": "Las pruebas de la espada en el Santuario.",
+        "varn": "Varn, el Guardián del Umbral, en su primera fase.",
+        "duel": "El choque de espadas contra Varn."
+      }
     }
   },
   "subscribe": {
@@ -477,7 +529,6 @@
   "studio": {
     "about": {
       "title": "Sobre Hex Studio",
-      "lead": " ",
       "productsKicker": "Lo que hacemos",
       "productsTitle": "Un juego, tres productos",
       "products": {
@@ -513,7 +564,6 @@
       "simplifiedSubscribe": "Hex Studio Kitsune, S. de R.L. de C.V. usa tu correo solo para avisarte del lanzamiento."
     },
     "footer": {
-      "tagline": " ",
       "game": "El juego",
       "players": "Jugadores",
       "legal": "Legal",

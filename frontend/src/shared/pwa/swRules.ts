@@ -6,8 +6,11 @@ import type { MessageToPage } from './messages'
  * compiles for the page (tests) and for the worker.
  */
 
-/** Requests that never get the SPA shell: the API answers its own errors (404 problem+json, not index.html). */
-export const NAVIGATION_DENYLIST = [/^\/api\//]
+/**
+ * Requests that never get the SPA shell: the API answers its own errors (404 problem+json, not index.html),
+ * and /downloads/ must reach the network so the APK is downloaded, not replaced by the app.
+ */
+export const NAVIGATION_DENYLIST = [/^\/api\//, /^\/downloads\//]
 
 /** Public API answers kept for a day (Stale-While-Revalidate): news and the achievements catalog. */
 export const PUBLIC_API_CACHE = { name: 'public-api', maxEntries: 50, maxAgeSeconds: 24 * 60 * 60, statuses: [200] } as const

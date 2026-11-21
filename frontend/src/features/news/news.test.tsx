@@ -1,12 +1,16 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http } from 'msw'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { problem, url } from '@/test/msw/handlers'
 import { server } from '@/test/msw/server'
 import { renderRoute } from '@/test/renderRoute'
 
 describe('noticias', () => {
+  // The detail page is a lazy route with react-markdown (unified + micromark, dozens of ESM modules).
+  // The first transform can take several seconds on Windows, so it is loaded here, outside each test's budget.
+  beforeAll(() => import('./pages/NewsPostPage'), 30_000)
+
   it('pagina con Cargar más hasta mostrar todas', async () => {
     const user = userEvent.setup()
     renderRoute('/news')

@@ -1,10 +1,9 @@
 import { BookOpen, Download, Newspaper, Save, Trophy } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { CHARACTERS, KEY_ART } from '@/shared/ui/art'
+import { MOBILE_APP_URL } from '../config'
 import css from '../landing.module.css'
 
-/** Latest Android build of the companion app (GitHub Releases of the mobile repository). */
-export const MOBILE_APP_URL = 'https://github.com/Sidas200/integradora_movil/releases/latest'
 
 const FEATURES = [
   { id: 'saves', Icon: Save },
@@ -29,7 +28,7 @@ export function AppSection() {
             ))}
           </ul>
           <p className={css.appActions}>
-            <a href={MOBILE_APP_URL} className={css.btnPromise} target="_blank" rel="noreferrer">
+            <a href={MOBILE_APP_URL} className={css.btnPromise} download data-cta="android">
               <Download size={18} aria-hidden="true" />{t('landing.app.download')}
             </a>
             <small>{t('landing.app.note')}</small>

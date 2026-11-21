@@ -65,6 +65,12 @@
   .cta { padding: 0 var(--s-3); }
   .cta svg { display: none; }
 }
+/* Narrow phones: the CTA also becomes an icon so the whole bar fits without scrolling */
+@media (max-width: 439px) {
+  .cta { justify-content: center; min-width: 40px; padding: 0; }
+  .cta svg { display: inline; }
+  .ctaLabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
 @media (min-width: 900px) {
   .brandName { display: inline; }
   .header { padding-top: var(--s-4); }

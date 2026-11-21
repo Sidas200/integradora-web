@@ -21,6 +21,11 @@ export const manifest: Partial<ManifestOptions> = {
     { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png' },
     { src: '/maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
   ],
+  // Richer install dialog (Chrome on desktop and Android). webp keeps them out of the precache.
+  screenshots: [
+    { src: '/screenshots/landing-wide.webp', sizes: '1280x720', type: 'image/webp', form_factor: 'wide', label: 'Página principal del juego en escritorio' },
+    { src: '/screenshots/landing-narrow.webp', sizes: '390x844', type: 'image/webp', form_factor: 'narrow', label: 'Página principal del juego en el teléfono' },
+  ],
   // Long-press on the installed icon (Android, Windows). They open inside /app, so they need a session.
   shortcuts: [
     { name: 'Historial', short_name: 'Historial', description: 'Tus sesiones, logros e hitos', url: '/app/history?source=shortcut', icons: [{ src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' }] },

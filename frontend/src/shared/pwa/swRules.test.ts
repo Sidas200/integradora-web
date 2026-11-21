@@ -55,6 +55,7 @@ describe('navegación', () => {
     ['/app/history', false],
     ['/news/devlog-01', false],
     ['/', false],
+    ['/downloads/tdimp-mobile.apk', true],
   ])('%s queda fuera del shell de la SPA: %s', (path, excluded) => {
     expect(NAVIGATION_DENYLIST.some((rule) => rule.test(path))).toBe(excluded)
   })

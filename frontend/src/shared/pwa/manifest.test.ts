@@ -1,4 +1,6 @@
 import { matchRoutes, type RouteObject } from 'react-router'
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { createRoutes } from '@/app/routes'
 import { manifest } from './manifest'
@@ -28,5 +30,11 @@ describe('manifiesto', () => {
     const icons = manifest.icons ?? []
     expect(icons.map((i) => i.sizes)).toEqual(expect.arrayContaining(['192x192', '512x512']))
     expect(icons.some((i) => i.purpose === 'maskable')).toBe(true)
+  })
+
+  it('trae capturas ancha y angosta que existen en public/', () => {
+    const shots = manifest.screenshots ?? []
+    expect(shots.map((s) => s.form_factor)).toEqual(['wide', 'narrow'])
+    for (const shot of shots) expect(existsSync(resolve('public' + shot.src)), shot.src).toBe(true)
   })
 })

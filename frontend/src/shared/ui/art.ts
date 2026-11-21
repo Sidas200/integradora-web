@@ -65,6 +65,40 @@ import tsuki from '@/assets/art/tsuki.webp'
 import wordmark1605 from '@/assets/art/wordmark-1605.webp'
 import wordmark900 from '@/assets/art/wordmark-900.webp'
 
+// Game media: real screenshots, the intro panels and the menu art (from the game build)
+import shotIsland800 from '@/assets/art/shot-island-800.webp'
+import shotIsland1600 from '@/assets/art/shot-island-1600.webp'
+import shotCabin800 from '@/assets/art/shot-cabin-800.webp'
+import shotCabin1600 from '@/assets/art/shot-cabin-1600.webp'
+import shotCombat800 from '@/assets/art/shot-combat-800.webp'
+import shotCombat1600 from '@/assets/art/shot-combat-1600.webp'
+import shotForge800 from '@/assets/art/shot-forge-800.webp'
+import shotForge1600 from '@/assets/art/shot-forge-1600.webp'
+import shotCamp800 from '@/assets/art/shot-camp-800.webp'
+import shotCamp1600 from '@/assets/art/shot-camp-1600.webp'
+import shotSanctuary800 from '@/assets/art/shot-sanctuary-800.webp'
+import shotSanctuary1600 from '@/assets/art/shot-sanctuary-1600.webp'
+import shotVarn800 from '@/assets/art/shot-varn-800.webp'
+import shotVarn1600 from '@/assets/art/shot-varn-1600.webp'
+import shotDuel800 from '@/assets/art/shot-duel-800.webp'
+import shotDuel1600 from '@/assets/art/shot-duel-1600.webp'
+import legend1_600 from '@/assets/art/legend-1-600.webp'
+import legend1_1200 from '@/assets/art/legend-1-1200.webp'
+import legend2_600 from '@/assets/art/legend-2-600.webp'
+import legend2_1200 from '@/assets/art/legend-2-1200.webp'
+import legend3_600 from '@/assets/art/legend-3-600.webp'
+import legend3_1200 from '@/assets/art/legend-3-1200.webp'
+import legend4_600 from '@/assets/art/legend-4-600.webp'
+import legend4_1200 from '@/assets/art/legend-4-1200.webp'
+import legend5_600 from '@/assets/art/legend-5-600.webp'
+import legend5_1200 from '@/assets/art/legend-5-1200.webp'
+import legend6_600 from '@/assets/art/legend-6-600.webp'
+import legend6_1200 from '@/assets/art/legend-6-1200.webp'
+import menuKeyArt800 from '@/assets/art/menu-key-art-800.webp'
+import menuKeyArt1600 from '@/assets/art/menu-key-art-1600.webp'
+import tsukiArt600 from '@/assets/art/tsuki-art-600.webp'
+import tsukiArt1122 from '@/assets/art/tsuki-art-1122.webp'
+
 export interface ArtImage {
   src: string
   srcSet: string
@@ -130,3 +164,32 @@ export const COVER_ART = {
   ruins: pair(coverRuins778, 778, coverRuins1557, 1557),
   dusk: pair(coverDusk800, 800, coverDusk1730, 1730),
 } as const
+
+/** Real in-game screenshots for the gallery and the game-loop chapters (16:9 / 16:10). */
+export const SHOTS = {
+  island: pair(shotIsland800, 800, shotIsland1600, 1600),
+  cabin: pair(shotCabin800, 800, shotCabin1600, 1600),
+  combat: pair(shotCombat800, 800, shotCombat1600, 1600),
+  forge: pair(shotForge800, 800, shotForge1600, 1600),
+  camp: pair(shotCamp800, 800, shotCamp1600, 1600),
+  sanctuary: pair(shotSanctuary800, 800, shotSanctuary1600, 1600),
+  varn: pair(shotVarn800, 800, shotVarn1600, 1600),
+  duel: pair(shotDuel800, 800, shotDuel1600, 1600),
+} as const
+export type ShotId = keyof typeof SHOTS
+
+/** The six panels of the intro cinematic, in order. */
+export const LEGEND: readonly ArtImage[] = [
+  pair(legend1_600, 600, legend1_1200, 1200),
+  pair(legend2_600, 600, legend2_1200, 1200),
+  pair(legend3_600, 600, legend3_1200, 1200),
+  pair(legend4_600, 600, legend4_1200, 1200),
+  pair(legend5_600, 600, legend5_1200, 1200),
+  pair(legend6_600, 600, legend6_1200, 1200),
+]
+
+/** Main menu illustration with the title (download section). */
+export const MENU_ART = pair(menuKeyArt800, 800, menuKeyArt1600, 1600)
+/** Tsuki, full illustration from the main menu (transparent). */
+export const TSUKI_ART = pair(tsukiArt600, 600, tsukiArt1122, 1122)
+

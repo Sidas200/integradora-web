@@ -2,7 +2,8 @@
 // Laboratorio de pruebas · recorrido automático (npm run lab:evidence)
 //
 // 1. API      Casos de la API contra Spring Boot + PostgreSQL, serie de latencia y métricas de Actuator.
-// 2. PWA      Recorrido con Playwright por las páginas reales (/, /news, /news/:slug) en línea y sin conexión.
+// 2. PWA      Recorrido con Playwright por las páginas reales (/, /news, /news/:slug) en línea y sin conexión,
+//             y registro de un jugador desde /register hasta su cuenta en /app/account.
 // 3. Backend  Recorta del log de Spring Boot las líneas de esta corrida y arma la tabla por petición.
 //
 // Requisitos: API corriendo (perfil local) y la PWA compilada con `npm run build` + `npm run preview`.
@@ -30,7 +31,15 @@ const stamp = runStart.toISOString().replace(/\D/g, '').slice(0, 14)
 const EMAIL_API = `lab-api-${stamp}@tdimp.test`
 const EMAIL_ONLINE = `lab-online-${stamp}@tdimp.test`
 const EMAIL_OFFLINE = `lab-offline-${stamp}@tdimp.test`
-const EXPECTED = { published: 12, pageSize: 6, achievements: 6 }
+// Jugadores (creación y consulta sobre la misma entidad): usuario de 3 a 20 letras, números o guion bajo.
+const EMAIL_USER_API = `lab-user-api-${stamp}@tdimp.test`
+const EMAIL_USER_WEB = `lab-user-web-${stamp}@tdimp.test`
+const USER_API = `lab_api_${stamp.slice(-8)}`
+const USER_WEB = `lab_web_${stamp.slice(-8)}`
+const PASSWORD = 'promesa-del-laboratorio'
+const NEWS_DETAIL = 'diario-03-la-forja-de-kaede'
+const NEWS_DRAFT = 'lo-que-viene-despues-del-capitulo-1'
+const EXPECTED = { published: 9, pageSize: 6, achievements: 6 }
 
 for (const dir of ['db', 'backend', 'frontend']) await mkdir(path.join(OUT, dir), { recursive: true })
 
@@ -73,12 +82,12 @@ function parseServerTiming(header) {
   return out
 }
 
-async function call(method, route, { json, raw } = {}) {
+async function call(method, route, { json, raw, headers = {} } = {}) {
   const body = raw ?? (json === undefined ? undefined : JSON.stringify(json))
   const started = performance.now()
   const res = await fetch(API + route, {
     method,
-    headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
+    headers: body === undefined ? headers : { 'Content-Type': 'application/json', ...headers },
     body,
   })
   const text = await res.text()
@@ -100,6 +109,7 @@ async function call(method, route, { json, raw } = {}) {
     serverTiming: h('server-timing'),
     timing: parseServerTiming(h('server-timing')),
     requestId: h('x-request-id'),
+    setCookie: h('set-cookie'),
   }
 }
 
@@ -120,11 +130,11 @@ const apiCases = [
     expect(r.data?.content?.length === EXPECTED.published - EXPECTED.pageSize, `content tiene ${r.data?.content?.length}`)
     return `página ${r.data.page.number + 1} de ${r.data.page.totalPages}`
   }],
-  ['API-03', 'GET', '/api/v1/news/lab-devlog-06-forge', 'Detalle de una noticia publicada', 200, {}, (r) => {
+  ['API-03', 'GET', `/api/v1/news/${NEWS_DETAIL}`, 'Detalle de una noticia publicada', 200, {}, (r) => {
     expect(typeof r.data?.contentMd === 'string' && r.data.contentMd.length > 0, 'sin contentMd')
     return `"${r.data.title}" · ${r.data.contentMd.length} caracteres de Markdown`
   }],
-  ['API-04', 'GET', '/api/v1/news/lab-draft-not-visible', 'Un borrador no se publica', 404, {}, (r) => {
+  ['API-04', 'GET', `/api/v1/news/${NEWS_DRAFT}`, 'Un borrador no se publica', 404, {}, (r) => {
     expect(isProblem(r, 'NOT_FOUND'), `respuesta ${r.contentType} ${r.data?.code}`)
     return 'problem+json NOT_FOUND'
   }],
@@ -163,12 +173,37 @@ const apiCases = [
     expect(isProblem(r, 'VALIDATION_FAILED'), `code=${r.data?.code}`)
     return 'VALIDATION_FAILED · cuerpo ilegible'
   }],
+  // Jugador: POST crea la fila en game.players y GET /account la lee con el token que devolvió el registro.
+  ['API-13', 'POST', '/api/v1/auth/register', 'Registro de jugador (creación)', 201,
+    { json: { email: EMAIL_USER_API, username: USER_API, password: PASSWORD, acceptedPrivacyNotice: true, client: 'WEB' } }, (r) => {
+      expect(typeof r.data?.accessToken === 'string' && r.data.tokenType === 'Bearer', 'sin accessToken')
+      expect(!('refreshToken' in (r.data ?? {})), 'en WEB el refresh token no debe ir en el JSON')
+      expect(r.setCookie?.includes('HttpOnly'), `Set-Cookie=${r.setCookie}`)
+      accessToken = r.data.accessToken
+      return `${EMAIL_USER_API} · Bearer, expira en ${r.data.expiresInSec} s · refresh token en cookie HttpOnly`
+    }],
+  ['API-14', 'GET', '/api/v1/account', 'Consulta del jugador recién creado (lectura)', 200,
+    () => ({ headers: { Authorization: `Bearer ${accessToken}` } }), (r) => {
+      expect(r.data?.email === EMAIL_USER_API && r.data?.username === USER_API, `cuenta ${r.data?.email} / ${r.data?.username}`)
+      expect(typeof r.data?.id === 'string' && r.data?.createdAt, 'sin id o createdAt')
+      return `${r.data.username} · ${r.data.email} · id ${r.data.id.slice(0, 8)}… · creada ${r.data.createdAt}`
+    }],
+  ['API-15', 'POST', '/api/v1/auth/register', 'Mismo correo otra vez', 409,
+    { json: { email: EMAIL_USER_API, username: `${USER_API}x`.slice(0, 20), password: PASSWORD, acceptedPrivacyNotice: true, client: 'WEB' } }, (r) => {
+      expect(isProblem(r, 'EMAIL_IN_USE'), `code=${r.data?.code}`)
+      return 'problem+json EMAIL_IN_USE · sin fila nueva (índice único ux_players_email)'
+    }],
+  ['API-16', 'GET', '/api/v1/account', 'Cuenta sin token', 401, {}, (r) => {
+    expect(r.contentType?.startsWith('application/problem+json'), `content-type ${r.contentType}`)
+    return `problem+json ${r.data?.code}: los datos del jugador solo se leen con sesión`
+  }],
 ]
+let accessToken = null
 
 console.log('1. API')
 const apiResults = []
 for (const [id, method, route, title, expectedStatus, options, check] of apiCases) {
-  const r = await call(method, route, options)
+  const r = await call(method, route, typeof options === 'function' ? options() : options)
   let ok = r.status === expectedStatus
   let detail = ok ? '' : `status ${r.status}, se esperaba ${expectedStatus}`
   if (ok) {
@@ -186,7 +221,7 @@ for (const [id, method, route, title, expectedStatus, options, check] of apiCase
 
 // Serie de latencia: 20 peticiones seguidas por endpoint de lectura (sin caché del navegador).
 const SERIES = 20
-const latencyTargets = ['/api/v1/news?page=0&size=6', '/api/v1/news/lab-devlog-06-forge', '/api/v1/achievements']
+const latencyTargets = ['/api/v1/news?page=0&size=6', `/api/v1/news/${NEWS_DETAIL}`, '/api/v1/achievements']
 const percentile = (sorted, p) => sorted[Math.min(sorted.length - 1, Math.ceil((p / 100) * sorted.length) - 1)]
 const latency = []
 for (const route of latencyTargets) {
@@ -230,7 +265,7 @@ const actuator = {
   },
   requests: [],
 }
-for (const uri of ['/api/v1/news', '/api/v1/news/{slug}', '/api/v1/achievements', '/api/v1/subscriptions']) {
+for (const uri of ['/api/v1/news', '/api/v1/news/{slug}', '/api/v1/achievements', '/api/v1/subscriptions', '/api/v1/auth/register', '/api/v1/account']) {
   const m = await metric('http.server.requests', `uri:${uri}`)
   if (m) actuator.requests.push({ uri, count: m.COUNT, avgMs: (m.TOTAL_TIME / m.COUNT) * 1000, maxMs: m.MAX * 1000 })
 }
@@ -249,6 +284,8 @@ const context = await browser.newContext({
   viewport: { width: 1366, height: 900 },
   locale: 'es-MX',
   serviceWorkers: 'allow',
+  // Sin animaciones de entrada: las capturas de página completa salen con todas las secciones visibles.
+  reducedMotion: 'reduce',
   recordHar: { path: path.join(OUT, 'frontend/network.har'), urlFilter: /\/api\// },
 })
 const page = await context.newPage()
@@ -261,6 +298,8 @@ page.on('console', pushConsole('page'))
 context.on('serviceworker', (worker) => worker.on?.('console', pushConsole('sw')))
 
 const network = []
+// La contraseña del jugador de prueba no se escribe en los reportes ni en el HAR.
+const redact = (body) => body?.replace(/("password"\s*:\s*")[^"]*"/g, '$1***"') ?? null
 page.on('requestfinished', async (request) => {
   if (!request.url().includes('/api/')) return
   const step = currentStep
@@ -277,7 +316,7 @@ page.on('requestfinished', async (request) => {
     ttfbMs: timing.responseStart >= 0 ? Math.round(timing.responseStart - Math.max(timing.requestStart, 0)) : null,
     totalMs: timing.responseEnd >= 0 ? Math.round(timing.responseEnd) : null,
     responseBytes: sizes && sizes.responseBodySize >= 0 ? sizes.responseBodySize : null,
-    payload: request.postData() ?? null,
+    payload: redact(request.postData()),
     cacheControl: headers['cache-control'],
     serverTiming: headers['server-timing'],
     queued: headers['x-queued'],
@@ -376,7 +415,20 @@ async function step(id, title, fn) {
     await page.screenshot({ path: path.join(OUT, `frontend/${id}-ERROR.png`), fullPage: true }).catch(() => {})
   }
 }
-const shot = (name) => page.screenshot({ path: path.join(OUT, 'frontend', name), fullPage: true })
+// Captura de página completa: antes se recorre la página para que carguen las imágenes diferidas
+// (loading="lazy") y terminen las animaciones de entrada de cada sección.
+async function shot(name) {
+  await page.evaluate(async () => {
+    for (let y = 0; y < document.body.scrollHeight; y += 500) {
+      window.scrollTo(0, y)
+      await new Promise((r) => setTimeout(r, 90))
+    }
+    window.scrollTo(0, 0)
+  })
+  await page.waitForLoadState('networkidle', { timeout: 5_000 }).catch(() => {})
+  await sleep(900)
+  await page.screenshot({ path: path.join(OUT, 'frontend', name), fullPage: true })
+}
 const newsItems = () => page.getByTestId('news-item')
 const swLogged = (text) => consoleLines.some((l) => l.includes('[sw]') && l.includes(text))
 let visitedSlug = null
@@ -496,9 +548,36 @@ await step('PWA-08', 'Vuelve la red: la cola se envía, queda vacía y la PWA lo
   return `cola vacía · ${EMAIL_OFFLINE} reenviado`
 })
 
+await step('PWA-09', 'Registro desde /register y consulta en /app/account (misma entidad: el jugador)', async () => {
+  await page.goto(BASE + '/register', { waitUntil: 'networkidle' })
+  await page.getByLabel('Correo').fill(EMAIL_USER_WEB)
+  await page.getByLabel('Nombre de jugador').fill(USER_WEB)
+  await page.getByLabel('Contraseña', { exact: true }).fill(PASSWORD)
+  await page.getByLabel('Repite la contraseña').fill(PASSWORD)
+  await page.getByLabel('Acepto el aviso de privacidad').check()
+  const [created] = await Promise.all([
+    page.waitForResponse((r) => r.url().endsWith('/api/v1/auth/register') && r.request().method() === 'POST'),
+    page.getByRole('button', { name: 'Crear mi cuenta' }).click(),
+  ])
+  expect(created.status() === 201, `registro respondió ${created.status()}`)
+  await page.waitForURL((url) => url.pathname.startsWith('/app'), { timeout: 15_000 })
+  await page.waitForLoadState('networkidle')
+  await shot('ui-10-cuenta-creada.png')
+  // El panel (/app) ya pidió GET /account; la pantalla de perfil puede reutilizar esa respuesta.
+  await page.goto(BASE + '/app/account', { waitUntil: 'domcontentloaded' })
+  await page.locator('[data-list="profile"]').getByText(EMAIL_USER_WEB).waitFor({ timeout: 15_000 })
+  await sleep(300)
+  await shot('ui-11-mi-cuenta.png')
+  const reads = network.filter((n) => n.step === 'PWA-09' && n.method === 'GET' && n.url.endsWith('/api/v1/account'))
+  expect(reads.some((n) => n.status === 200), 'no hubo un GET /api/v1/account con 200')
+  return `POST register ${created.status()} → GET account ${reads.at(-1).status} · ${USER_WEB} / ${EMAIL_USER_WEB}`
+})
+
 const chromiumVersion = browser.version()
 await context.close() // aquí se escribe network.har
 await browser.close()
+const harPath = path.join(OUT, 'frontend/network.har')
+await writeFile(harPath, redact(await readFile(harPath, 'utf8')).replace(/(\\"password\\"\s*:\s*\\")[^\\]*\\"/g, '$1***\\"'))
 
 // ---------------------------------------------------------------------------------------------
 // 3. Log del backend: solo las líneas de esta corrida
@@ -577,9 +656,12 @@ const summary = [
   `- \`${EMAIL_API}\` (API-07; API-08 lo reenvió en mayúsculas: debe existir una sola fila)`,
   `- \`${EMAIL_ONLINE}\` (PWA-04, en línea)`,
   `- \`${EMAIL_OFFLINE}\` (PWA-07/08, encolado sin conexión y reenviado)`,
+  '', '## Jugadores de esta corrida (bloque E de `03_evidencias.sql`)', '',
+  `- \`${EMAIL_USER_API}\` · \`${USER_API}\` (API-13 lo creó, API-14 lo leyó, API-15 intentó repetirlo: debe existir una sola fila)`,
+  `- \`${EMAIL_USER_WEB}\` · \`${USER_WEB}\` (PWA-09, desde el formulario de /register)`,
   '', '## Archivos generados', '',
   '- `backend/api-report.md`, `backend/trazas.md`, `backend/tdimp-api.log`',
-  '- `frontend/ui-01` a `ui-09`, `frontend/network.har`, `frontend/network-report.md`, `frontend/application-report.json`, `frontend/console.log`',
+  '- `frontend/ui-01` a `ui-11`, `frontend/network.har`, `frontend/network-report.md`, `frontend/application-report.json`, `frontend/console.log`',
 ].join('\n')
 
 await writeFile(path.join(OUT, 'backend/api-report.md'), apiReport + '\n')

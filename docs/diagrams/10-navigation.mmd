@@ -5,7 +5,9 @@ flowchart LR
   post["/news/:slug"]
   login["/login"]
   register["/register"]
-  privacy["/privacy"]
+  about["/nosotros"]
+  privacy["/privacidad · /cookies"]
+  lost["*  404"]
 
   subgraph app["/app  (requiere sesión · layout con navegación)"]
     direction TB
@@ -25,7 +27,9 @@ flowchart LR
   home --> news --> post
   home --> register
   home --> login
+  home --> about
   home --> privacy
+  home -. "ruta inexistente" .-> lost
   register -- "201 · sesión iniciada" --> dashboard
   login -- "200" --> dashboard
   dashboard --> saves --> save
@@ -36,4 +40,4 @@ flowchart LR
   profile --> security
   profile --> delete
   delete -- "204 · sesión cerrada" --> home
-  app -. "sin sesión → redirige con ?returnTo=" .-> login
+  app -. "sin sesión → redirige con ?next=" .-> login

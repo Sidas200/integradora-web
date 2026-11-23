@@ -24,6 +24,8 @@ export function PublicLayout() {
   const [signingOut, setSigningOut] = useState(false)
   const notice = (location.state as { notice?: Notice } | null)?.notice
   const signedIn = status === 'authenticated' || status === 'offline'
+  // In read-only mode the player panel already explains the situation (AppLayout); one notice is enough.
+  const panelExplainsOffline = status === 'offline' && location.pathname.startsWith('/app')
 
   // Logout in two steps: revoke in the API and go home; the local session closes once home is
   // on screen. Closing it first would make RequireAuth (still on /app) bounce to /login.
@@ -44,7 +46,7 @@ export function PublicLayout() {
     <div className={css.page}>
       <a href="#main" data-skip-link="" className={css.skip}>{t('app.skipToContent')}</a>
       <div className={css.notices}>
-        <OfflineBanner />
+        {!panelExplainsOffline && <OfflineBanner />}
         <UpdatePrompt />
         {notice && <p role="status" data-notice={notice} className={css.notice}>{t(`notices.${notice}`)}</p>}
       </div>

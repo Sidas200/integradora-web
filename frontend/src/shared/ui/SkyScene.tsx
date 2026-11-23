@@ -36,6 +36,9 @@ export function SkyScene({ variant = 'hero', petals = 14, focus }: {
       loading={eager ? 'eager' : 'lazy'}
       decoding="async"
       draggable={false}
+      // Offline, a width that was never downloaded is not in the cache: hide it instead of showing the
+      // browser's broken-image icon (the scene's gradient stays behind it).
+      onError={(e) => { e.currentTarget.style.visibility = 'hidden' }}
     />
   )
 

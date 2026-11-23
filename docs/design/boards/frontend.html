@@ -48,20 +48,21 @@
 <div class="arrow">empaqueta</div>
 
 <section class="block">
-  <div class="head"><b>app/</b><code>main.tsx · router.tsx · providers.tsx</code><span>Arranque: compone las rutas que exporta cada feature y monta los providers.</span></div>
+  <div class="head"><b>app/</b><code>main.tsx · routes.tsx · providers.tsx · layouts/</code><span>Arranque: compone las rutas que exporta cada feature y monta los providers.</span></div>
 </section>
 <div class="arrow">importa solo index.ts</div>
 
 <section class="block">
   <div class="head"><b>features/</b><span>Un módulo por funcionalidad. Lo azul es su interfaz pública; todo lo demás es interno.</span></div>
   <div class="row">
-    <div class="mod"><h4>landing</h4><span class="if">landingRoutes</span></div>
-    <div class="mod"><h4>news</h4><span class="if">newsRoutes</span><span class="if">newsQuery</span></div>
+    <div class="mod"><h4>landing</h4><span class="if">landingRoutes</span><span class="if">SubscribeForm</span><span class="if">GAME_DOWNLOAD_URL</span><span class="if">MOBILE_APP_URL</span></div>
+    <div class="mod"><h4>news</h4><span class="if">newsRoutes</span><span class="if">NewsList</span><span class="if">LatestNews</span><span class="if">newsKeys</span></div>
+    <div class="mod"><h4>studio</h4><span class="if">studioRoutes</span><span class="if">SiteFooter</span><span class="if">COMPANY</span></div>
     <div class="mod"><h4>auth</h4><span class="if">authRoutes</span></div>
     <div class="mod"><h4>dashboard</h4><span class="if">dashboardRoutes</span></div>
-    <div class="mod"><h4>saves</h4><span class="if">savesRoutes</span><span class="if">savesQuery</span></div>
-    <div class="mod"><h4>history</h4><span class="if">historyRoutes</span><span class="if">historyInfiniteQuery</span></div>
-    <div class="mod"><h4>achievements</h4><span class="if">achievementsRoutes</span><span class="if">achievementsQuery</span></div>
+    <div class="mod"><h4>saves</h4><span class="if">savesRoutes</span><span class="if">savesQuery</span><span class="if">latestSave</span></div>
+    <div class="mod"><h4>history</h4><span class="if">historyRoutes</span><span class="if">recentHistoryQuery</span><span class="if">Timeline</span></div>
+    <div class="mod"><h4>achievements</h4><span class="if">achievementsRoutes</span><span class="if">AchievementCatalog</span></div>
     <div class="mod"><h4>account</h4><span class="if">accountRoutes</span><span class="if">accountQuery</span></div>
   </div>
   <div class="two">
@@ -70,7 +71,7 @@
       <div class="ar">
         <span class="if">index.ts<i>interfaz pública</i></span><span>Exporta rutas, query options y tipos. Lo único importable desde fuera.</span>
         <span class="impl">routes.ts</span><span>Rutas con <code>lazy</code>: la pantalla se descarga al entrar.</span>
-        <span class="impl">queries.ts</span><span>Query options y claves de TanStack Query; usa <code>ApiConnection</code>.</span>
+        <span class="impl">queries.ts</span><span>Query options y claves de TanStack Query; usa el cliente <code>api</code> de <code>shared/api</code>.</span>
         <span class="impl">pages/ · components/</span><span>Pantallas y componentes, cada uno con su <code>*.module.css</code>.</span>
         <span class="impl">schemas.ts</span><span>Validación Zod de formularios.</span>
       </div>
@@ -91,14 +92,14 @@
 <section class="block shared">
   <div class="head"><b>shared/</b><span>Contratos comunes. Cada interfaz tiene una implementación de producción y otra para pruebas.</span></div>
   <div class="row">
-    <div class="mod"><h4>api/</h4><span class="if">ApiConnection<i>api + refresh()</i></span><span class="if">paths<i>tipos de openapi.yaml</i></span><span class="if">ApiProblem</span><br><span class="impl">createApiConnection()<i>openapi-fetch + middleware</i></span></div>
-    <div class="mod"><h4>auth/</h4><span class="if">TokenStore</span><br><span class="impl">en memoria<i>producción</i></span><span class="impl">falso<i>pruebas</i></span></div>
-    <div class="mod"><h4>query/</h4><span class="if">KeyValueStore</span><br><span class="impl">indexedDbStore<i>navegador</i></span><span class="impl">createMemoryStore<i>Vitest</i></span></div>
-    <div class="mod"><h4>ui/</h4><span class="if">ButtonProps</span><span class="if">FieldProps</span><span class="if">DialogProps</span><br><span class="impl">componentes + CSS Modules</span></div>
-    <div class="mod"><h4>pwa/</h4><span class="if">MessageToSW</span><span class="if">MessageToPage</span><br><span class="impl">registerSW, avisos</span></div>
+    <div class="mod"><h4>api/</h4><span class="if">api<i>cliente openapi-fetch</i></span><span class="if">paths<i>tipos de openapi.yaml</i></span><span class="if">toApiError</span><br><span class="impl">tracing<i>consola TDIMP API</i></span></div>
+    <div class="mod"><h4>auth/</h4><span class="if">AuthProvider</span><span class="if">RequireAuth</span><br><span class="impl">session.ts<i>token en memoria</i></span><span class="impl">authMiddleware<i>Bearer + refresh</i></span></div>
+    <div class="mod"><h4>query/</h4><span class="if">Persister</span><span class="if">persisted</span><br><span class="impl">createIdbPersister<i>IndexedDB por jugador</i></span></div>
+    <div class="mod"><h4>ui/ · theme/</h4><span class="if">ButtonProps</span><span class="if">TextField</span><span class="if">states</span><br><span class="impl">componentes + CSS Modules</span><span class="impl">tema claro / oscuro</span></div>
+    <div class="mod"><h4>pwa/</h4><span class="if">MessageToSW</span><span class="if">MessageToPage</span><span class="if">swRules</span><span class="if">manifest</span><br><span class="impl">registerSW, avisos, instalar</span></div>
     <div class="mod"><h4>styles/ · i18n/</h4><span class="if">tokens.css<i>variables CSS</i></span><span class="if">es.json<i>textos</i></span></div>
   </div>
-  <div class="sw"><span class="impl">src/sw.ts<i>Service Worker (Workbox)</i></span> usa el mismo contrato <code>MessageToSW · MessageToPage</code> que la página.</div>
+  <div class="sw"><span class="impl">src/sw.ts<i>Service Worker (Workbox)</i></span> usa las reglas de <code>swRules.ts</code> y el mismo contrato <code>MessageToSW · MessageToPage</code> que la página.</div>
 </section>
 
 <div class="legend">

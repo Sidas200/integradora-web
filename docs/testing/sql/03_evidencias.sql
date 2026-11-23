@@ -7,17 +7,20 @@
 --   B  DESPUÉS del envío -> evidencias/db/db-02-despues.png
 --   C  INTEGRIDAD        -> evidencias/db/db-03-integridad.png
 --   D  PLAN DEL GET      -> evidencias/db/db-04-explain.png
+--   E  JUGADORES         -> evidencias/db/db-05-jugadores.png
 -- =====================================================================
 
 
 -- ---------------------------------------------------------------------
 -- A. ANTES DEL ENVÍO (justo después de 02_carga.sql)
---    Las 2 suscripciones previas y los totales del estado inicial.
+--    Las 2 suscripciones previas y los totales del estado inicial
+--    (9 noticias publicadas, 1 borrador, 0 jugadores del laboratorio, 6 logros).
 -- ---------------------------------------------------------------------
 select s.id, s.email, s.language, s.source, s.consented_at, s.created_at,
        count(*) over () as total_suscripciones,
        (select count(*) from game.news_posts where published_at is not null) as noticias_publicadas,
        (select count(*) from game.news_posts where published_at is null) as borradores,
+       (select count(*) from game.players where email like 'lab-%@tdimp.test') as jugadores_lab,
        (select count(*) from game.achievements) as logros
 from game.launch_subscriptions s
 order by s.created_at desc;
@@ -79,7 +82,7 @@ order by orden, nombre;
 
 -- ---------------------------------------------------------------------
 -- D. PLAN DE EJECUCIÓN de la consulta de GET /api/v1/news?page=0&size=6
---    Es la misma SQL que ejecuta NewsReaderJdbc. Con solo 13 filas PostgreSQL
+--    Es la misma SQL que ejecuta NewsReaderJdbc. Con solo 10 filas PostgreSQL
 --    prefiere leer la tabla completa (Seq Scan) porque es más barato; se apaga
 --    esa opción solo en esta pestaña para mostrar que el índice parcial
 --    ix_news_posts_published resuelve la consulta. Debe aparecer
@@ -92,3 +95,23 @@ from game.news_posts
 where published_at is not null
 order by published_at desc, slug
 limit 6 offset 0;
+
+
+-- ---------------------------------------------------------------------
+-- E. JUGADORES CREADOS POR EL LABORATORIO (al terminar npm run lab:evidence)
+--    Creación y consulta sobre la misma entidad: POST /api/v1/auth/register crea el
+--    jugador y GET /api/v1/account lo lee. Deben aparecer 2 filas (lab-user-api-* y
+--    lab-user-web-*); el intento repetido de API-15 respondió 409 y no creó otra.
+--    Cada registro deja, en la misma transacción, su configuración por defecto y una
+--    sesión; la contraseña se guarda cifrada con BCrypt, nunca en texto plano.
+-- ---------------------------------------------------------------------
+select p.id, p.email, p.username, p.privacy_accepted_at, p.created_at,
+       left(p.password_hash, 12) || '…' as hash_inicio,
+       p.password_hash like '{bcrypt}$2%' as contrasena_cifrada,
+       exists (select 1 from game.settings st where st.player_id = p.id) as tiene_configuracion,
+       (select count(*) from game.auth_sessions a where a.player_id = p.id) as sesiones,
+       (select string_agg(distinct a.client, ', ') from game.auth_sessions a where a.player_id = p.id) as clientes,
+       count(*) over () as jugadores_lab
+from game.players p
+where p.email like 'lab-%@tdimp.test'
+order by p.created_at desc;

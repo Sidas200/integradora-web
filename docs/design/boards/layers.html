@@ -42,7 +42,7 @@
   .legend b{color:var(--red)}
 </style></head><body>
 <h1>Backend en N-capas · controller, service, repository, dto y model</h1>
-<p class="sub">Cada capa solo habla con la de abajo y solo a través de su interfaz. Los DTO viajan entre controller y service; los model (entidades) entre service y repository.</p>
+<p class="sub">Cada capa solo habla con la de abajo y solo a través de su interfaz. Los DTO viajan entre controller y service; los model (records del dominio) entre service y repository.</p>
 <div class="grid">
 <div class="stack">
   <div class="client">PWA React · Juego Unity PC · App Flutter</div>
@@ -52,13 +52,14 @@
     <div class="title"><b>controller/</b><span>Presentación · HTTP</span></div>
     <div class="exposes">
       <span class="type">GET/POST/PUT/PATCH/DELETE /api/v1/**<i>endpoints del contrato OpenAPI</i></span>
-      <span class="type">ProblemDetail<i>formato de error RFC 9457</i></span>
+      <span class="type">application/problem+json<i>formato de error RFC 9457 con code</i></span>
     </div>
     <div class="hides">
-      <span class="impl">*Controller<i>Auth, Account, Save, History, Achievement, News…</i></span>
+      <span class="impl">*Controller<i>Auth, Account, Save, Achievement, News, Subscription</i></span>
       <span class="impl">RefreshChannel → CookieRefreshChannel, BodyRefreshChannel<i>polimorfismo por tipo de cliente</i></span>
       <span class="impl">ApiExceptionHandler<i>@RestControllerAdvice</i></span>
-      <span class="impl">RequesterResolver<i>JWT → Requester</i></span>
+      <span class="impl">BearerAuthInterceptor<i>/account/** exige Bearer</i></span>
+      <span class="impl">CurrentPlayerResolver<i>JWT → AccessClaims</i></span>
     </div>
   </section>
   <div class="arrow">llama interfaces *Service · envía y recibe dto</div>
@@ -66,38 +67,38 @@
     <div class="title"><b>service/</b><span>Negocio · transacciones</span></div>
     <div class="exposes">
       <span class="if">AuthService<i>«interface»</i></span>
-      <span class="if">AccountService<i>«interface»</i></span>
-      <span class="if">SettingsService<i>«interface»</i></span>
-      <span class="if">DeviceService<i>«interface»</i></span>
-      <span class="if">SaveService<i>«interface»</i></span>
-      <span class="if">SyncService<i>«interface»</i></span>
-      <span class="if">HistoryService<i>«interface»</i></span>
+      <span class="if">AccountService<i>«interface» cuenta, configuración, dispositivos, historial</i></span>
+      <span class="if">SaveService<i>«interface» partidas y telemetría</i></span>
       <span class="if">AchievementService<i>«interface»</i></span>
       <span class="if">NewsService<i>«interface»</i></span>
       <span class="if">SubscriptionService<i>«interface»</i></span>
+      <span class="if">TokenIssuer<i>«interface»</i></span>
+      <span class="if">RateLimiter<i>«interface»</i></span>
     </div>
     <div class="hides">
       <span class="impl">*ServiceImpl<i>@Service, @Transactional</i></span>
       <span class="impl note">Reglas: 3 ranuras, versión del guardado, borrar solo desde la web, rotación de tokens</span>
-      <span class="impl">Mappers MapStruct<i>model ↔ dto</i></span>
+      <span class="impl">SaveMapper y métodos from<i>model ↔ dto, sin librerías</i></span>
+      <span class="impl">HmacTokenIssuer<i>JWT HS256</i></span>
+      <span class="impl">InMemoryRateLimiter · NoOpRateLimiter<i>límite de intentos · pruebas</i></span>
     </div>
   </section>
   <div class="arrow">llama interfaces de repository · envía y recibe model</div>
   <section class="layer">
     <div class="title"><b>repository/</b><span>Acceso a datos</span></div>
     <div class="exposes">
-      <span class="if">PlayerRepository<i>«interface» Spring Data</i></span>
-      <span class="if">AuthSessionRepository<i>«interface» Spring Data</i></span>
-      <span class="if">SaveRepository<i>«interface» Spring Data</i></span>
-      <span class="if">…Repository<i>uno por entidad</i></span>
-      <span class="if">SaveDataWriter<i>«interface»</i></span>
-      <span class="if">TelemetryWriter<i>«interface»</i></span>
-      <span class="if">HistoryReader<i>«interface»</i></span>
-      <span class="if">SummaryReader<i>«interface»</i></span>
+      <span class="if">PlayerRepository<i>«interface»</i></span>
+      <span class="if">AuthSessionRepository<i>«interface»</i></span>
+      <span class="if">SettingsRepository<i>«interface»</i></span>
+      <span class="if">SaveRepository<i>«interface»</i></span>
+      <span class="if">AchievementRepository<i>«interface»</i></span>
+      <span class="if">HistoryReader · NewsReader<i>«interface» lecturas</i></span>
+      <span class="if">AchievementReader · CatalogReader<i>«interface» lecturas</i></span>
+      <span class="if">SubscriptionWriter · TelemetryWriter<i>«interface» escrituras</i></span>
     </div>
     <div class="hides">
-      <span class="impl">Implementación de los repositorios<i>la genera Spring Data</i></span>
-      <span class="impl">*Jdbc<i>JdbcClient: lotes y lecturas</i></span>
+      <span class="impl">*Jdbc<i>JdbcClient: SQL explícito y parámetros</i></span>
+      <span class="impl">QueryTimer<i>filas y tiempo de cada consulta en el log</i></span>
       <span class="impl">SQL y nombres de columnas</span>
     </div>
   </section>
@@ -111,24 +112,24 @@
     </div>
     <div class="hides">
       <span class="impl">Índices y triggers</span>
-      <span class="impl">Historial de Flyway<i>V1, V2, Vn…</i></span>
+      <span class="impl">Historial de Flyway<i>V1, V2, V3</i></span>
     </div>
   </section>
 </div>
 <aside class="side">
   <div class="card carrier">
     <b class="t">dto/</b><div class="who">Viajan entre controller y service</div>
-    <div class="box"><span class="type">RegisterRequest</span><span class="type">TokenResponse</span><span class="type">AccountDto</span><span class="type">HistoryItemDto</span><span class="type">PageResult&lt;T&gt;</span><span class="type">Requester</span></div>
+    <div class="box"><span class="type">RegisterRequest</span><span class="type">TokenResponse</span><span class="type">AccountDto</span><span class="type">HistoryItemDto</span><span class="type">NewsSummaryDto</span><span class="type">PageResult&lt;T&gt;</span></div>
     <p style="margin-top:8px">Records inmutables con validación (Bean Validation). Son el JSON del contrato.</p>
   </div>
   <div class="card carrier">
     <b class="t">model/</b><div class="who">Viajan entre service y repository</div>
-    <div class="box"><span class="type">Player</span><span class="type">AuthSession</span><span class="type">Settings</span><span class="type">Save</span><span class="type">SaveStats</span><span class="type">PlaySession</span><span class="type">NewsPost</span><span class="type">ClientType</span></div>
-    <p style="margin-top:8px">Entidades JPA y enums. Las entidades nunca llegan a controller ni se convierten a JSON.</p>
+    <div class="box"><span class="type">Player</span><span class="type">AuthSession</span><span class="type">Settings</span><span class="type">SaveRecord</span><span class="type">SaveStats</span><span class="type">PlaySession</span><span class="type">NewsPost</span><span class="type">ClientType</span></div>
+    <p style="margin-top:8px">Records del dominio y enums. Nunca llegan a controller ni se convierten a JSON.</p>
   </div>
   <div class="card cross">
-    <b class="t">security/ · config/ · exception/</b><div class="who">Transversales</div>
-    <div class="box"><span class="if">TokenIssuer<i>«interface»</i></span><span class="if">RateLimiter<i>«interface»</i></span><span class="if">PasswordEncoder<i>«interface»</i></span><span class="impl">JwtTokenIssuer</span><span class="impl">Bucket4jRateLimiter</span><span class="type">NotFoundException…</span></div>
+    <b class="t">config/ · exception/</b><div class="who">Transversales</div>
+    <div class="box"><span class="if">PasswordEncoder<i>«interface» BCrypt</i></span><span class="impl">SecurityConfig</span><span class="impl">RequestTraceFilter<i>trazas por petición</i></span><span class="impl">ClockConfig</span><span class="type">ErrorCode</span><span class="type">NotFoundException…</span></div>
   </div>
 </aside>
 </div>
@@ -136,6 +137,6 @@
   <span><i class="m" style="background:#DDEEFB;border:1.5px solid #1D5C9A"></i>interfaz</span>
   <span><i class="m" style="background:#fff;border:1.5px solid #CFE0EF"></i>tipo de dato o contrato público</span>
   <span><i class="m" style="background:#EEF3F8;border:1.5px dashed #9DB1C8"></i>implementación oculta</span>
-  <span><b>Verificado por ArchUnit:</b> controller no depende de repository ni de entidades; ninguna clase *Impl o *Jdbc es pública.</span>
+  <span><b>Verificado por ArchUnit:</b> controller no depende de repository ni del model; repository no conoce los dto; ninguna clase *Impl o *Jdbc es pública.</span>
 </div>
 </body></html>

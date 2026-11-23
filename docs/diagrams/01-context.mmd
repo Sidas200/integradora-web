@@ -16,10 +16,11 @@ flowchart LR
     api -- "JDBC / SQL" --> db
   end
 
-  itch["itch.io<br/>tienda externa"]
+  gh["GitHub Releases<br/>demo para Windows"]
 
   visitor -- "lee la landing y las noticias,<br/>se suscribe al lanzamiento" --> pwa
   player -- "crea cuenta, consulta historial y logros,<br/>configura, elimina su cuenta" --> pwa
   player -- "juega; guarda en la nube" --> game
   player -- "crea cuenta, consulta" --> mobile
-  pwa -- "botón Comprar" --> itch
+  pwa -- "botón Descargar demo" --> gh
+  pwa -. "descarga la APK<br/>(/downloads)" .-> mobile

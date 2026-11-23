@@ -1,5 +1,10 @@
+---
+config:
+  layout: elk
+---
 %% Class diagram of authentication: interfaces, implementations and polymorphism.
 %% Classes without «interface» are package-private (not public).
+%% transversales: TokenIssuer and RateLimiter live in service/, PasswordEncoder is the bean of config/SecurityConfig.
 classDiagram
   direction TB
 
@@ -9,12 +14,13 @@ classDiagram
       +login(LoginRequest) TokenResponse
       +refresh(RefreshRequest) TokenResponse
       +logout(RefreshRequest) void
+      +reauthenticate(AccessClaims, ReauthenticateRequest) TokenResponse
     }
     class RefreshChannel {
       <<interface>>
       +supports(ClientType) boolean
       +read(HttpServletRequest, RefreshRequest) Optional~String~
-      +deliver(IssuedSession, HttpServletResponse) TokenResponse
+      +deliver(TokenResponse, HttpServletResponse) TokenResponse
       +clear(HttpServletResponse) void
     }
     class CookieRefreshChannel
@@ -24,11 +30,11 @@ classDiagram
   namespace service {
     class AuthService {
       <<interface>>
-      +register(RegisterRequest, ClientContext) IssuedSession
-      +login(LoginRequest, ClientContext) IssuedSession
-      +refresh(String, ClientContext) IssuedSession
+      +register(RegisterRequest, String userAgent) AuthResult
+      +login(LoginRequest, String userAgent) AuthResult
+      +refresh(String, String userAgent) AuthResult
       +logout(String) void
-      +reauthenticate(Requester, String) IssuedSession
+      +reauthenticate(AccessClaims, String) TokenResponse
     }
     class AuthServiceImpl
   }
@@ -37,26 +43,29 @@ classDiagram
     class PlayerRepository {
       <<interface>>
       +findByEmail(String) Optional~Player~
-      +existsByUsernameIgnoreCase(String) boolean
+      +emailExists(String) boolean
+      +insert(String, String, String, OffsetDateTime) Player
     }
     class AuthSessionRepository {
       <<interface>>
-      +findByTokenHash(String) Optional~AuthSession~
-      +revokeFamily(UUID, String, Instant) int
+      +findByTokenHashForUpdate(String) Optional~AuthSession~
+      +revokeFamily(UUID, RevocationReason, OffsetDateTime) int
     }
   }
 
-  namespace security {
+  namespace transversales {
     class TokenIssuer {
       <<interface>>
-      +issueAccessToken(TokenClaims) AccessToken
+      +issueAccessToken(UUID, UUID, ClientType, Instant) String
+      +verify(String) AccessClaims
     }
-    class JwtTokenIssuer
+    class HmacTokenIssuer
     class RateLimiter {
       <<interface>>
-      +consume(String key) void
+      +acquire(RateLimitRule, String key) void
+      +reset(RateLimitRule, String key) void
     }
-    class Bucket4jRateLimiter
+    class InMemoryRateLimiter
     class NoOpRateLimiter
     class PasswordEncoder {
       <<interface>>
@@ -76,7 +85,7 @@ classDiagram
   AuthServiceImpl --> TokenIssuer
   AuthServiceImpl --> RateLimiter
   AuthServiceImpl --> PasswordEncoder
-  JwtTokenIssuer ..|> TokenIssuer
-  Bucket4jRateLimiter ..|> RateLimiter : dev, prod
+  HmacTokenIssuer ..|> TokenIssuer : HS256
+  InMemoryRateLimiter ..|> RateLimiter : local, prod
   NoOpRateLimiter ..|> RateLimiter : test
-  DelegatingPasswordEncoder ..|> PasswordEncoder
+  DelegatingPasswordEncoder ..|> PasswordEncoder : BCrypt

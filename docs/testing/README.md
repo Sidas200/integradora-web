@@ -117,11 +117,11 @@ Debe terminar con `API 16/16 · PWA 9/9`. Si un caso falla, deja `evidencias/fro
 
 **Paso 7. Log del backend.** Captura de la terminal 1 con las líneas `-->` / `<--` de un `POST /api/v1/subscriptions`, un `POST /api/v1/auth/register` y un `GET /api/v1/news` → `backend/backend-01-consola.png`. El archivo completo ya lo copió el paso 4 a `backend/tdimp-api.log`.
 
-**Paso 8. Pruebas automatizadas** (terminal 3; el backend usa la base `tdimp_test`, así que pueden correr con la API encendida).
+**Paso 8. Pruebas automatizadas** (Git Bash; el backend usa la base `tdimp_test`, así que pueden correr con la API encendida). Se usa Git Bash porque `Tee-Object` de PowerShell guarda los archivos en UTF-16 y GitHub ya no los muestra como texto; `NO_COLOR=1` y `-B` quitan los códigos de color.
 
-```powershell
-cd backend;  ./mvnw verify 2>&1 | Tee-Object ../docs/testing/evidencias/backend/mvn-verify.txt; cd ..
-cd frontend; npm run test:coverage 2>&1 | Tee-Object ../docs/testing/evidencias/frontend/npm-test.txt; cd ..
+```bash
+cd backend  && ./mvnw -B verify 2>&1 | tee ../docs/testing/evidencias/backend/mvn-verify.txt; cd ..
+cd frontend && NO_COLOR=1 npm run test:coverage 2>&1 | tee ../docs/testing/evidencias/frontend/npm-test.txt; cd ..
 ```
 
 ## 6. Casos de prueba
@@ -240,4 +240,5 @@ Evidencia: `evidencias/frontend/npm-test.txt` (salida completa con la lista de p
 - `consented_at` guarda la hora en que la API recibe la petición; en un registro que estuvo en cola es la hora del reenvío.
 - El registro de jugadores no se encola sin conexión: necesita la respuesta del servidor (token y cookie) para iniciar la sesión, así que sin red el formulario muestra el error y no se envía nada.
 - En Playwright, `context.setOffline()` no corta las peticiones del Service Worker. El script se conecta al Service Worker por CDP y las hace fallar con `InternetDisconnected`, y dispara el evento `sync` para no esperar a Chrome.
+- **Brave** quita Background Sync de Chromium (está en su lista de funciones deshabilitadas) y sus Shields pueden impedir que se registre el Service Worker o bloquear peticiones que pasan por él. En Brave la cola de *Avísame del lanzamiento* se envía al volver a abrir el sitio, no al volver la red; si la PWA no funciona sin conexión, hay que permitir scripts y bajar los Shields para el sitio. El laboratorio se corre en Chrome.
 - Las capturas automáticas recorren la página completa antes de tomarla, para que carguen las imágenes diferidas (`loading="lazy"`), y usan *reducir movimiento*, así ninguna sección queda a media animación.

@@ -69,21 +69,21 @@
 
 ## Checklist manual
 
-Las capturas de la versión anterior del laboratorio (sin diseño, con las noticias `lab-*`) se reemplazan en la corrida final. Las de `unitarias/` siguen vigentes: el código de esas pruebas no cambió.
+Todas corresponden a la corrida final del laboratorio (noviembre de 2026). Las de `unitarias/` son de la práctica de pruebas unitarias; el código de esas pruebas no cambió.
 
-- [ ] db-01-antes.png
-- [ ] db-02-despues.png
-- [ ] db-03-integridad.png
-- [ ] db-04-explain.png
-- [ ] db-05-jugadores.png (nueva)
-- [ ] backend-01-consola.png
-- [ ] mvn-verify.txt
-- [ ] devtools-01-console.png
-- [ ] devtools-02-network-get.png
-- [ ] devtools-03-application-sw.png
-- [ ] devtools-04-cache-storage.png
-- [ ] devtools-05-network-post.png
-- [ ] devtools-06-indexeddb-cola.png
-- [ ] devtools-07-sincronizado.png
-- [ ] devtools-08-network-registro.png (nueva)
+- [x] db-01-antes.png
+- [x] db-02-despues.png
+- [x] db-03-integridad.png
+- [x] db-04-explain.png
+- [x] db-05-jugadores.png
+- [x] backend-01-consola.png
+- [x] mvn-verify.txt
+- [x] devtools-01-console.png
+- [x] devtools-02-network-get.png
+- [x] devtools-03-application-sw.png
+- [x] devtools-04-cache-storage.png
+- [x] devtools-05-network-post.png
+- [x] devtools-06-indexeddb-cola.png
+- [x] devtools-07-sincronizado.png
+- [x] devtools-08-network-registro.png
 - [x] unitarias/01 a 05

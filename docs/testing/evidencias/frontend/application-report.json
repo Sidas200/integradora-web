@@ -1,7 +1,7 @@
 [
   {
     "step": "PWA-02 en línea, tras consultar",
-    "at": "2026-11-22T21:53:10.646Z",
+    "at": "2026-11-22T23:24:33.773Z",
     "online": true,
     "serviceWorker": {
       "state": "activated",
@@ -40,7 +40,7 @@
   },
   {
     "step": "PWA-07 sin conexión, tras el envío",
-    "at": "2026-11-22T21:53:34.319Z",
+    "at": "2026-11-22T23:24:53.395Z",
     "online": false,
     "serviceWorker": {
       "state": "activated",
@@ -79,17 +79,17 @@
       "backgroundSyncQueue": [
         {
           "queueName": "subscription-queue",
-          "queuedAt": "2026-11-22T21:53:28.220Z",
+          "queuedAt": "2026-11-22T23:24:48.686Z",
           "method": "POST",
           "url": "http://localhost:4173/api/v1/subscriptions",
-          "payload": "{\"email\":\"lab-offline-20261122215254@tdimp.test\",\"language\":\"es\",\"consent\":true}"
+          "payload": "{\"email\":\"lab-offline-20261122232421@tdimp.test\",\"language\":\"es\",\"consent\":true}"
         }
       ]
     }
   },
   {
     "step": "PWA-08 en línea, tras sincronizar",
-    "at": "2026-11-22T21:53:40.831Z",
+    "at": "2026-11-22T23:24:59.274Z",
     "online": true,
     "serviceWorker": {
       "state": "activated",

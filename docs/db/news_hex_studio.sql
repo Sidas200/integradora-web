@@ -91,7 +91,7 @@ $md$,
  'Diario de desarrollo #3: la forja de Kaede',
  'Una investigadora, un campamento escondido entre los árboles y la primera mejora de la espada: de 15 a 25 de daño.',
  $md$
-Del otro lado del puente, en tierra firme, vive **Kaede**, una investigadora que le ofrece a Tsuki lo que nadie más le daría a un **Rulebreaker**: un refugio y una forja.
+Del otro lado del puente, en otra isla, vive **Kaede**, una investigadora que le ofrece a Tsuki lo que nadie más le daría a un **Rulebreaker**: un refugio y una forja.
 
 ## Recetas, no suerte
 
@@ -215,7 +215,7 @@ La espera terminó: **la demo del capítulo 1 ya está disponible** y es gratis.
 
 ## Qué incluye
 
-- La **Isla de las Flores** y el camino a tierra firme.
+- La **Isla de las Flores** y el puente hacia otra isla.
 - El campamento y la **forja de Kaede**, con sus recetas y mejoras.
 - La **prueba del Santuario**.
 - El duelo contra **Varn, el Guardián del Umbral**.

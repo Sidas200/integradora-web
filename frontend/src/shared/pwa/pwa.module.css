@@ -7,7 +7,7 @@
   backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
   animation: drop var(--dur-slow) var(--ease-spring) both;
 }
-.offline { background: var(--c-glass-strong); color: var(--c-text); }
+.offline { background: var(--c-glass-solid); color: var(--c-text); }  /* opaque: it floats over the page */
 .offline::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: var(--c-promise); flex: none;
   box-shadow: 0 0 0 4px var(--c-promise-soft); animation: pulse 1.6s ease-in-out infinite; }
 .update { background: var(--c-primary); color: var(--c-on-primary); }

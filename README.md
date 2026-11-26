@@ -909,7 +909,53 @@ La práctica de pruebas unitarias de `findAll` y `create` con JUnit 5 y Mockito 
 
 Las evidencias están en [`docs/testing/evidencias/`](docs/testing/evidencias).
 
-### 11.3 Entornos y despliegue
+### 11.3 Auditoría con Lighthouse
+
+Se audita la PWA desplegada en producción con **Lighthouse** (Chrome DevTools › Lighthouse) para medir rendimiento, accesibilidad y buenas prácticas. No se aplicó la categoría SEO porque la PWA no depende del posicionamiento en buscadores.
+
+| Dato | Valor |
+|---|---|
+| URL auditada | <https://www.tdimtp.site/> |
+| Fecha | 26 de noviembre de 2026, 13:52 (hora de Chihuahua) |
+| Herramienta | Lighthouse 13.5.0 en Google Chrome 158 |
+| Modo | Navegación · Escritorio · ventana de incógnito |
+| Categorías | Rendimiento, Accesibilidad y Buenas prácticas |
+
+![Reporte de Lighthouse de la PWA](docs/testing/evidencias/frontend/lighthouse-01-pwa.png)
+
+| Categoría | Puntaje |
+|---|---|
+| Rendimiento | **99** / 100 |
+| Accesibilidad | **93** / 100 |
+| Buenas prácticas | **92** / 100 |
+
+Métricas de rendimiento (carga de la página principal):
+
+| Métrica | Resultado |
+|---|---|
+| First Contentful Paint | 0.6 s |
+| Largest Contentful Paint | 0.8 s |
+| Speed Index | 0.8 s |
+| Total Blocking Time | 0 ms |
+| Cumulative Layout Shift | 0.002 |
+
+La auditoría confirma que el sitio se sirve por **HTTPS** (`is-on-https`: aprobada), requisito para el Service Worker y la instalación. Las demás características de la PWA (manifiesto, Service Worker, caché y modo sin conexión) se comprueban en DevTools › Application y están en `devtools-03-application-sw.png`, `devtools-04-cache-storage.png` y `ui-05-offline-noticias.png`.
+
+Puntos que Lighthouse marcó para mejora (no afectan el funcionamiento):
+
+| Categoría | Auditoría | Pendiente |
+|---|---|---|
+| Accesibilidad | `color-contrast` | Algún texto no alcanza la relación de contraste mínima. |
+| Accesibilidad | `link-name` | Algún enlace no tiene un nombre reconocible para lectores de pantalla. |
+| Accesibilidad | `label-content-name-mismatch` | La etiqueta accesible de algún elemento no coincide con su texto visible. |
+| Buenas prácticas | `errors-in-console` | Hay errores registrados en la consola del navegador. |
+| Buenas prácticas | `inspector-issues` | DevTools reporta incidencias en el panel Issues. |
+
+Lighthouse avisó que puede haber datos en IndexedDB que influyen en el rendimiento. La auditoría se hizo en una ventana de incógnito, pero el reporte completo (`lighthouse-report.json`) queda en las evidencias.
+
+Cómo repetirla: abrir la URL en Chrome (incógnito, sin extensiones) › F12 › **Lighthouse** › Modo *Navigation* › Dispositivo *Desktop* › categorías Rendimiento, Accesibilidad y Buenas prácticas › **Analyze page load**.
+
+### 11.4 Entornos y despliegue
 
 | Entorno | PWA | API | BD |
 |---|---|---|---|

@@ -20,6 +20,7 @@
 | Microservicio (core/base) | [`backend/`](backend): API REST en Spring Boot con arquitectura en N-capas, contrato [`docs/api/openapi.yaml`](docs/api/openapi.yaml); la consumen la PWA, el juego y la app móvil ([README §4](README.md#4-arquitectura)) |
 | Documentación del proceso de desarrollo y pruebas en Markdown | [README.md](README.md) (arquitectura, decisiones y cambios respecto a la propuesta en §12), [`docs/testing/README.md`](docs/testing/README.md) (laboratorio de pruebas), [`backend/README.md`](backend/README.md) (ejecución y práctica de pruebas unitarias), [`docs/ci/README.md`](docs/ci/README.md) (pipelines) |
 | URL de repositorio remoto | <https://github.com/Sidas200/integradora-web> |
+| URL de la PWA en producción (HTTPS) | <https://www.tdimtp.site/> |
 
 ## Propuesta de arquitectura e interfaz
 
@@ -50,6 +51,7 @@
 | DevTools: Network (latencia, payload, headers) | `devtools-02-network-get`, `devtools-05-network-post`, `devtools-08-network-registro`, `network.har`, `network-report.md` |
 | DevTools: Application (Service Worker, Cache Storage, IndexedDB, sincronización) | `devtools-03` a `devtools-07`, `application-report.json` |
 | DevTools: Console | `devtools-01-console.png`, `console.log` |
+| Auditoría Lighthouse de la PWA | `evidencias/frontend/lighthouse-01-pwa.png`, `lighthouse-report.json` · [README §11.3](README.md#113-auditoría-con-lighthouse) |
 
 ## Pruebas unitarias (JUnit 5 y Mockito)
 

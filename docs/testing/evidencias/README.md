@@ -56,6 +56,7 @@
 | `devtools-07-sincronizado.png` | manual | Cola vacía tras sincronizar |
 | `devtools-08-network-registro.png` | manual | Network: `POST /auth/register` (201) y `GET /account` (200) |
 | `npm-test.txt` | auto | Salida de `npm run test:coverage`: 293 pruebas y resumen de cobertura |
+| `frontend/lighthouse-01-pwa.png` · `frontend/lighthouse-report.json` | Auditoría Lighthouse de la PWA en producción: Rendimiento 99, Accesibilidad 93, Buenas prácticas 92 (§11.3 del README) |
 
 ## unitarias/ · Práctica de `findAll` y `create` (JUnit 5 + Mockito)
 
